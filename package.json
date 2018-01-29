@@ -39,7 +39,7 @@
     "proving": "^0.1.0",
     "q": "^1.4.1",
     "zcl-id": "^0.3.2",
-    "zcl-packet": "^0.2.0",
+    "zcl-packet": "https://github.com/kirovilya/zcl-packet",
     "ziee": "^0.3.0",
     "zive": "^0.2.2",
     "zstack-constants": "^0.2.0"
