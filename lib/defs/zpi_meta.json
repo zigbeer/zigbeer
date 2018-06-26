@@ -29,7 +29,8 @@
                     { "product": 0      },
                     { "majorrel": 0     },
                     { "minorrel": 0     },
-                    { "maintrel": 0     }
+                    { "maintrel": 0     },
+                    { "revision": 2     }
                 ]
             }
         },
