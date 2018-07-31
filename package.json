@@ -33,7 +33,7 @@
   "dependencies": {
     "areq": "^0.2.0",
     "busyman": "^0.3.0",
-    "cc-znp": "git+https://github.com/Koenkk/cc-znp.git#0445c554344421498c1721b4a7fc84531b222cbf",
+    "cc-znp": "git+https://github.com/Koenkk/cc-znp.git#cf1df71dfa0b62daf1d7f21bc0071ce56bffd1f0",
     "debug": "^2.6.3",
     "objectbox": "^0.3.0",
     "proving": "^0.1.0",
