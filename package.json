@@ -33,13 +33,13 @@
   "dependencies": {
     "areq": "^0.2.0",
     "busyman": "^0.3.0",
-    "cc-znp": "git+https://github.com/Koenkk/cc-znp.git",
+    "cc-znp": "git+https://github.com/Koenkk/cc-znp.git#0445c554344421498c1721b4a7fc84531b222cbf",
     "debug": "^2.6.3",
     "objectbox": "^0.3.0",
     "proving": "^0.1.0",
     "q": "^1.4.1",
     "zcl-id": "^0.3.2",
-    "zcl-packet": "git+https://github.com/Koenkk/zcl-packet.git",
+    "zcl-packet": "git+https://github.com/Koenkk/zcl-packet.git#1513d8087b8ccd52f73a90dd15112d7e3468f861",
     "ziee": "^0.3.0",
     "zive": "^0.2.2",
     "zstack-constants": "^0.2.0"
