@@ -1,6 +1,6 @@
 {
     "name": "zigbee-bridge-znp",
-    "version": "0.0.1",
+    "version": "0.0.2",
     "license": "MIT",
 
     "description": "The interface for a host to communicate with TI CC253X Zigbee Network Processor(ZNP) over a serial port.",
@@ -58,6 +58,6 @@
         "mocha": "^2.5.3",
 
         "eslint": "5.2.0",
-            "eslint-config-open-zigbee": "0.0.2"
+            "eslint-config-open-zigbee": "0.0.3"
     }
 }
