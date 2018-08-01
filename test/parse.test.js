@@ -184,8 +184,6 @@ function randomArgForParse(type, name) {
         case 'preLenBeaconlist':
             preBufLen = chance.integer({min: 1, max: 2}) * 21;
             return preBufLen / 21;
-        case 'uint8ZdoInd':
-            return chance.integer({min: 0, max: 255});
         case 'dynbuffer':
             testBuf = new Buffer(preBufLen);
             for (k = 0; k < preBufLen; k += 1) {
@@ -210,6 +208,8 @@ function framer() {
     this.args.forEach(function(arg, idx) {
         const type = arg.type;
         const val = arg.value;
+        let msb;
+        let lsb;
 
         switch (type) {
             case 'uint8':
@@ -240,8 +240,8 @@ function framer() {
                 dataBuf = dataBuf.uint16(val);
                 break;
             case 'longaddr':
-                const msb = parseInt(val.slice(2, 10), 16);
-                const lsb = parseInt(val.slice(10), 16);
+                msb = parseInt(val.slice(2, 10), 16);
+                lsb = parseInt(val.slice(10), 16);
 
                 dataBuf = dataBuf.uint32le(lsb).uint32le(msb);
                 break;

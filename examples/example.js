@@ -1,3 +1,4 @@
+/* eslint no-console: 0 */
 const ccznp = require('../index.js');
 
 const spCfg = {

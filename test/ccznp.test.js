@@ -125,7 +125,7 @@ describe('Functional Check', function() {
         ccznp._unpi.send = () => {};
         ccznp.request('SYS', 'ping', {}, function(err, result) {
             if (err) {
-                console.log(err);
+                throw err;
             } else if (result === rsp && ccznp._spinLock === false) {
                 done();
             }
