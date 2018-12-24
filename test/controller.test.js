@@ -73,7 +73,7 @@ describe('Constructor Check', function () {
         expect(controller._zdo).to.be.an('object');
         expect(controller._cfg).to.be.deep.equal({ path: '/dev/ttyUSB0' });
         expect(controller._resetting).to.be.false;
-        expect(controller.querie).to.be.an('object');
+        expect(controller.query).to.be.an('object');
 
         expect(controller._net).to.be.deep.equal({
             state: null,
@@ -755,7 +755,7 @@ describe('Functional Check', function () {
 
     describe('#.simpleDescReq', function () {
         it('get remoteDev simple description', function (done) {
-            var deviceWithEndpointsStub = sinon.stub(controller.querie, 'deviceWithEndpoints', function (nwkAddr, ieeeAddr, callback) {
+            var deviceWithEndpointsStub = sinon.stub(controller.query, 'deviceWithEndpoints', function (nwkAddr, ieeeAddr, callback) {
                 var deferred = Q.defer();
 
                 setImmediate(function () {

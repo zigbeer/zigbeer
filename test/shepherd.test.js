@@ -232,7 +232,7 @@ describe('Top Level of Tests', function () {
         describe('#.start', function () {
             this.timeout(6000);
 
-            it('should start ok, _ready and reday should be fired, _enabled,', function (done) {
+            it('should start ok, _ready and ready should be fired, _enabled,', function (done) {
                 var _readyCbCalled = false,
                     readyCbCalled = false,
                     startCbCalled = false,
@@ -301,7 +301,7 @@ describe('Top Level of Tests', function () {
 
         describe('#.mount', function () {
             it('should mount zApp', function (done) {
-                var coordStub = sinon.stub(shepherd.controller.querie, 'coordInfo', function (callback) {
+                var coordStub = sinon.stub(shepherd.controller.query, 'coordInfo', function (callback) {
                         return Q({}).nodeify(callback);
                     }),
                     syncStub = sinon.stub(shepherd._devbox, 'sync', function (id, callback) {
