@@ -2,10 +2,11 @@ var Q = require('q'),
     sinon = require('sinon'),
     expect = require('chai').expect,
     EventEmitter = require('events'),
-    Controller = require('../lib/components/controller');
+    znp = require('cc-znp');
 
 var Device  = require('../lib/model/device'),
     Endpoint  = require('../lib/model/endpoint'),
+    Controller = require('../lib/components/controller'),
     Coord  = require('../lib/model/coord'),
     Coordpoint  = require('../lib/model/coordpoint');
 
@@ -69,7 +70,6 @@ describe('Constructor Check', function () {
 
         expect(controller._shepherd).to.be.an('object');
         expect(controller._coord).to.be.null;
-        expect(controller._znp).to.be.an('object');
         expect(controller._zdo).to.be.an('object');
         expect(controller._cfg).to.be.deep.equal({ path: '/dev/ttyUSB0' });
         expect(controller._resetting).to.be.false;
@@ -476,7 +476,7 @@ describe('Functional Check', function () {
 
     describe('#.start', function () {
         it('should init znp', function (done) {
-            var initStub = sinon.stub(controller._znp, 'init', function (spCfg, callback) {
+            var initStub = sinon.stub(znp, 'init', function (spCfg, callback) {
                 setImmediate(function () {
                     callback(null);
                     controller.emit('ZNP:INIT');
@@ -494,7 +494,7 @@ describe('Functional Check', function () {
 
     describe('#.close', function () {
         it('should close znp', function (done) {
-            var closeStub = sinon.stub(controller._znp, 'close', function (callback) {
+            var closeStub = sinon.stub(znp, 'close', function (callback) {
                 setImmediate(function () {
                     callback(null);
                     controller.emit('ZNP:CLOSE');
@@ -579,7 +579,7 @@ describe('Functional Check', function () {
         });
 
         it('request SYS command', function (done) {
-            var _znpRequestStub = sinon.stub(controller._znp, 'request', function (subsys, cmdId, valObj, callback) {
+            var _znpRequestStub = sinon.stub(znp, 'request', function (subsys, cmdId, valObj, callback) {
                 expect(subsys).to.be.equal('SYS');
                 expect(cmdId).to.be.equal('resetReq');
 
@@ -711,7 +711,7 @@ describe('Functional Check', function () {
                 return deferred.promise.nodeify(callback);
             });
 
-            controller.getCoord().endpoints[1] = loEp1;
+            controller._coord.endpoints[1] = loEp1;
 
             controller.deregisterEp(loEp1, function (err) {
                 if (!err){
