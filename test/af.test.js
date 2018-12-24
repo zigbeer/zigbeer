@@ -73,9 +73,7 @@ coordDev.getDelegator = function (profId) {
         return loEp1;
 };
 
-controller.getCoord = function () {
-    return coordDev;
-};
+controller._coord = coordDev;
 
 var transId = 0;
 controller.nextTransId = function () {
