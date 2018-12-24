@@ -34,20 +34,20 @@
     "areq": "^0.2.0",
     "busyman": "^0.3.0",
     "cc-znp": "git+https://github.com/Koenkk/cc-znp.git#94646da556bc273f9476266a888ecc55c4f167e3",
-    "debug": "^2.6.3",
+    "debug": "^3.2.6",
     "objectbox": "^0.3.0",
     "proving": "^0.1.0",
-    "q": "^1.4.1",
-    "zcl-id": "^0.3.2",
+    "q": "^1.5.1",
+    "zcl-id": "^0.4.0",
     "zcl-packet": "git+https://github.com/Koenkk/zcl-packet.git#fbd8c936bbd4be0597ad3e934be0ca722b0128a6",
     "ziee": "^0.3.0",
-    "zive": "^0.2.2",
     "zstack-constants": "^0.2.0"
   },
   "devDependencies": {
     "chai": "^3.5.0",
     "mocha": "^3.2.0",
     "sinon": "^1.17.4",
-    "sinon-chai": "^2.8.0"
+    "sinon-chai": "^2.8.0",
+    "zive": "^0.2.2"
   }
 }
