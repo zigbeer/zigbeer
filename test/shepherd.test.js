@@ -10,8 +10,7 @@ var Q = require('q'),
 
 var Shepherd = require('../index.js'),
     Coord  = require('../lib/model/coord'),
-    Device  = require('../lib/model/device'),
-    Endpoint  = require('../lib/model/endpoint');
+    Device  = require('../lib/model/device')
 
 chai.use(sinonChai);
 
