@@ -77,7 +77,7 @@
             "sceneValid":{"id":3,"type":"boolean"},
             "nameSupport":{"id":4,"type":"bitmap8"},
             "lastCfgBy":{"id":5,"type":"ieeeAddr"}},
-        "cmd":{"add":0,"view":1,"remove":2,"removeAll":3,"store":4,"recall":5,"getSceneMembership":6,"enhancedAdd":64,"enhancedView":65,"copy":66},
+        "cmd":{"add":0,"view":1,"remove":2,"removeAll":3,"store":4,"recall":5,"getSceneMembership":6,"enhancedAdd":64,"enhancedView":65,"copy":66, "tradfriArrowSingle": 7, "tradfriArrowHold": 8, "tradfriArrowRelease": 9},
         "cmdRsp":{"addRsp":0,"viewRsp":1,"removeRsp":2,"removeAllRsp":3,"storeRsp":4,"getSceneMembershipRsp":6,"enhancedAddRsp":64,"enhancedViewRsp":65,"copyRsp":66}},
     "genOnOff": {
         "attrId":{
