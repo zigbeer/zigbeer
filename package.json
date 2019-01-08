@@ -38,8 +38,8 @@
     "objectbox": "^0.3.0",
     "proving": "^0.1.0",
     "q": "^1.5.1",
-    "zcl-id": "^0.4.0",
-    "zcl-packet": "git+https://github.com/Koenkk/zcl-packet.git#fbd8c936bbd4be0597ad3e934be0ca722b0128a6",
+    "zcl-id": "git+https://github.com/Koenkk/zcl-id.git#509f77ab620ece6ad8e83a008283457a5280c8db",
+    "zcl-packet": "git+https://github.com/Koenkk/zcl-packet.git#9fdecf5d684fb664b416bde982436c4a22187062",
     "ziee": "^0.3.0",
     "zstack-constants": "^0.2.0"
   },
