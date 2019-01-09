@@ -123,7 +123,7 @@ describe('Functional Check', function () {
     });
 
     it('event: data', function (done) {
-        var data = { sof: 254, len: 5, type: 3, subsys: 1, cmd: 2, payload: new Buffer([0, 1, 2, 3, 4]), fcs: 100, csum: 100 },
+        var data = { sof: 254, len: 5, type: 3, subsys: 1, cmd: 2, payload: Buffer.from([0, 1, 2, 3, 4, 5, 0, 0, 0]), fcs: 100, csum: 100 },
             dataEvtFlag = false;
 
         ccznp.on('data', function (msg) {
@@ -137,7 +137,8 @@ describe('Functional Check', function () {
                     product: 1,
                     majorrel: 2,
                     minorrel: 3,
-                    maintrel: 4
+                    maintrel: 4,
+                    revision: 5
                 };
 
             for (var key in result) {
@@ -152,7 +153,7 @@ describe('Functional Check', function () {
     });
 
     it('event: AREQ', function (done) {
-        var data = { sof: 254, len: 3, type: 2, subsys: 4, cmd: 128, payload: new Buffer([0, 8, 30]), fcs: 100, csum: 100 },
+        var data = { sof: 254, len: 3, type: 2, subsys: 4, cmd: 128, payload: Buffer.from([0, 8, 30]), fcs: 100, csum: 100 },
             dataEvtFlag = false;
 
         ccznp.on('data', function (msg) {
