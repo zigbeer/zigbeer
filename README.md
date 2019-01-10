@@ -4,8 +4,8 @@ cc-znp
 The interface for a host to communicate with TI **CC**253X **Z**igBee **N**etwork **P**rocessor(ZNP) over a serial port.  
 
 [![Build Status](https://travis-ci.com/ZigBeans/cc-znp.svg?branch=master)](https://travis-ci.com/ZigBeans/cc-znp)
-[![npm](https://img.shields.io/npm/v/@ZigBeans/cc-znp.svg?maxAge=2592000)](https://www.npmjs.com/package/cc-znp)
-[![npm](https://img.shields.io/npm/l/@ZigBeans/cc-znp.svg?maxAge=2592000)](https://www.npmjs.com/package/cc-znp)
+[![npm](https://img.shields.io/npm/v/@zigbee/cc-znp.svg?maxAge=2592000)](https://www.npmjs.com/package/@zigbee/cc-znp)
+[![npm](https://img.shields.io/npm/l/@zigbee/cc-znp.svg?maxAge=2592000)](https://www.npmjs.com/package/@zigbee/cc-znp)
 
 <br />
   
