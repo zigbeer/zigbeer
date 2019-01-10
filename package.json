@@ -1,5 +1,5 @@
 {
-  "name": "zigbee-shepherd",
+  "name": "@zigbee/zigbee-shepherd",
   "version": "0.3.0",
   "description": "An open source ZigBee gateway solution with node.js.",
   "main": "index.js",
@@ -8,7 +8,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/zigbeer/zigbee-shepherd.git"
+    "url": "git+https://github.com/ZigBeans/zigbee-shepherd.git"
   },
   "keywords": [
     "zigbee",
@@ -27,9 +27,9 @@
   ],
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/zigbeer/zigbee-shepherd/issues"
+    "url": "https://github.com/ZigBeans/zigbee-shepherd/issues"
   },
-  "homepage": "https://github.com/zigbeer/zigbee-shepherd#readme",
+  "homepage": "https://github.com/ZigBeans/zigbee-shepherd#readme",
   "dependencies": {
     "@zigbee/cc-znp": "^0.5.2-1",
     "areq": "^0.2.0",
