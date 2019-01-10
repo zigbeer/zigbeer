@@ -8,12 +8,15 @@
     "/lib",
     "npm-shrinkwrap.json"
   ],
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "test": "mocha -u bdd --reporter spec"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/zigbeer/cc-znp.git"
+    "url": "https://github.com/ZigBeans/cc-znp.git"
   },
   "keywords": [
     "zigbee",
@@ -35,9 +38,9 @@
   ],
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/zigbeer/cc-znp/issues"
+    "url": "https://github.com/ZigBeans/cc-znp/issues"
   },
-  "homepage": "https://github.com/zigbeer/cc-znp#readme",
+  "homepage": "https://github.com/ZigBeans/cc-znp#readme",
   "dependencies": {
     "debug": "^4.1.1",
     "enum": "^2.5.0",
