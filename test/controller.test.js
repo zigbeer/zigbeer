@@ -2,7 +2,7 @@ var Q = require('q'),
     sinon = require('sinon'),
     expect = require('chai').expect,
     EventEmitter = require('events'),
-    znp = require('cc-znp');
+    znp = require('@zigbee/cc-znp');
 
 var Device  = require('../lib/model/device'),
     Endpoint  = require('../lib/model/endpoint'),
