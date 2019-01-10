@@ -70,7 +70,7 @@ function randomArgForFrame(type) {
             return chance.integer({min: 0, max: 4294967295});
         case 'buffer':
         case 'dynbuffer':
-            testBuf = new Buffer(6);
+            testBuf = Buffer.alloc(6);
             for (k = 0; k < 6; k += 1) {
                 testBuf[k] = chance.integer({min: 0, max: 255});
             }

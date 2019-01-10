@@ -131,7 +131,7 @@ function randomArgForParse(type, name) {
         case 'buffer42':
         case 'buffer100':
             bufLen = parseInt(type.slice(6));
-            testBuf = new Buffer(bufLen);
+            testBuf = Buffer.alloc(bufLen);
             for (k = 0; k < bufLen; k += 1) {
                 testBuf[k] = chance.integer({min: 0, max: 255});
             }
@@ -139,7 +139,7 @@ function randomArgForParse(type, name) {
         case 'buffer':
         case 'devlistbuffer':
             bufLen = chance.integer({min: 0, max: 128}) * 2;  // MT CMD Max 256bytes
-            testBuf = new Buffer(bufLen);
+            testBuf = Buffer.alloc(bufLen);
             for (k = 0; k < bufLen; k += 1) {
                 testBuf[k] = chance.integer({min: 0, max: 255});
             }
@@ -153,14 +153,14 @@ function randomArgForParse(type, name) {
                 bufLen = chance.integer({min: 0, max: 20}) * 5;
             else if (name === 'bindingtablelist')
                 bufLen = chance.integer({min: 0, max: 10}) * 21;
-            testBuf = new Buffer(bufLen);
+            testBuf = Buffer.alloc(bufLen);
             for (k = 0; k < bufLen; k += 1) {
                 testBuf[k] = chance.integer({min: 0, max: 255});
             }
             return testBuf;
         case 'zdomsgcb':
             bufLen = chance.integer({min: 0, max: 200});      // MT CMD Max 256bytes
-            testBuf = new Buffer(bufLen);
+            testBuf = Buffer.alloc(bufLen);
             for (k = 0; k < bufLen; k += 1) {
                 testBuf[k] = chance.integer({min: 0, max: 255});
             }
@@ -180,7 +180,7 @@ function randomArgForParse(type, name) {
         case 'uint8ZdoInd':
             return chance.integer({min: 0, max: 255});
         case 'dynbuffer':
-            testBuf = new Buffer(preBufLen);
+            testBuf = Buffer.alloc(preBufLen);
             for (k = 0; k < preBufLen; k += 1) {
                 testBuf[k] = chance.integer({min: 0, max: 255});
             }
@@ -220,7 +220,7 @@ function framer() {
             case 'zdomsgcb':
             case 'dynbuffer':
             case 'nwklistbuffer':
-                dataBuf = dataBuf.buffer(new Buffer(val));
+                dataBuf = dataBuf.buffer(Buffer.from(val));
                 break;
             case 'uint8ZdoInd':
             case '_preLenUint8':
@@ -238,7 +238,7 @@ function framer() {
                 dataBuf = dataBuf.uint32le(lsb).uint32le(msb);
                 break;
             case 'devlistbuffer':
-                dataBuf = dataBuf.buffer(new Buffer(val));
+                dataBuf = dataBuf.buffer(Buffer.from(val));
                 break;
             default:
                 throw new Error('Unknown Data Type');
