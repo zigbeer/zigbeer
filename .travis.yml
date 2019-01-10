@@ -1,5 +1,18 @@
 language: node_js
 node_js:
-  - "0.12.10"
-  - "4.1.0"
-  - "6.9.2"
+- '6'
+- '10'
+jobs:
+  include:
+    - stage: deploy
+      script: skip
+      node_js: 
+        - '10'
+      deploy:
+        provider: npm
+        email: qm3ster@gmail.com
+        api_key:
+          secure: GfmKKZ4GPooWzISq/1fgftXbQPlsRlGmBP86IM5YUrSXR7Ib64/SaahhDVmIUfK1D3r9P2jz62PS1PLOOxCg+uPF4G+PmiMpLgQAQiKVFy64/upK9YycWuha98y2tU69jymhh7IEJk1BV2VLKw8Tea3hCXjGkfBrPus09jAfVeQlMIqZZS4B+eiwXb2JZJx8R2k6V5Lck9oQwIuLUHRISQ7+B7VBUJPTgbHYy1USjSotKaSJ8Zvbz3cQsq15/aPurARmSpvVfi+MTFOoy2eVBOspcUU+fpD9WdZtWQ+9RW98FjE1QttTQ7B0K0iq2Abe3QQjTbBeXtQQJopNEcGzj+hIixh63jVGSmC2QQPTN4c5pdchqyGQYl4Aknmvu7bNPf5ZSnDdXtFfXF4nach8+C3WuxDFSY1dWeceXfbJM0rJV2gHjph64rzKnhVuUiz5E2jMbjJ+xpRu0agwicpj2aQY5iDmmekMfBW4I2fL+M/E9ubXD2/cQCiIIh6LUrmKHTCzsSM71p/tE4H41l9BpoxsRi3yXfc/Wpgxe3JCe1SPik09/KlO1tKeCAOeYhrLfhvt4ERXCj8EqgqSLPWI3p5N67vv3ptuRNyZZmIIhX7tDyBN68AyeqmSdwrpsw4ZLLcyd1UArK/eU+JwaEEx1y3qc6ke24qDBxxatlJDUkE=
+        on:
+          tags: true
+          repo: ZigBeans/zigbee-shepherd
