@@ -1,14 +1,22 @@
 {
-  "name": "zcl-id",
+  "name": "@zigbee/zcl-id",
   "version": "0.4.0",
   "description": "An utility for getting ZCL identifiers defined by ZigBee Cluster Library.",
   "main": "index.js",
+  "files": [
+    "/index.js",
+    "/lib",
+    "npm-shrinkwrap.json"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
-    "test": "make test-all"
+    "test": "mocha -u bdd --reporter spec"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/zigbeer/zcl-id.git"
+    "url": "git+https://github.com/ZigBeans/zcl-id.git"
   },
   "author": "Simen Li",
   "contributors": [
@@ -31,9 +39,9 @@
   ],
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/zigbeer/zcl-id/issues"
+    "url": "https://github.com/ZigBeans/zcl-id/issues"
   },
-  "homepage": "https://github.com/zigbeer/zcl-id#readme",
+  "homepage": "https://github.com/ZigBeans/zcl-id#readme",
   "dependencies": {
     "busyman": "^0.3.0",
     "enum": "^2.5.0"

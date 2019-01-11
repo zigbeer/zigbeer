@@ -1,9 +1,9 @@
 # zcl-id
 An utility for getting ZCL identifiers defined by ZigBee Cluster Library.  
 
-[![Travis branch](https://img.shields.io/travis/zigbeer/zcl-id/master.svg?maxAge=2592000)](https://travis-ci.org/zigbeer/zcl-id)
-[![npm](https://img.shields.io/npm/v/zcl-id.svg?maxAge=2592000)](https://www.npmjs.com/package/zcl-id)
-[![npm](https://img.shields.io/npm/l/zcl-id.svg?maxAge=2592000)](https://www.npmjs.com/package/zcl-id)
+[![Build Status](https://travis-ci.com/ZigBeans/zcl-id.svg?branch=master)](https://travis-ci.com/ZigBeans/zcl-id)
+[![npm](https://img.shields.io/npm/v/@zigbee/zcl-id.svg?maxAge=2592000)](https://www.npmjs.com/package/@zigbee/zcl-id)
+[![npm](https://img.shields.io/npm/l/@zigbee/zcl-id.svg?maxAge=2592000)](https://www.npmjs.com/package/@zigbee/zcl-id)
 
 <br />
   
@@ -21,7 +21,7 @@ Please visit the [Wiki](https://github.com/zigbeer/zcl-id/wiki).
 
 ## Installation  
 
-> $ npm install zcl-id --save
+> $ npm install @zigbee/zcl-id --save
   
 <br />
 
@@ -33,4 +33,4 @@ See [Usage](https://github.com/zigbeer/zcl-id/wiki#Usage) on the Wiki.
 
 ## License  
 
-Licensed under [MIT](https://github.com/zigbeer/zcl-id/blob/master/LICENSE).
+Licensed under [MIT](https://github.com/ZigBeans/zcl-id/blob/master/LICENSE).
