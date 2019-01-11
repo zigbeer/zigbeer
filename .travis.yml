@@ -4,15 +4,15 @@ node_js:
 - '10'
 jobs:
   include:
-    - stage: deploy
-      script: skip
-      node_js: 
-        - '10'
-      deploy:
-        provider: npm
-        email: qm3ster@gmail.com
-        api_key:
-          secure: GfmKKZ4GPooWzISq/1fgftXbQPlsRlGmBP86IM5YUrSXR7Ib64/SaahhDVmIUfK1D3r9P2jz62PS1PLOOxCg+uPF4G+PmiMpLgQAQiKVFy64/upK9YycWuha98y2tU69jymhh7IEJk1BV2VLKw8Tea3hCXjGkfBrPus09jAfVeQlMIqZZS4B+eiwXb2JZJx8R2k6V5Lck9oQwIuLUHRISQ7+B7VBUJPTgbHYy1USjSotKaSJ8Zvbz3cQsq15/aPurARmSpvVfi+MTFOoy2eVBOspcUU+fpD9WdZtWQ+9RW98FjE1QttTQ7B0K0iq2Abe3QQjTbBeXtQQJopNEcGzj+hIixh63jVGSmC2QQPTN4c5pdchqyGQYl4Aknmvu7bNPf5ZSnDdXtFfXF4nach8+C3WuxDFSY1dWeceXfbJM0rJV2gHjph64rzKnhVuUiz5E2jMbjJ+xpRu0agwicpj2aQY5iDmmekMfBW4I2fL+M/E9ubXD2/cQCiIIh6LUrmKHTCzsSM71p/tE4H41l9BpoxsRi3yXfc/Wpgxe3JCe1SPik09/KlO1tKeCAOeYhrLfhvt4ERXCj8EqgqSLPWI3p5N67vv3ptuRNyZZmIIhX7tDyBN68AyeqmSdwrpsw4ZLLcyd1UArK/eU+JwaEEx1y3qc6ke24qDBxxatlJDUkE=
-        on:
-          tags: true
-          repo: ZigBeans/zcl-packet
+  - stage: deploy
+    script: skip
+    node_js:
+    - '10'
+    deploy:
+      provider: npm
+      email: qm3ster@gmail.com
+      api_key:
+        secure: WivGfyKyv1WJKFPFaDgxMWBF38IxoRa5rjDNmiJrLrlumVkcbcsJpjiXugv8dxDi6acJ4OdtKQOLdUag2Nb18RH5QEXjoFdFcUuwhZ6FJiRIvSJ5mN2B22eK4Hl3CFOLgnmXHG0r43V+QW5GNl2s+P0xM1HOQ2vCWvo94C4+TNuq4JmE3QZMiy122jVuPNdI2zshgkjapbUsobjNIucecYfhhvlHtseQRuVbv+3lzrHidtrG0QrXmsxDKm0WXFh5tmq/3V0UGQqBijSEdLGUs5gUMRKS+t+HQ2Tyt1TzQKniaQ6zZmPuiUsBZxGUL82eccAnJ4fkIxp88/bOWV9BX9OcfT3fQOvOG57W5MExzwS+i770B93f8lfWVOsQnsixt3Fwhqg7pRLD/qDeaOGo1fK+tjq3II8iK1lcGnZp+oDdUoJYKHYvQQ8Hc3lRWfghdA3qaZJcVcrYIyS0Khprg6KnQUP5u5yJ2ZaoQHeXMBdk3JkbsCqTBtLk9aJwfjewtrWyTFnajMDPd5tFeITY24E1GU3E88Q74KZ1yEQb3UrDHutSAGe1ImQX6mQK4KyPEdvmWkeQ/T9DDsQ2ngQOQNC37Qb1DAuZCSLFbgWEe15qc8AtXJouC0qTJ3zb8cHmXYyRmpoVoIUulQT37eI/JOTHmGNIjcavwh4FGfYezII=
+      on:
+        tags: true
+        repo: ZigBeans/zcl-packet
