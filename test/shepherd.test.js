@@ -87,9 +87,12 @@ describe('Top Level of Tests', function () {
     });
 
     describe('Constructor Check', function () {
+        const dbPath = __dirname + '/database/dev.db'
+        const justDbPath = { dbPath }
+
         var shepherd;
         before(function () {
-            shepherd = new Shepherd('/dev/ttyUSB0', { dbPath: __dirname + '/database/dev.db' });
+            shepherd = new Shepherd('/dev/ttyUSB0', justDbPath);
         });
 
         it('should has all correct members after new', function () {
@@ -98,18 +101,18 @@ describe('Top Level of Tests', function () {
             expect(shepherd._zApp).to.be.an('array');
             expect(shepherd.controller).to.be.an('object');
             expect(shepherd.af).to.be.null;
-            expect(shepherd._dbPath).to.be.equal(__dirname + '/database/dev.db');
+            expect(shepherd._dbPath).to.be.equal(dbPath);
             expect(shepherd._devbox).to.be.an('object');
         });
 
         it('should throw if path is not a string', function () {
-            expect(function () { return new Shepherd({}, {}); }).to.throw(TypeError);
-            expect(function () { return new Shepherd([], {}); }).to.throw(TypeError);
-            expect(function () { return new Shepherd(1, {}); }).to.throw(TypeError);
-            expect(function () { return new Shepherd(true, {}); }).to.throw(TypeError);
-            expect(function () { return new Shepherd(NaN, {}); }).to.throw(TypeError);
+            expect(function () { return new Shepherd({}, justDbPath); }).to.throw(TypeError);
+            expect(function () { return new Shepherd([], justDbPath); }).to.throw(TypeError);
+            expect(function () { return new Shepherd(1, justDbPath); }).to.throw(TypeError);
+            expect(function () { return new Shepherd(true, justDbPath); }).to.throw(TypeError);
+            expect(function () { return new Shepherd(NaN, justDbPath); }).to.throw(TypeError);
 
-            expect(function () { return new Shepherd('xxx'); }).not.to.throw(Error);
+            expect(function () { return new Shepherd('xxx', justDbPath); }).not.to.throw(Error);
         });
 
         it('should throw if opts is given but not an object', function () {
@@ -117,7 +120,7 @@ describe('Top Level of Tests', function () {
             expect(function () { return new Shepherd('xxx', 1); }).to.throw(TypeError);
             expect(function () { return new Shepherd('xxx', true); }).to.throw(TypeError);
 
-            expect(function () { return new Shepherd('xxx', {}); }).not.to.throw(Error);
+            expect(function () { return new Shepherd('xxx', justDbPath); }).not.to.throw(Error);
         });
     });
 
@@ -250,31 +253,27 @@ describe('Top Level of Tests', function () {
                         return deferred.promise.nodeify(callback);
                     });
 
-                shepherd.once('_ready', function () {
-                    _readyCbCalled = true;
+                function leave () {
                     if (_readyCbCalled && readyCbCalled && startCbCalled && shepherd._enabled)
                         setTimeout(function () {
                             startStub.restore();
                             done();
                         }, 200);
+                }
+
+                shepherd.once('_ready', function () {
+                    _readyCbCalled = true;
+                    leave();
                 });
 
                 shepherd.once('ready', function () {
                     readyCbCalled = true;
-                    if (_readyCbCalled && readyCbCalled && startCbCalled && shepherd._enabled)
-                        setTimeout(function () {
-                            startStub.restore();
-                            done();
-                        }, 200);
+                    leave();
                 });
 
                 shepherd.start(function (err) {
                     startCbCalled = true;
-                    if (_readyCbCalled && readyCbCalled && startCbCalled && shepherd._enabled)
-                        setTimeout(function () {
-                            startStub.restore();
-                            done();
-                        }, 200);
+                    leave();
                 });
             });
         });
