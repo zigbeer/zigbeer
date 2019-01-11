@@ -27,7 +27,7 @@ Please visit the [Wiki](https://github.com/zigbeer/zigbee-shepherd/wiki).
 
 * Install zigbee-shepherd
 
-> $ npm install zigbee-shepherd --save
+> $ npm install @zigbee/zigbee-shepherd --save
 
 * Hardware
     - [SmartRF05EB (with CC2530EM)](http://www.ti.com/tool/cc2530dk)
