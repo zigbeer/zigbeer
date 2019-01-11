@@ -1,7 +1,7 @@
 var expect = require('chai').expect,
     Chance = require('chance'),
     chance = new Chance(),
-    zclId = require('zcl-id');
+    zclId = require('@zigbee/zcl-id');
 
 var zclmeta = require('../lib/zclmeta'),
     FuncClass = require('../lib/functional');

@@ -1,5 +1,5 @@
 var expect = require('chai').expect,
-    zclId = require('zcl-id'),
+    zclId = require('@zigbee/zcl-id'),
     _ = require('busyman');
 
 var zclmeta = require('../lib/zclmeta'),
@@ -88,12 +88,12 @@ var valObj = {
             { attrId: 0x2222, selector: { indicator: 0 } },
             { attrId: 0x1111, selector: { indicator: 5, indexes: [ 0x0101, 0x0202, 0x0303, 0x0404, 0x0505 ] } }
         ],
-        writeStrcut: [
+        writeStruct: [
             { attrId: 0x0011, selector: { indicator: 3, indexes: [ 0x0101, 0x0202, 0x0303 ] }, dataType: 0x21, attrData: 60000 },
             { attrId: 0x0022, selector: { indicator: 0 }, dataType: 0x50, attrData: { elmType: 0x20, numElms: 3, elmVals: [ 1, 2, 3 ] } },
             { attrId: 0x0033, selector: { indicator: 1, indexes: [ 0x0101 ] }, dataType: 0x4c, attrData: { numElms: 0x01, structElms: [ { elmType: 0x20, elmVal: 1 } ] } }
         ],
-        writeStrcutRsp: [
+        writeStructRsp: [
             { status: 0, attrId: 0x0001, selector: { indicator: 3, indexes: [ 0x0101, 0x0202, 0x0303 ] } },
             { status: 0, attrId: 0x0002, selector: { indicator: 2, indexes: [ 0x0101, 0x0202 ] } },
             { status: 1, attrId: 0x0003, selector: { indicator: 1, indexes: [ 0x0101 ] } },
