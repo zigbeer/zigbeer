@@ -170,7 +170,7 @@ describe('Module Methods Check', function() {
                     },
                     manufCode: 0,
                     seqNum: 2,
-                    cmdId: 'writeStrcut',
+                    cmdId: 'writeStruct',
                     payload: [
                         {attrId: 0x0011, selector: {indicator: 3, indexes: [0x0101, 0x0202, 0x0303]}, dataType: 0x21, attrData: 60000},
                         {attrId: 0x0022, selector: {indicator: 0}, dataType: 0x50, attrData: {elmType: 0x20, numElms: 3, elmVals: [1, 2, 3]}},
