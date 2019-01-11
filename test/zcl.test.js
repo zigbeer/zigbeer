@@ -295,4 +295,23 @@ describe('Module Methods Check', function() {
             });
         });
     });
+
+    describe('zcl #.header Check - Bad command', function () {
+        var headers = [
+            {
+                buf: new Buffer([ 0x1e, 0x34, 0x12, 0xff, 0x01 ])
+            },
+            {
+                buf: new Buffer([ 0x1f, 0x34, 0x12, 0xff, 0x01 ])
+            },
+        ];
+
+        headers.forEach(function (header) {
+            var result = zcl.header(header.buf);
+            it('zcl header Check', function () {
+                expect(result).to.be.undefined;
+            });
+        });
+    });
+
 });
