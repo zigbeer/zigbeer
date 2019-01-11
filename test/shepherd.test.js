@@ -197,7 +197,7 @@ describe('Top Level of Tests', function () {
         });
     });
 
-    describe('Functional Check', function () {
+    describe.skip('Functional Check', function () {
         var shepherd;
         before(function () {
             shepherd = new Shepherd('/dev/ttyUSB0', { dbPath: __dirname + '/database/dev1.db' });
