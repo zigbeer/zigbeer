@@ -24,7 +24,7 @@ The **zcl-packet** is the packet builder and parser for ZigBee application layer
 
 ## Installation
 
-> $ npm install zcl-packet --save
+> $ npm install @zigbee/zcl-packet --save
 
 <br />
 
