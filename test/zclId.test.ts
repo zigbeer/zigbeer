@@ -1,8 +1,8 @@
-var fs = require('fs'),
-    expect = require('chai').expect,
-    zclId = require('../index');
+var expect = require('chai').expect
+    
+import * as zclId from '../src'
 
-var clusterDefs = JSON.parse(fs.readFileSync(__dirname + '/../definitions/cluster_defs.json'));
+var clusterDefs = require('../src/definitions/cluster_defs.json');
 
 var profIdKeys = [],
     profIdVals = [],
@@ -233,7 +233,7 @@ describe('Module Methods Check', function() {
 
                 cmdIdKeys.forEach(function (cmdkey) {
                     var hitA = zclId.functional(ckey, cmdkey),
-                        hitB = zclId[ckey].cmd.get(cmdkey);
+                        hitB = zclId._getCluster(ckey).cmd.get(cmdkey);
 
                     expect(hitA).not.to.be.undefined;
                     expect(hitA.key).to.be.eql(hitB.key);
@@ -254,7 +254,7 @@ describe('Module Methods Check', function() {
 
                 cmdIdVals.forEach(function (cmdval) {
                     var hitA = zclId.functional(ckey, cmdval),
-                        hitB = zclId[ckey].cmd.get(cmdval);
+                        hitB = zclId._getCluster(ckey).cmd.get(cmdval);
 
                     expect(hitA).not.to.be.undefined;
                     expect(hitA.key).to.be.eql(hitB.key);
@@ -277,7 +277,7 @@ describe('Module Methods Check', function() {
 
                 cmdIdKeys.forEach(function (cmdkey) {
                     var hitA = zclId.functional(cval, cmdkey),
-                        hitB = zclId[cId.key].cmd.get(cmdkey);
+                        hitB = zclId._getCluster(cId.key).cmd.get(cmdkey);
 
                     expect(hitA).not.to.be.undefined;
                     expect(hitA.key).to.be.eql(hitB.key);
@@ -300,7 +300,7 @@ describe('Module Methods Check', function() {
 
                 cmdIdVals.forEach(function (cmdval) {
                     var hitA = zclId.functional(cval, cmdval),
-                        hitB = zclId[cId.key].cmd.get(cmdval);
+                        hitB = zclId._getCluster(cId.key).cmd.get(cmdval);
 
                     expect(hitA).not.to.be.undefined;
                     expect(hitA.key).to.be.eql(hitB.key);
@@ -337,7 +337,7 @@ describe('Module Methods Check', function() {
 
                 cmdIdKeys.forEach(function (cmdkey) {
                     var hitA = zclId.getCmdRsp(ckey, cmdkey),
-                        hitB = zclId[ckey].cmdRsp.get(cmdkey);
+                        hitB = zclId._getCluster(ckey).cmdRsp.get(cmdkey);
 
                     expect(hitA).not.to.be.undefined;
                     expect(hitA.key).to.be.eql(hitB.key);
@@ -358,7 +358,7 @@ describe('Module Methods Check', function() {
 
                 cmdIdVals.forEach(function (cmdval) {
                     var hitA = zclId.getCmdRsp(ckey, cmdval),
-                        hitB = zclId[ckey].cmdRsp.get(cmdval);
+                        hitB = zclId._getCluster(ckey).cmdRsp.get(cmdval);
 
                     expect(hitA).not.to.be.undefined;
                     expect(hitA.key).to.be.eql(hitB.key);
@@ -381,7 +381,7 @@ describe('Module Methods Check', function() {
 
                 cmdIdKeys.forEach(function (cmdkey) {
                     var hitA = zclId.getCmdRsp(cval, cmdkey),
-                        hitB = zclId[cId.key].cmdRsp.get(cmdkey);
+                        hitB = zclId._getCluster(cId.key).cmdRsp.get(cmdkey);
 
                     expect(hitA).not.to.be.undefined;
                     expect(hitA.key).to.be.eql(hitB.key);
@@ -404,7 +404,7 @@ describe('Module Methods Check', function() {
 
                 cmdIdVals.forEach(function (cmdval) {
                     var hitA = zclId.getCmdRsp(cval, cmdval),
-                        hitB = zclId[cId.key].cmdRsp.get(cmdval);
+                        hitB = zclId._getCluster(cId.key).cmdRsp.get(cmdval);
 
                     expect(hitA).not.to.be.undefined;
                     expect(hitA.key).to.be.eql(hitB.key);
@@ -441,7 +441,7 @@ describe('Module Methods Check', function() {
 
                 attrIdKeys.forEach(function (akey) {
                     var hitA = zclId.attr(ckey, akey),
-                        hitB = zclId[ckey].attr.get(akey);
+                        hitB = zclId._getCluster(ckey).attr.get(akey);
 
                     expect(hitA).not.to.be.undefined;
                     expect(hitA.key).to.be.eql(hitB.key);
@@ -462,7 +462,7 @@ describe('Module Methods Check', function() {
 
                 attrIdVals.forEach(function (aval) {
                     var hitA = zclId.attr(ckey, aval),
-                        hitB = zclId[ckey].attr.get(aval);
+                        hitB = zclId._getCluster(ckey).attr.get(aval);
 
                     expect(hitA).not.to.be.undefined;
                     expect(hitA.key).to.be.eql(hitB.key);
@@ -485,7 +485,7 @@ describe('Module Methods Check', function() {
 
                 attrIdKeys.forEach(function (akey) {
                     var hitA = zclId.attr(cval, akey),
-                        hitB = zclId[cId.key].attr.get(akey);
+                        hitB = zclId._getCluster(cId.key).attr.get(akey);
 
                     expect(hitA).not.to.be.undefined;
                     expect(hitA.key).to.be.eql(hitB.key);
@@ -508,7 +508,7 @@ describe('Module Methods Check', function() {
 
                 attrIdVals.forEach(function (aval) {
                     var hitA = zclId.attr(cval, aval),
-                        hitB = zclId[cId.key].attr.get(aval);
+                        hitB = zclId._getCluster(cId.key).attr.get(aval);
 
                     expect(hitA).not.to.be.undefined;
                     expect(hitA.key).to.be.eql(hitB.key);
@@ -544,7 +544,7 @@ describe('Module Methods Check', function() {
                 }
 
                 attrIdKeys.forEach(function (akey) {
-                    var dataType = zclId[ckey].attrType.get(akey),
+                    var dataType = zclId._getCluster(ckey).attrType.get(akey),
                         hitA = zclId.attrType(ckey, akey),
                         hitB = zclId.dataType(dataType.value);
 
@@ -567,7 +567,7 @@ describe('Module Methods Check', function() {
 
                 attrIdVals.forEach(function (aval) {
                     var attrId = zclId.attr(ckey, aval),
-                        dataType = zclId[ckey].attrType.get(attrId.key),
+                        dataType = zclId._getCluster(ckey).attrType.get(attrId.key),
                         hitA = zclId.attrType(ckey, aval),
                         hitB = zclId.dataType(dataType.value);
 
@@ -591,7 +591,7 @@ describe('Module Methods Check', function() {
                 }
 
                 attrIdKeys.forEach(function (akey) {
-                    var dataType = zclId[cId.key].attrType.get(akey),
+                    var dataType = zclId._getCluster(cId.key).attrType.get(akey),
                         hitA = zclId.attrType(cval, akey),
                         hitB = zclId.dataType(dataType.value);
 
@@ -616,7 +616,7 @@ describe('Module Methods Check', function() {
 
                 attrIdVals.forEach(function (aval) {
                     var attrId = zclId.attr(cval, aval),
-                        dataType = zclId[cId.key].attrType.get(attrId.key),
+                        dataType = zclId._getCluster(cId.key).attrType.get(attrId.key),
                         hitA = zclId.attrType(cval, aval),
                         hitB = zclId.dataType(dataType.value);
 
