@@ -1,9 +1,16 @@
-import _ = require('busyman')
-import Enum = require('./definitions/enum')
+import { Enum } from './enum'
 
-import common = require('./definitions/common.json')
-import clusterDefs = require('./definitions/cluster_defs.json')
-import clusterWithNewFormat from './definitions/clusterWithNewFormat'
+import * as common from './definitions/common.json'
+import * as clusterDefs from './definitions/cluster_defs.json'
+
+type ClusterName = keyof typeof clusterDefs
+
+interface ClusterDef {
+  attrId: Record<string, { id: number; type: string }> | null // Actually type should be keyof typeof common.dataType
+  cmd: Record<string, number> | null
+  cmdRsp: Record<string, number> | null
+}
+const _clusterDefs: Record<string, ClusterDef | undefined> = clusterDefs
 
 /*************************************************************************************************/
 /*** Loading Enumerations                                                                      ***/
@@ -14,258 +21,222 @@ export const foundationId = new Enum(_common.foundation)
 export const dataTypeId = new Enum(_common.dataType)
 export const statusId = new Enum(_common.status)
 export const clusterId = new Enum(_common.clusterId)
-export const deviceId = { HA: new Enum(_common.haDevId) }
+export const deviceId: Record<string, Enum<string, number>> = {
+  HA: new Enum(_common.haDevId)
+}
 
-function isValidArgType(param) {
-  if (typeof param !== 'number' && typeof param !== 'string') {
-    return false
+function isValidArgType(param: any): param is string | number {
+  if (typeof param === 'string') {
+    return true
   }
   if (typeof param === 'number') {
     return !isNaN(param)
   }
-  return true
+  return false
+}
+
+const isNil = (val: any): val is null | undefined => val == undefined
+
+const assertAndParse = (val: any, name: string): string | number => {
+  if (!isValidArgType(val))
+    throw new TypeError(name + ' should be a number or a string.')
+  const num = parseInt(val as string, 10)
+  return isNaN(num) ? val : num
+}
+type AttributeName = string
+type AttributeID = number
+type AttributeType = string
+type CommandName = string
+type CommandID = number
+type CommandResponseName = string
+type CommandResponseID = number
+interface NewFormatCluster {
+  attr: Enum<AttributeName, AttributeID>
+  attrType: Enum<AttributeName, AttributeType>
+  cmd?: Enum<CommandName, CommandID>
+  cmdRsp?: Enum<CommandResponseName, CommandResponseID>
+}
+
+function clusterWithNewFormat({
+  attrId,
+  cmd,
+  cmdRsp
+}: ClusterDef): NewFormatCluster {
+  type AttrID = NonNullable<typeof attrId>
+  const attrs: Record<keyof AttrID, AttrID[string]['id']> = {}
+  const attrTypes: Record<keyof AttrID, AttrID[string]['type']> = {}
+
+  for (const name in attrId) {
+    const { id, type } = attrId[name]
+    attrs[name] = id
+    attrTypes[name] = type
+  }
+
+  return {
+    attr: new Enum(attrs),
+    attrType: new Enum(attrTypes),
+    cmd: cmd ? new Enum(cmd) : undefined,
+    cmdRsp: cmdRsp ? new Enum(cmdRsp) : undefined
+  }
 }
 
 const newFormatClusters = new Map()
 
+type AnyClusterName = keyof typeof _common.clusterId
+
 /*************************************************************************************************/
 /*** zclId Methods                                                                             ***/
 /*************************************************************************************************/
-export function _getCluster(cluster) {
+export function _getCluster(
+  cluster: AnyClusterName
+): NewFormatCluster | undefined {
   const readyCluster = newFormatClusters.get(cluster)
   if (readyCluster) return readyCluster
-  const newClusterDef = clusterDefs[cluster]
-  if (newClusterDef) {
-    const newCluster = clusterWithNewFormat(newClusterDef)
-    newFormatClusters.set(cluster, newCluster)
-    clusterDefs[cluster] = null
-    return newCluster
-  }
-  throw new Error(`Cluster ${cluster} not found in cluster_defs.json`)
-  // return: {
-  //     attr,
-  //     attrType,
-  //     cmd,
-  //     cmdRsp
-  // }
+
+  const newClusterDef = _clusterDefs[cluster]
+  if (!newClusterDef) return // throw new Error(`Cluster ${cluster} not found in cluster_defs.json`)
+
+  const newCluster = clusterWithNewFormat(newClusterDef)
+  newFormatClusters.set(cluster, newCluster)
+  delete _clusterDefs[cluster] // Drop references to original Def to free memory. Do we need this?
+  return newCluster
 }
 
-export function profile(profId) {
-  // profId: String | Number
-  if (!isValidArgType(profId))
-    throw new TypeError('profId should be a number or a string.')
+export function profile(profId: string | number) {
+  profId = assertAndParse(profId, 'profId')
 
-  const profNumber = parseInt(profId)
+  return profileId.get(profId) // { key: 'HA', value: 260 }
+}
 
-  if (!isNaN(profNumber)) profId = profNumber
+export function device(profId: string | number, devId: string | number) {
+  profId = assertAndParse(profId, 'profId')
+  devId = assertAndParse(devId, 'devId')
 
   const profItem = profileId.get(profId)
+  if (!profItem) return
 
-  if (profItem) return { key: profItem.key, value: profItem.value } // { key: 'HA', value: 260 }
+  return deviceId[profItem.key].get(devId) // { key: 'ON_OFF_SWITCH', value: 0 }
 }
 
-export function device(profId, devId) {
-  // profId: String | Number, devId: String | Number
-  if (!isValidArgType(profId))
-    throw new TypeError('profId should be a number or a string.')
+/**
+ * Get cluster entry by name|id|id as string
+ * */
+export function cluster(cId: string | number) {
+  cId = assertAndParse(cId, 'cId')
 
-  if (!isValidArgType(devId))
-    throw new TypeError('devId should be a number or a string.')
-
-  const profNumber = parseInt(profId)
-  const devNumber = parseInt(devId)
-
-  if (!isNaN(profNumber)) profId = profNumber
-
-  if (!isNaN(devNumber)) devId = devNumber
-
-  const profItem = profileId.get(profId)
-
-  let devItem
-  if (profItem) devItem = deviceId[profItem.key].get(devId)
-
-  if (devItem) return { key: devItem.key, value: devItem.value } // { key: 'ON_OFF_SWITCH', value: 0 }
+  return clusterId.get(cId) // { key: 'genBasic', value: 0 }
 }
 
-export function cluster(cId: string | number): { key: string; value: number } {
-  // cId: String | Number
-  if (!isValidArgType(cId))
-    throw new TypeError('cId should be a number or a string.')
+/**
+ * Get foundation command entry by name|id|id as string
+ * */
+export function foundation(cmdId: string | number) {
+  cmdId = assertAndParse(cmdId, 'cmdId')
 
-  const cNumber = parseInt(cId as string)
+  return foundationId.get(cmdId) // { key: 'read', value: 0 }
+}
 
-  if (!isNaN(cNumber)) cId = cNumber
+/**
+ * Get functional command entry of cluster by two name|id|id as string
+ * */
+export function functional(cId: string | number, cmdId: string | number) {
+  cId = assertAndParse(cId, 'cId')
+  cmdId = assertAndParse(cmdId, 'cmdId')
 
   const cItem = clusterId.get(cId)
+  if (!cItem) return
 
-  return cItem // { key: 'genBasic', value: 0 }
+  const cInfo = _getCluster(cItem.key)
+  if (!cInfo || isNil(cInfo.cmd)) return
+
+  return cInfo.cmd.get(cmdId) // { key: 'view', value: 1 }
 }
 
-export function foundation(cmdId) {
-  // cmdId: String | Number
-  if (!isValidArgType(cmdId))
-    throw new TypeError('cmdId should be a number or a string.')
-
-  const cmdNumber = parseInt(cmdId)
-
-  if (!isNaN(cmdNumber)) cmdId = cmdNumber
-
-  const cmdItem = foundationId.get(cmdId)
-
-  if (cmdItem) return { key: cmdItem.key, value: cmdItem.value } // { key: 'read', value: 0 }
-}
-
-export function functional(cId, cmdId) {
-  // cId: String | Number, cmdId: String | Number
-  if (!isValidArgType(cId))
-    throw new TypeError('cId should be a number or a string.')
-
-  if (!isValidArgType(cmdId))
-    throw new TypeError('cmdId should be a number or a string.')
-
-  const cNumber = parseInt(cId)
-  const cmdNumber = parseInt(cmdId)
-
-  if (!isNaN(cNumber)) cId = cNumber
-
-  let cmdItem
-  if (!isNaN(cmdNumber)) cmdId = cmdNumber
-
-  const cItem = clusterId.get(cId)
-
-  let cInfo
-  if (cItem) cInfo = _getCluster(cItem.key)
-
-  if (cInfo && !_.isNil(cInfo.cmd)) cmdItem = cInfo.cmd.get(cmdId)
-
-  if (cmdItem) return { key: cmdItem.key, value: cmdItem.value } // { key: 'view', value: 1 }
-}
-
+/**
+ * Get functional (command) response entry of cluster by two name|id|id as string
+ * */
 export function getCmdRsp(cId: string | number, rspId: string | number) {
-  // TODO
-  if (!isValidArgType(cId))
-    throw new TypeError('cId should be a number or a string.')
-
-  if (!isValidArgType(rspId))
-    throw new TypeError('rspId should be a number or a string.')
-
-  const cNumber = parseInt(cId as string)
-  const cmdNumber = parseInt(rspId as string)
-
-  if (!isNaN(cNumber)) cId = cNumber
-
-  if (!isNaN(cmdNumber)) rspId = cmdNumber
+  cId = assertAndParse(cId, 'cId')
+  rspId = assertAndParse(rspId, 'rspId')
 
   const cItem = clusterId.get(cId)
+  if (!cItem) return
 
-  let cInfo
-  if (cItem) cInfo = _getCluster(cItem.key)
+  const cInfo = _getCluster(cItem.key)
+  if (!cInfo || isNil(cInfo.cmdRsp)) return
 
-  let cmdItem
-  if (cInfo && !_.isNil(cInfo.cmdRsp)) cmdItem = cInfo.cmdRsp.get(rspId)
-
-  if (cmdItem) return { key: cmdItem.key, value: cmdItem.value } // { key: 'viewRsp', value: 1 }
+  return cInfo.cmdRsp.get(rspId) // { key: 'viewRsp', value: 1 }
 }
 
+/**
+ * Get an array of all attributes, with numeric ID and numeric type of cluster by name|id|id as string
+ * */
 export function attrList(cId: string | number) {
-  if (!isValidArgType(cId))
-    throw new TypeError('cId should be a number or a string.')
-
   const cItem = cluster(cId)
   const clst = cItem ? _getCluster(cItem.key) : undefined
 
   if (!cItem || !clst) return
 
-  const attrs = _.map(clst.attr.enums, function(item) {
-    return { attrId: item.value }
+  return clst.attr.enums.map(function(item) {
+    const attrId = item.value
+    const type = attrType(cItem.key, attrId)
+    const dataType = type ? type.value : 255
+    return { attrId, dataType }
   })
-
-  _.forEach(attrs, function(item) {
-    const type = attrType(cItem.key, item.attrId)
-    item.dataType = type ? type.value : 255
-  })
-
-  return attrs
 }
 
+/**
+ * Get an attribute entry, with numeric ID and numeric type of cluster by two name|id|id as string
+ * */
 export function attr(cId: string | number, attrId: string | number) {
-  if (!isValidArgType(cId))
-    throw new TypeError('cId should be a number or a string.')
-
-  if (!isValidArgType(attrId))
-    throw new TypeError('attrId should be a number or a string.')
-
-  const cNumber = parseInt(cId as string)
-  const attrNumber = parseInt(attrId as string)
-
-  if (!isNaN(cNumber)) cId = cNumber
-
-  if (!isNaN(attrNumber)) attrId = attrNumber
+  cId = assertAndParse(cId, 'cId')
+  attrId = assertAndParse(attrId, 'attrId')
 
   const cItem = clusterId.get(cId)
+  if (!cItem) return
 
-  let cInfo
-  if (cItem) cInfo = _getCluster(cItem.key)
+  const cInfo = _getCluster(cItem.key)
+  if (!cInfo || isNil(cInfo.attr)) return
 
-  let attrItem
-  if (cInfo && !_.isNil(cInfo.attr)) attrItem = cInfo.attr.get(attrId)
-
-  if (attrItem) return { key: attrItem.key, value: attrItem.value } // { key: 'modelId', value: 5 }
+  return cInfo.attr.get(attrId) // { key: 'modelId', value: 5 }
 }
 
+/**
+ * Get the type entry of an attribute by two name|id|id as string
+ * */
 export function attrType(cId: string | number, attrId: string | number) {
-  if (!isValidArgType(cId))
-    throw new TypeError('cId should be a number or a string.')
-
-  if (!isValidArgType(attrId))
-    throw new TypeError('attrId should be a number or a string.')
-
-  const cNumber = parseInt(cId as string)
-  const attrNumber = parseInt(attrId as string)
-
-  if (!isNaN(cNumber)) cId = cNumber
-
-  if (!isNaN(attrNumber)) attrId = attrNumber
+  cId = assertAndParse(cId, 'cId')
+  attrId = assertAndParse(attrId, 'attrId')
 
   const cItem = clusterId.get(cId)
+  if (!cItem) return
 
-  let cInfo
-  if (cItem) cInfo = _getCluster(cItem.key)
+  const cInfo = _getCluster(cItem.key)
+  if (!cInfo || isNil(cInfo.attr)) return
 
-  const attrName = attr(cId, attrId)
+  const attrName = cInfo.attr.get(attrId)
+  if (!attrName) return
 
-  let attrItem
-  let attrType
-  if (cInfo && !_.isNil(cInfo.attrType) && attrName) {
-    attrItem = cInfo.attrType.get(attrName.key)
-    attrType = dataType(attrItem.value)
-  }
+  const attrItem = cInfo.attrType.get(attrName.key)
+  if (!attrItem) return
 
-  if (attrType) return { key: attrType.key, value: attrType.value } // { key: 'CHAR_STR', value: 66 }
+  return dataTypeId.byKey.get(attrItem.value) // { key: 'CHAR_STR', value: 66 }
 }
 
+/**
+ * Get a dataType entry by name|id|id as string
+ * */
 export function dataType(type: string | number) {
-  if (!isValidArgType(type))
-    throw new TypeError('dataType should be a number or a string.')
+  type = assertAndParse(type, 'type')
 
-  const typeNumber = parseInt(type as string)
-
-  if (!isNaN(typeNumber)) type = typeNumber
-
-  const typeItem = dataTypeId.get(type)
-
-  if (typeItem) return { key: typeItem.key, value: typeItem.value } // { key: 'DATA8', value: 8 }
+  return dataTypeId.get(type) // { key: 'DATA8', value: 8 }
 }
 
+/**
+ * Get a status entry by name|id|id as string
+ * */
 export function status(status: string | number) {
-  if (!isValidArgType(status))
-    throw new TypeError('status should be a number or a string.')
+  status = assertAndParse(status, 'status')
 
-  const statusNumber = parseInt(status as string)
-
-  if (!isNaN(statusNumber)) status = statusNumber
-
-  const statusItem = statusId.get(status)
-
-  if (statusItem) return { key: statusItem.key, value: statusItem.value } // { key: 'DATA8', value: 8 }
+  return statusId.get(status) // { key: 'DATA8', value: 8 }
 }
