@@ -11,7 +11,7 @@
     "access": "public"
   },
   "scripts": {
-    "test": "mocha -r ts-node/register \"test/**/*.ts\"",
+    "test": "mocha -r ts-node/register ",
     "prepare": "tsc"
   },
   "repository": {
@@ -42,9 +42,7 @@
     "url": "https://github.com/ZigBeans/zcl-id/issues"
   },
   "homepage": "https://github.com/ZigBeans/zcl-id#readme",
-  "dependencies": {
-    "busyman": "^0.3.0"
-  },
+  "dependencies": {},
   "devDependencies": {
     "@types/mocha": "^5.2.5",
     "@types/node": "^10.12.18",
