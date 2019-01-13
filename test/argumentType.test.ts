@@ -1,5 +1,5 @@
 var expect = require('chai').expect,
-    zclId = require('../index');
+    zclId = require('../src');
 
 describe('APIs Arguments Check for Throwing Error', function() {
     describe('#._getCluster', function() {
