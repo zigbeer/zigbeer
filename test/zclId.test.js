@@ -1,4 +1,4 @@
-const { expect } = require('chai')
+const { expect } = require("chai")
 
 const {
   _common,
@@ -20,9 +20,9 @@ const {
   status,
   statusId,
   attrList
-} = require('../src')
+} = require("../src")
 
-const clusterDefs = require('../src/definitions/cluster_defs.json')
+const clusterDefs = require("../src/definitions/cluster_defs.json")
 
 const profIdKeys = []
 const profIdVals = []
@@ -71,9 +71,9 @@ for (const k in _common.haDevId) {
   devIdVals.HA.push(_common.haDevId[k])
 }
 
-describe('Module Methods Check', function() {
-  describe('#.profile', function() {
-    it('should get right item by profId string', function() {
+describe("Module Methods Check", function() {
+  describe("#.profile", function() {
+    it("should get right item by profId string", function() {
       profIdKeys.forEach(function(pkey) {
         const hitA = profile(pkey),
           hitB = profileId.get(pkey)
@@ -84,7 +84,7 @@ describe('Module Methods Check', function() {
       })
     })
 
-    it('should get right item by profId number', function() {
+    it("should get right item by profId number", function() {
       profIdVals.forEach(function(pval) {
         const hitA = profile(pval),
           hitB = profileId.get(pval)
@@ -95,14 +95,14 @@ describe('Module Methods Check', function() {
       })
     })
 
-    it('should get undefined if profId not found', function() {
-      expect(profile('xxx')).to.be.undefined
+    it("should get undefined if profId not found", function() {
+      expect(profile("xxx")).to.be.undefined
       expect(profile(12345)).to.be.undefined
     })
   })
 
-  describe('#.device', function() {
-    it('should get right item by profId string and devId string', function() {
+  describe("#.device", function() {
+    it("should get right item by profId string and devId string", function() {
       profIdKeys.forEach(function(pkey) {
         if (!devIdKeys[pkey]) return
 
@@ -117,7 +117,7 @@ describe('Module Methods Check', function() {
       })
     })
 
-    it('should get right item by profId string and devId number', function() {
+    it("should get right item by profId string and devId number", function() {
       profIdKeys.forEach(function(pkey) {
         if (!devIdKeys[pkey]) return
 
@@ -132,7 +132,7 @@ describe('Module Methods Check', function() {
       })
     })
 
-    it('should get right item by profId number and devId string', function() {
+    it("should get right item by profId number and devId string", function() {
       profIdVals.forEach(function(pval) {
         const profId = profile(pval)
 
@@ -149,7 +149,7 @@ describe('Module Methods Check', function() {
       })
     })
 
-    it('should get right item by profId number and devId number', function() {
+    it("should get right item by profId number and devId number", function() {
       profIdVals.forEach(function(pval) {
         const profId = profile(pval)
 
@@ -166,23 +166,23 @@ describe('Module Methods Check', function() {
       })
     })
 
-    it('should get undefined if target not found', function() {
-      expect(device('HA', 'dddd')).to.be.undefined
-      expect(device('HA', 12345)).to.be.undefined
-      expect(device(3, 'dddd')).to.be.undefined
+    it("should get undefined if target not found", function() {
+      expect(device("HA", "dddd")).to.be.undefined
+      expect(device("HA", 12345)).to.be.undefined
+      expect(device(3, "dddd")).to.be.undefined
       expect(device(3, 12345)).to.be.undefined
     })
 
-    it('should get an item if target is found', function() {
-      expect(device('HA', 'doorLock')).not.to.be.undefined
-      expect(device('HA', 4)).not.to.be.undefined
-      expect(device(260, 'doorLock')).not.to.be.undefined
+    it("should get an item if target is found", function() {
+      expect(device("HA", "doorLock")).not.to.be.undefined
+      expect(device("HA", 4)).not.to.be.undefined
+      expect(device(260, "doorLock")).not.to.be.undefined
       expect(device(260, 4)).not.to.be.undefined
     })
   })
 
-  describe('#.cluster', function() {
-    it('should get right item by cId string', function() {
+  describe("#.cluster", function() {
+    it("should get right item by cId string", function() {
       cIdKeys.forEach(function(ckey) {
         const hitA = cluster(ckey),
           hitB = clusterId.get(ckey)
@@ -193,7 +193,7 @@ describe('Module Methods Check', function() {
       })
     })
 
-    it('should get right item by cId number', function() {
+    it("should get right item by cId number", function() {
       cIdVals.forEach(function(cval) {
         const hitA = cluster(cval),
           hitB = clusterId.get(cval)
@@ -204,14 +204,14 @@ describe('Module Methods Check', function() {
       })
     })
 
-    it('should get undefined if cId not found', function() {
-      expect(cluster('xxx')).to.be.undefined
+    it("should get undefined if cId not found", function() {
+      expect(cluster("xxx")).to.be.undefined
       expect(cluster(12345)).to.be.undefined
     })
   })
 
-  describe('#.foundation', function() {
-    it('should get right item by cmdId string', function() {
+  describe("#.foundation", function() {
+    it("should get right item by cmdId string", function() {
       foundKeys.forEach(function(fkey) {
         const hitA = foundation(fkey),
           hitB = foundationId.get(fkey)
@@ -222,7 +222,7 @@ describe('Module Methods Check', function() {
       })
     })
 
-    it('should get right item by cmdId number', function() {
+    it("should get right item by cmdId number", function() {
       foundVals.forEach(function(fval) {
         const hitA = foundation(fval),
           hitB = foundationId.get(fval)
@@ -233,14 +233,14 @@ describe('Module Methods Check', function() {
       })
     })
 
-    it('should get undefined if cmdId not found', function() {
-      expect(foundation('xxx')).to.be.undefined
+    it("should get undefined if cmdId not found", function() {
+      expect(foundation("xxx")).to.be.undefined
       expect(foundation(12345)).to.be.undefined
     })
   })
 
-  describe('#.functional', function() {
-    it('should get right item by cId string and cmdId string', function() {
+  describe("#.functional", function() {
+    it("should get right item by cId string and cmdId string", function() {
       cIdKeys.forEach(function(ckey) {
         if (!clusterDefs[ckey]) return
 
@@ -261,7 +261,7 @@ describe('Module Methods Check', function() {
       })
     })
 
-    it('should get right item by cId string and cmdId number', function() {
+    it("should get right item by cId string and cmdId number", function() {
       cIdKeys.forEach(function(ckey) {
         if (!clusterDefs[ckey]) return
 
@@ -282,7 +282,7 @@ describe('Module Methods Check', function() {
       })
     })
 
-    it('should get right item by cId number and cmdId string', function() {
+    it("should get right item by cId number and cmdId string", function() {
       cIdVals.forEach(function(cval) {
         const cId = cluster(cval)
 
@@ -305,7 +305,7 @@ describe('Module Methods Check', function() {
       })
     })
 
-    it('should get right item by cId number and cmdId number', function() {
+    it("should get right item by cId number and cmdId number", function() {
       cIdVals.forEach(function(cval) {
         const cId = cluster(cval)
 
@@ -328,23 +328,23 @@ describe('Module Methods Check', function() {
       })
     })
 
-    it('should get undefined if target not found', function() {
-      expect(functional('genOnOff', 'dddd')).to.be.undefined
-      expect(functional('genOnOff', 12345)).to.be.undefined
-      expect(functional(3, 'dddd')).to.be.undefined
+    it("should get undefined if target not found", function() {
+      expect(functional("genOnOff", "dddd")).to.be.undefined
+      expect(functional("genOnOff", 12345)).to.be.undefined
+      expect(functional(3, "dddd")).to.be.undefined
       expect(functional(3, 12345)).to.be.undefined
     })
 
-    it('should get an item if target is found', function() {
-      expect(functional('genOnOff', 'toggle')).not.to.be.undefined
-      expect(functional('genOnOff', 2)).not.to.be.undefined
-      expect(functional(6, 'toggle')).not.to.be.undefined
+    it("should get an item if target is found", function() {
+      expect(functional("genOnOff", "toggle")).not.to.be.undefined
+      expect(functional("genOnOff", 2)).not.to.be.undefined
+      expect(functional(6, "toggle")).not.to.be.undefined
       expect(functional(6, 2)).not.to.be.undefined
     })
   })
 
-  describe('#.getCmdRsp', function() {
-    it('should get right item by cId string and cmdId string', function() {
+  describe("#.getCmdRsp", function() {
+    it("should get right item by cId string and cmdId string", function() {
       cIdKeys.forEach(function(ckey) {
         if (!clusterDefs[ckey]) return
 
@@ -365,7 +365,7 @@ describe('Module Methods Check', function() {
       })
     })
 
-    it('should get right item by cId string and cmdId number', function() {
+    it("should get right item by cId string and cmdId number", function() {
       cIdKeys.forEach(function(ckey) {
         if (!clusterDefs[ckey]) return
 
@@ -386,7 +386,7 @@ describe('Module Methods Check', function() {
       })
     })
 
-    it('should get right item by cId number and cmdId string', function() {
+    it("should get right item by cId number and cmdId string", function() {
       cIdVals.forEach(function(cval) {
         const cId = cluster(cval)
 
@@ -409,7 +409,7 @@ describe('Module Methods Check', function() {
       })
     })
 
-    it('should get right item by cId number and cmdId number', function() {
+    it("should get right item by cId number and cmdId number", function() {
       cIdVals.forEach(function(cval) {
         const cId = cluster(cval)
 
@@ -432,23 +432,23 @@ describe('Module Methods Check', function() {
       })
     })
 
-    it('should get undefined if target not found', function() {
-      expect(getCmdRsp('ssIasZone', 'dddd')).to.be.undefined
-      expect(getCmdRsp('ssIasZone', 12345)).to.be.undefined
-      expect(getCmdRsp(1280, 'dddd')).to.be.undefined
+    it("should get undefined if target not found", function() {
+      expect(getCmdRsp("ssIasZone", "dddd")).to.be.undefined
+      expect(getCmdRsp("ssIasZone", 12345)).to.be.undefined
+      expect(getCmdRsp(1280, "dddd")).to.be.undefined
       expect(getCmdRsp(1280, 12345)).to.be.undefined
     })
 
-    it('should get an item if target is found', function() {
-      expect(getCmdRsp('ssIasZone', 'enrollReq')).not.to.be.undefined
-      expect(getCmdRsp('ssIasZone', 1)).not.to.be.undefined
-      expect(getCmdRsp(1280, 'enrollReq')).not.to.be.undefined
+    it("should get an item if target is found", function() {
+      expect(getCmdRsp("ssIasZone", "enrollReq")).not.to.be.undefined
+      expect(getCmdRsp("ssIasZone", 1)).not.to.be.undefined
+      expect(getCmdRsp(1280, "enrollReq")).not.to.be.undefined
       expect(getCmdRsp(1280, 1)).not.to.be.undefined
     })
   })
 
-  describe('#.attr', function() {
-    it('should get right item by cId string and attrId string', function() {
+  describe("#.attr", function() {
+    it("should get right item by cId string and attrId string", function() {
       cIdKeys.forEach(function(ckey) {
         if (!clusterDefs[ckey]) return
 
@@ -469,7 +469,7 @@ describe('Module Methods Check', function() {
       })
     })
 
-    it('should get right item by cId string and attrId number', function() {
+    it("should get right item by cId string and attrId number", function() {
       cIdKeys.forEach(function(ckey) {
         if (!clusterDefs[ckey]) return
 
@@ -490,7 +490,7 @@ describe('Module Methods Check', function() {
       })
     })
 
-    it('should get right item by cId number and attrId string', function() {
+    it("should get right item by cId number and attrId string", function() {
       cIdVals.forEach(function(cval) {
         const cId = cluster(cval)
 
@@ -513,7 +513,7 @@ describe('Module Methods Check', function() {
       })
     })
 
-    it('should get right item by cId number and attrId number', function() {
+    it("should get right item by cId number and attrId number", function() {
       cIdVals.forEach(function(cval) {
         const cId = cluster(cval)
 
@@ -536,23 +536,23 @@ describe('Module Methods Check', function() {
       })
     })
 
-    it('should get undefined if target not found', function() {
-      expect(attr('genBasic', 'dddd')).to.be.undefined
-      expect(attr('genBasic', 12345)).to.be.undefined
-      expect(attr(3, 'dddd')).to.be.undefined
+    it("should get undefined if target not found", function() {
+      expect(attr("genBasic", "dddd")).to.be.undefined
+      expect(attr("genBasic", 12345)).to.be.undefined
+      expect(attr(3, "dddd")).to.be.undefined
       expect(attr(3, 12345)).to.be.undefined
     })
 
-    it('should get an item if target is found', function() {
-      expect(attr('genBasic', 'zclVersion')).not.to.be.undefined
-      expect(attr('genBasic', 0)).not.to.be.undefined
-      expect(attr(0, 'zclVersion')).not.to.be.undefined
+    it("should get an item if target is found", function() {
+      expect(attr("genBasic", "zclVersion")).not.to.be.undefined
+      expect(attr("genBasic", 0)).not.to.be.undefined
+      expect(attr(0, "zclVersion")).not.to.be.undefined
       expect(attr(0, 0)).not.to.be.undefined
     })
   })
 
-  describe('#.attrType', function() {
-    it('should get right item by cId string and attrId string', function() {
+  describe("#.attrType", function() {
+    it("should get right item by cId string and attrId string", function() {
       cIdKeys.forEach(function(ckey) {
         if (!clusterDefs[ckey]) return
 
@@ -574,7 +574,7 @@ describe('Module Methods Check', function() {
       })
     })
 
-    it('should get right item by cId string and attrId number', function() {
+    it("should get right item by cId string and attrId number", function() {
       cIdKeys.forEach(function(ckey) {
         if (!clusterDefs[ckey]) return
 
@@ -597,7 +597,7 @@ describe('Module Methods Check', function() {
       })
     })
 
-    it('should get right item by cId number and attrId string', function() {
+    it("should get right item by cId number and attrId string", function() {
       cIdVals.forEach(function(cval) {
         const cId = cluster(cval)
 
@@ -621,7 +621,7 @@ describe('Module Methods Check', function() {
       })
     })
 
-    it('should get right item by cId number and attrId number', function() {
+    it("should get right item by cId number and attrId number", function() {
       cIdVals.forEach(function(cval) {
         const cId = cluster(cval)
 
@@ -646,23 +646,23 @@ describe('Module Methods Check', function() {
       })
     })
 
-    it('should get undefined if target not found', function() {
-      expect(attrType('genBasic', 'dddd')).to.be.undefined
-      expect(attrType('genBasic', 12345)).to.be.undefined
-      expect(attrType(3, 'dddd')).to.be.undefined
+    it("should get undefined if target not found", function() {
+      expect(attrType("genBasic", "dddd")).to.be.undefined
+      expect(attrType("genBasic", 12345)).to.be.undefined
+      expect(attrType(3, "dddd")).to.be.undefined
       expect(attrType(3, 12345)).to.be.undefined
     })
 
-    it('should get an item if target is found', function() {
-      expect(attr('genBasic', 'zclVersion')).not.to.be.undefined
-      expect(attr('genBasic', 0)).not.to.be.undefined
-      expect(attr(0, 'zclVersion')).not.to.be.undefined
+    it("should get an item if target is found", function() {
+      expect(attr("genBasic", "zclVersion")).not.to.be.undefined
+      expect(attr("genBasic", 0)).not.to.be.undefined
+      expect(attr(0, "zclVersion")).not.to.be.undefined
       expect(attr(0, 0)).not.to.be.undefined
     })
   })
 
-  describe('#.dataType', function() {
-    it('should get right item by type string', function() {
+  describe("#.dataType", function() {
+    it("should get right item by type string", function() {
       dataTypeKeys.forEach(function(dkey) {
         const hitA = dataType(dkey),
           hitB = dataTypeId.get(dkey)
@@ -673,7 +673,7 @@ describe('Module Methods Check', function() {
       })
     })
 
-    it('should get right item by type number', function() {
+    it("should get right item by type number", function() {
       dataTypeVals.forEach(function(dval) {
         const hitA = dataType(dval),
           hitB = dataTypeId.get(dval)
@@ -684,14 +684,14 @@ describe('Module Methods Check', function() {
       })
     })
 
-    it('should get undefined if type not found', function() {
-      expect(dataType('xxx')).to.be.undefined
+    it("should get undefined if type not found", function() {
+      expect(dataType("xxx")).to.be.undefined
       expect(dataType(12345)).to.be.undefined
     })
   })
 
-  describe('#.status', function() {
-    it('should get right item by type string', function() {
+  describe("#.status", function() {
+    it("should get right item by type string", function() {
       statusKeys.forEach(function(dkey) {
         const hitA = status(dkey),
           hitB = statusId.get(dkey)
@@ -702,7 +702,7 @@ describe('Module Methods Check', function() {
       })
     })
 
-    it('should get right item by type number', function() {
+    it("should get right item by type number", function() {
       statusVals.forEach(function(dval) {
         const hitA = status(dval),
           hitB = statusId.get(dval)
@@ -713,15 +713,15 @@ describe('Module Methods Check', function() {
       })
     })
 
-    it('should get undefined if type not found', function() {
-      expect(status('xxx')).to.be.undefined
+    it("should get undefined if type not found", function() {
+      expect(status("xxx")).to.be.undefined
       expect(status(12345)).to.be.undefined
     })
   })
 
-  describe('#.attrList', function() {
-    it('should get right list by cluster string id', function() {
-      expect(attrList('genDeviceTempCfg')).to.be.deep.equal([
+  describe("#.attrList", function() {
+    it("should get right list by cluster string id", function() {
+      expect(attrList("genDeviceTempCfg")).to.be.deep.equal([
         { attrId: 0, dataType: 41 },
         { attrId: 1, dataType: 41 },
         { attrId: 2, dataType: 41 },
@@ -734,7 +734,7 @@ describe('Module Methods Check', function() {
       ])
     })
 
-    it('should get right list by cluster numeric id', function() {
+    it("should get right list by cluster numeric id", function() {
       expect(attrList(2)).to.be.deep.equal([
         { attrId: 0, dataType: 41 },
         { attrId: 1, dataType: 41 },
@@ -748,8 +748,8 @@ describe('Module Methods Check', function() {
       ])
     })
 
-    it('should be undefined if cluster not found', function() {
-      expect(attrList('genDeviceTempCfgxx')).to.be.undefined
+    it("should be undefined if cluster not found", function() {
+      expect(attrList("genDeviceTempCfgxx")).to.be.undefined
     })
   })
 })

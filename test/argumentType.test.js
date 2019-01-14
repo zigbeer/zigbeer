@@ -1,4 +1,4 @@
-const { expect } = require('chai')
+const { expect } = require("chai")
 
 const {
   profile,
@@ -12,20 +12,20 @@ const {
   attrType,
   dataType,
   attrList
-} = require('../src')
+} = require("../src")
 
-describe('#._getCluster', function() {
-  it('should be a function', function() {
-    expect(_getCluster).to.be.a('function')
+describe("#._getCluster", function() {
+  it("should be a function", function() {
+    expect(_getCluster).to.be.a("function")
   })
 })
 
-describe('#.profile', function() {
-  it('should be a function', function() {
-    expect(profile).to.be.a('function')
+describe("#.profile", function() {
+  it("should be a function", function() {
+    expect(profile).to.be.a("function")
   })
 
-  it('should throw TypeError if input profId is not a number and not a string', function() {
+  it("should throw TypeError if input profId is not a number and not a string", function() {
     expect(function() {
       return profile()
     }).to.throw(TypeError)
@@ -58,26 +58,26 @@ describe('#.profile', function() {
       return profile(260)
     }).not.to.throw(Error)
     expect(function() {
-      return profile('260')
+      return profile("260")
     }).not.to.throw(Error)
     expect(function() {
       return profile(0x0104)
     }).not.to.throw(Error)
     expect(function() {
-      return profile('0x0104')
+      return profile("0x0104")
     }).not.to.throw(Error)
     expect(function() {
-      return profile('HA')
+      return profile("HA")
     }).not.to.throw(Error)
   })
 })
 
-describe('#.device', function() {
-  it('should be a function', function() {
-    expect(device).to.be.a('function')
+describe("#.device", function() {
+  it("should be a function", function() {
+    expect(device).to.be.a("function")
   })
 
-  it('should throw TypeError if input profId is not a number and not a string', function() {
+  it("should throw TypeError if input profId is not a number and not a string", function() {
     expect(function() {
       return device()
     }).to.throw(TypeError)
@@ -110,28 +110,28 @@ describe('#.device', function() {
       return device()
     }).to.throw(TypeError)
     expect(function() {
-      return device(undefined, '5')
+      return device(undefined, "5")
     }).to.throw(TypeError)
     expect(function() {
-      return device(null, '5')
+      return device(null, "5")
     }).to.throw(TypeError)
     expect(function() {
-      return device(NaN, '5')
+      return device(NaN, "5")
     }).to.throw(TypeError)
     expect(function() {
-      return device([], '5')
+      return device([], "5")
     }).to.throw(TypeError)
     expect(function() {
-      return device({}, '5')
+      return device({}, "5")
     }).to.throw(TypeError)
     expect(function() {
-      return device(true, '5')
+      return device(true, "5")
     }).to.throw(TypeError)
     expect(function() {
-      return device(new Date(), '5')
+      return device(new Date(), "5")
     }).to.throw(TypeError)
     expect(function() {
-      return device(function() {}, '5')
+      return device(function() {}, "5")
     }).to.throw(TypeError)
 
     expect(function() {
@@ -166,81 +166,81 @@ describe('#.device', function() {
       return device()
     }).to.throw(TypeError)
     expect(function() {
-      return device(undefined, 'CONFIGURATION_TOOL')
+      return device(undefined, "CONFIGURATION_TOOL")
     }).to.throw(TypeError)
     expect(function() {
-      return device(null, 'CONFIGURATION_TOOL')
+      return device(null, "CONFIGURATION_TOOL")
     }).to.throw(TypeError)
     expect(function() {
-      return device(NaN, 'CONFIGURATION_TOOL')
+      return device(NaN, "CONFIGURATION_TOOL")
     }).to.throw(TypeError)
     expect(function() {
-      return device([], 'CONFIGURATION_TOOL')
+      return device([], "CONFIGURATION_TOOL")
     }).to.throw(TypeError)
     expect(function() {
-      return device({}, 'CONFIGURATION_TOOL')
+      return device({}, "CONFIGURATION_TOOL")
     }).to.throw(TypeError)
     expect(function() {
-      return device(true, 'CONFIGURATION_TOOL')
+      return device(true, "CONFIGURATION_TOOL")
     }).to.throw(TypeError)
     expect(function() {
-      return device(new Date(), 'CONFIGURATION_TOOL')
+      return device(new Date(), "CONFIGURATION_TOOL")
     }).to.throw(TypeError)
     expect(function() {
-      return device(function() {}, 'CONFIGURATION_TOOL')
+      return device(function() {}, "CONFIGURATION_TOOL")
     }).to.throw(TypeError)
 
     expect(function() {
       return device(260, 5)
     }).not.to.throw(Error)
     expect(function() {
-      return device(260, '5')
+      return device(260, "5")
     }).not.to.throw(Error)
     expect(function() {
       return device(260, 0x0005)
     }).not.to.throw(Error)
     expect(function() {
-      return device(260, 'CONFIGURATION_TOOL')
+      return device(260, "CONFIGURATION_TOOL")
     }).not.to.throw(Error)
     expect(function() {
-      return device('260', 5)
+      return device("260", 5)
     }).not.to.throw(Error)
     expect(function() {
-      return device('260', '5')
+      return device("260", "5")
     }).not.to.throw(Error)
     expect(function() {
-      return device('260', 0x0005)
+      return device("260", 0x0005)
     }).not.to.throw(Error)
     expect(function() {
-      return device('260', 'CONFIGURATION_TOOL')
+      return device("260", "CONFIGURATION_TOOL")
     }).not.to.throw(Error)
     expect(function() {
       return device(0x104, 5)
     }).not.to.throw(Error)
     expect(function() {
-      return device(0x104, '5')
+      return device(0x104, "5")
     }).not.to.throw(Error)
     expect(function() {
       return device(0x104, 0x0005)
     }).not.to.throw(Error)
     expect(function() {
-      return device(0x104, 'CONFIGURATION_TOOL')
+      return device(0x104, "CONFIGURATION_TOOL")
     }).not.to.throw(Error)
     expect(function() {
-      return device('HA', 5)
+      return device("HA", 5)
     }).not.to.throw(Error)
     expect(function() {
-      return device('HA', '5')
+      return device("HA", "5")
     }).not.to.throw(Error)
     expect(function() {
-      return device('HA', 0x0005)
+      return device("HA", 0x0005)
     }).not.to.throw(Error)
     expect(function() {
-      return device('HA', 'CONFIGURATION_TOOL')
+      return device("HA", "CONFIGURATION_TOOL")
     }).not.to.throw(Error)
   })
 
-  it('should throw TypeError if input devId is not a number and not a string', function() {
+  it("should throw TypeError if input devId is not a number and not a string", function() {
     expect(function() {
       return device()
     }).to.throw(TypeError)
@@ -273,28 +273,28 @@ describe('#.device', function() {
       return device()
     }).to.throw(TypeError)
     expect(function() {
-      return device('260', undefined)
+      return device("260", undefined)
     }).to.throw(TypeError)
     expect(function() {
-      return device('260', null)
+      return device("260", null)
     }).to.throw(TypeError)
     expect(function() {
-      return device('260', NaN)
+      return device("260", NaN)
     }).to.throw(TypeError)
     expect(function() {
-      return device('260', [])
+      return device("260", [])
     }).to.throw(TypeError)
     expect(function() {
-      return device('260', {})
+      return device("260", {})
     }).to.throw(TypeError)
     expect(function() {
-      return device('260', true)
+      return device("260", true)
     }).to.throw(TypeError)
     expect(function() {
-      return device('260', new Date())
+      return device("260", new Date())
     }).to.throw(TypeError)
     expect(function() {
-      return device('260', function() {})
+      return device("260", function() {})
     }).to.throw(TypeError)
 
     expect(function() {
@@ -329,87 +329,87 @@ describe('#.device', function() {
       return device()
     }).to.throw(TypeError)
     expect(function() {
-      return device('HA', undefined)
+      return device("HA", undefined)
     }).to.throw(TypeError)
     expect(function() {
-      return device('HA', null)
+      return device("HA", null)
     }).to.throw(TypeError)
     expect(function() {
-      return device('HA', NaN)
+      return device("HA", NaN)
     }).to.throw(TypeError)
     expect(function() {
-      return device('HA', [])
+      return device("HA", [])
     }).to.throw(TypeError)
     expect(function() {
-      return device('HA', {})
+      return device("HA", {})
     }).to.throw(TypeError)
     expect(function() {
-      return device('HA', true)
+      return device("HA", true)
     }).to.throw(TypeError)
     expect(function() {
-      return device('HA', new Date())
+      return device("HA", new Date())
     }).to.throw(TypeError)
     expect(function() {
-      return device('HA', function() {})
+      return device("HA", function() {})
     }).to.throw(TypeError)
 
     expect(function() {
       return device(260, 5)
     }).not.to.throw(Error)
     expect(function() {
-      return device(260, '5')
+      return device(260, "5")
     }).not.to.throw(Error)
     expect(function() {
       return device(260, 0x0005)
     }).not.to.throw(Error)
     expect(function() {
-      return device(260, 'CONFIGURATION_TOOL')
+      return device(260, "CONFIGURATION_TOOL")
     }).not.to.throw(Error)
     expect(function() {
-      return device('260', 5)
+      return device("260", 5)
     }).not.to.throw(Error)
     expect(function() {
-      return device('260', '5')
+      return device("260", "5")
     }).not.to.throw(Error)
     expect(function() {
-      return device('260', 0x0005)
+      return device("260", 0x0005)
     }).not.to.throw(Error)
     expect(function() {
-      return device('260', 'CONFIGURATION_TOOL')
+      return device("260", "CONFIGURATION_TOOL")
     }).not.to.throw(Error)
     expect(function() {
       return device(0x104, 5)
     }).not.to.throw(Error)
     expect(function() {
-      return device(0x104, '5')
+      return device(0x104, "5")
     }).not.to.throw(Error)
     expect(function() {
       return device(0x104, 0x0005)
     }).not.to.throw(Error)
     expect(function() {
-      return device(0x104, 'CONFIGURATION_TOOL')
+      return device(0x104, "CONFIGURATION_TOOL")
     }).not.to.throw(Error)
     expect(function() {
-      return device('HA', 5)
+      return device("HA", 5)
     }).not.to.throw(Error)
     expect(function() {
-      return device('HA', '5')
+      return device("HA", "5")
     }).not.to.throw(Error)
     expect(function() {
-      return device('HA', 0x0005)
+      return device("HA", 0x0005)
     }).not.to.throw(Error)
     expect(function() {
-      return device('HA', 'CONFIGURATION_TOOL')
+      return device("HA", "CONFIGURATION_TOOL")
     }).not.to.throw(Error)
   })
 })
 
-describe('#.cluster', function() {
-  it('should be a function', function() {
-    expect(cluster).to.be.a('function')
+describe("#.cluster", function() {
+  it("should be a function", function() {
+    expect(cluster).to.be.a("function")
   })
 
-  it('should throw TypeError if input cId is not a number and not a string', function() {
+  it("should throw TypeError if input cId is not a number and not a string", function() {
     expect(function() {
       return cluster()
     }).to.throw(TypeError)
@@ -442,26 +442,26 @@ describe('#.cluster', function() {
       return cluster(3)
     }).not.to.throw(Error)
     expect(function() {
-      return cluster('3')
+      return cluster("3")
     }).not.to.throw(Error)
     expect(function() {
       return cluster(0x0003)
     }).not.to.throw(Error)
     expect(function() {
-      return cluster('0x0003')
+      return cluster("0x0003")
     }).not.to.throw(Error)
     expect(function() {
-      return cluster('genIdentify')
+      return cluster("genIdentify")
     }).not.to.throw(Error)
   })
 })
 
-describe('#.foundation', function() {
-  it('should be a function', function() {
-    expect(foundation).to.be.a('function')
+describe("#.foundation", function() {
+  it("should be a function", function() {
+    expect(foundation).to.be.a("function")
   })
 
-  it('should throw TypeError if input cmdId is not a number and not a string', function() {
+  it("should throw TypeError if input cmdId is not a number and not a string", function() {
     expect(function() {
       return foundation()
     }).to.throw(TypeError)
@@ -494,26 +494,26 @@ describe('#.foundation', function() {
       return foundation(3)
     }).not.to.throw(Error)
     expect(function() {
-      return foundation('3')
+      return foundation("3")
     }).not.to.throw(Error)
     expect(function() {
       return foundation(0x0003)
     }).not.to.throw(Error)
     expect(function() {
-      return foundation('0x0003')
+      return foundation("0x0003")
     }).not.to.throw(Error)
     expect(function() {
-      return foundation('writeUndiv')
+      return foundation("writeUndiv")
     }).not.to.throw(Error)
   })
 })
 
-describe('#.functional', function() {
-  it('should be a function', function() {
-    expect(functional).to.be.a('function')
+describe("#.functional", function() {
+  it("should be a function", function() {
+    expect(functional).to.be.a("function")
   })
 
-  it('should throw TypeError if input cId is not a number and not a string', function() {
+  it("should throw TypeError if input cId is not a number and not a string", function() {
     expect(function() {
       return functional()
     }).to.throw(TypeError)
@@ -546,28 +546,28 @@ describe('#.functional', function() {
       return functional()
     }).to.throw(TypeError)
     expect(function() {
-      return functional(undefined, '5')
+      return functional(undefined, "5")
     }).to.throw(TypeError)
     expect(function() {
-      return functional(null, '5')
+      return functional(null, "5")
     }).to.throw(TypeError)
     expect(function() {
-      return functional(NaN, '5')
+      return functional(NaN, "5")
     }).to.throw(TypeError)
     expect(function() {
-      return functional([], '5')
+      return functional([], "5")
     }).to.throw(TypeError)
     expect(function() {
-      return functional({}, '5')
+      return functional({}, "5")
     }).to.throw(TypeError)
     expect(function() {
-      return functional(true, '5')
+      return functional(true, "5")
     }).to.throw(TypeError)
     expect(function() {
-      return functional(new Date(), '5')
+      return functional(new Date(), "5")
     }).to.throw(TypeError)
     expect(function() {
-      return functional(function() {}, '5')
+      return functional(function() {}, "5")
     }).to.throw(TypeError)
 
     expect(function() {
@@ -602,81 +602,81 @@ describe('#.functional', function() {
       return functional()
     }).to.throw(TypeError)
     expect(function() {
-      return functional(undefined, 'writeNoRsp')
+      return functional(undefined, "writeNoRsp")
     }).to.throw(TypeError)
     expect(function() {
-      return functional(null, 'writeNoRsp')
+      return functional(null, "writeNoRsp")
     }).to.throw(TypeError)
     expect(function() {
-      return functional(NaN, 'writeNoRsp')
+      return functional(NaN, "writeNoRsp")
     }).to.throw(TypeError)
     expect(function() {
-      return functional([], 'writeNoRsp')
+      return functional([], "writeNoRsp")
     }).to.throw(TypeError)
     expect(function() {
-      return functional({}, 'writeNoRsp')
+      return functional({}, "writeNoRsp")
     }).to.throw(TypeError)
     expect(function() {
-      return functional(true, 'writeNoRsp')
+      return functional(true, "writeNoRsp")
     }).to.throw(TypeError)
     expect(function() {
-      return functional(new Date(), 'writeNoRsp')
+      return functional(new Date(), "writeNoRsp")
     }).to.throw(TypeError)
     expect(function() {
-      return functional(function() {}, 'writeNoRsp')
+      return functional(function() {}, "writeNoRsp")
     }).to.throw(TypeError)
 
     expect(function() {
       return functional(5, 5)
     }).not.to.throw(Error)
     expect(function() {
-      return functional(5, '5')
+      return functional(5, "5")
     }).not.to.throw(Error)
     expect(function() {
       return functional(5, 0x05)
     }).not.to.throw(Error)
     expect(function() {
-      return functional(5, 'recall')
+      return functional(5, "recall")
     }).not.to.throw(Error)
     expect(function() {
-      return functional('5', 5)
+      return functional("5", 5)
     }).not.to.throw(Error)
     expect(function() {
-      return functional('5', '5')
+      return functional("5", "5")
     }).not.to.throw(Error)
     expect(function() {
-      return functional('5', 0x05)
+      return functional("5", 0x05)
     }).not.to.throw(Error)
     expect(function() {
-      return functional('5', 'recall')
+      return functional("5", "recall")
     }).not.to.throw(Error)
     expect(function() {
       return functional(0x0005, 5)
     }).not.to.throw(Error)
     expect(function() {
-      return functional(0x0005, '5')
+      return functional(0x0005, "5")
     }).not.to.throw(Error)
     expect(function() {
       return functional(0x0005, 0x05)
     }).not.to.throw(Error)
     expect(function() {
-      return functional(0x0005, 'recall')
+      return functional(0x0005, "recall")
     }).not.to.throw(Error)
     expect(function() {
-      return functional('genScenes', 5)
+      return functional("genScenes", 5)
     }).not.to.throw(Error)
     expect(function() {
-      return functional('genScenes', '5')
+      return functional("genScenes", "5")
     }).not.to.throw(Error)
     expect(function() {
-      return functional('genScenes', 0x05)
+      return functional("genScenes", 0x05)
     }).not.to.throw(Error)
     expect(function() {
-      return functional('genScenes', 'recall')
+      return functional("genScenes", "recall")
     }).not.to.throw(Error)
   })
 
-  it('should throw TypeError if input cmdId is not a number and not a string', function() {
+  it("should throw TypeError if input cmdId is not a number and not a string", function() {
     expect(function() {
       return functional()
     }).to.throw(TypeError)
@@ -709,28 +709,28 @@ describe('#.functional', function() {
       return functional()
     }).to.throw(TypeError)
     expect(function() {
-      return functional('5', undefined)
+      return functional("5", undefined)
     }).to.throw(TypeError)
     expect(function() {
-      return functional('5', null)
+      return functional("5", null)
     }).to.throw(TypeError)
     expect(function() {
-      return functional('5', NaN)
+      return functional("5", NaN)
     }).to.throw(TypeError)
     expect(function() {
-      return functional('5', [])
+      return functional("5", [])
     }).to.throw(TypeError)
     expect(function() {
-      return functional('5', {})
+      return functional("5", {})
     }).to.throw(TypeError)
     expect(function() {
-      return functional('5', true)
+      return functional("5", true)
     }).to.throw(TypeError)
     expect(function() {
-      return functional('5', new Date())
+      return functional("5", new Date())
     }).to.throw(TypeError)
     expect(function() {
-      return functional('5', function() {})
+      return functional("5", function() {})
     }).to.throw(TypeError)
 
     expect(function() {
@@ -765,87 +765,87 @@ describe('#.functional', function() {
       return functional()
     }).to.throw(TypeError)
     expect(function() {
-      return functional('genScenes', undefined)
+      return functional("genScenes", undefined)
     }).to.throw(TypeError)
     expect(function() {
-      return functional('genScenes', null)
+      return functional("genScenes", null)
     }).to.throw(TypeError)
     expect(function() {
-      return functional('genScenes', NaN)
+      return functional("genScenes", NaN)
     }).to.throw(TypeError)
     expect(function() {
-      return functional('genScenes', [])
+      return functional("genScenes", [])
     }).to.throw(TypeError)
     expect(function() {
-      return functional('genScenes', {})
+      return functional("genScenes", {})
     }).to.throw(TypeError)
     expect(function() {
-      return functional('genScenes', true)
+      return functional("genScenes", true)
     }).to.throw(TypeError)
     expect(function() {
-      return functional('genScenes', new Date())
+      return functional("genScenes", new Date())
     }).to.throw(TypeError)
     expect(function() {
-      return functional('genScenes', function() {})
+      return functional("genScenes", function() {})
     }).to.throw(TypeError)
 
     expect(function() {
       return functional(5, 5)
     }).not.to.throw(Error)
     expect(function() {
-      return functional(5, '5')
+      return functional(5, "5")
     }).not.to.throw(Error)
     expect(function() {
       return functional(5, 0x05)
     }).not.to.throw(Error)
     expect(function() {
-      return functional(5, 'recall')
+      return functional(5, "recall")
     }).not.to.throw(Error)
     expect(function() {
-      return functional('5', 5)
+      return functional("5", 5)
     }).not.to.throw(Error)
     expect(function() {
-      return functional('5', '5')
+      return functional("5", "5")
     }).not.to.throw(Error)
     expect(function() {
-      return functional('5', 0x05)
+      return functional("5", 0x05)
     }).not.to.throw(Error)
     expect(function() {
-      return functional('5', 'recall')
+      return functional("5", "recall")
     }).not.to.throw(Error)
     expect(function() {
       return functional(0x0005, 5)
     }).not.to.throw(Error)
     expect(function() {
-      return functional(0x0005, '5')
+      return functional(0x0005, "5")
     }).not.to.throw(Error)
     expect(function() {
       return functional(0x0005, 0x05)
     }).not.to.throw(Error)
     expect(function() {
-      return functional(0x0005, 'recall')
+      return functional(0x0005, "recall")
     }).not.to.throw(Error)
     expect(function() {
-      return functional('genScenes', 5)
+      return functional("genScenes", 5)
     }).not.to.throw(Error)
     expect(function() {
-      return functional('genScenes', '5')
+      return functional("genScenes", "5")
     }).not.to.throw(Error)
     expect(function() {
-      return functional('genScenes', 0x05)
+      return functional("genScenes", 0x05)
     }).not.to.throw(Error)
     expect(function() {
-      return functional('genScenes', 'recall')
+      return functional("genScenes", "recall")
     }).not.to.throw(Error)
   })
 })
 
-describe('#.getCmdRsp', function() {
-  it('should be a function', function() {
-    expect(getCmdRsp).to.be.a('function')
+describe("#.getCmdRsp", function() {
+  it("should be a function", function() {
+    expect(getCmdRsp).to.be.a("function")
   })
 
-  it('should throw TypeError if input cId is not a number and not a string', function() {
+  it("should throw TypeError if input cId is not a number and not a string", function() {
     expect(function() {
       return getCmdRsp()
     }).to.throw(TypeError)
@@ -878,28 +878,28 @@ describe('#.getCmdRsp', function() {
       return getCmdRsp()
     }).to.throw(TypeError)
     expect(function() {
-      return getCmdRsp(undefined, '0')
+      return getCmdRsp(undefined, "0")
     }).to.throw(TypeError)
     expect(function() {
-      return getCmdRsp(null, '0')
+      return getCmdRsp(null, "0")
     }).to.throw(TypeError)
     expect(function() {
-      return getCmdRsp(NaN, '0')
+      return getCmdRsp(NaN, "0")
     }).to.throw(TypeError)
     expect(function() {
-      return getCmdRsp([], '0')
+      return getCmdRsp([], "0")
     }).to.throw(TypeError)
     expect(function() {
-      return getCmdRsp({}, '0')
+      return getCmdRsp({}, "0")
     }).to.throw(TypeError)
     expect(function() {
-      return getCmdRsp(true, '0')
+      return getCmdRsp(true, "0")
     }).to.throw(TypeError)
     expect(function() {
-      return getCmdRsp(new Date(), '0')
+      return getCmdRsp(new Date(), "0")
     }).to.throw(TypeError)
     expect(function() {
-      return getCmdRsp(function() {}, '0')
+      return getCmdRsp(function() {}, "0")
     }).to.throw(TypeError)
 
     expect(function() {
@@ -934,81 +934,81 @@ describe('#.getCmdRsp', function() {
       return getCmdRsp()
     }).to.throw(TypeError)
     expect(function() {
-      return getCmdRsp(undefined, 'Rsp')
+      return getCmdRsp(undefined, "Rsp")
     }).to.throw(TypeError)
     expect(function() {
-      return getCmdRsp(null, 'Rsp')
+      return getCmdRsp(null, "Rsp")
     }).to.throw(TypeError)
     expect(function() {
-      return getCmdRsp(NaN, 'Rsp')
+      return getCmdRsp(NaN, "Rsp")
     }).to.throw(TypeError)
     expect(function() {
-      return getCmdRsp([], 'Rsp')
+      return getCmdRsp([], "Rsp")
     }).to.throw(TypeError)
     expect(function() {
-      return getCmdRsp({}, 'Rsp')
+      return getCmdRsp({}, "Rsp")
     }).to.throw(TypeError)
     expect(function() {
-      return getCmdRsp(true, 'Rsp')
+      return getCmdRsp(true, "Rsp")
     }).to.throw(TypeError)
     expect(function() {
-      return getCmdRsp(new Date(), 'Rsp')
+      return getCmdRsp(new Date(), "Rsp")
     }).to.throw(TypeError)
     expect(function() {
-      return getCmdRsp(function() {}, 'Rsp')
+      return getCmdRsp(function() {}, "Rsp")
     }).to.throw(TypeError)
 
     expect(function() {
       return getCmdRsp(5, 0)
     }).not.to.throw(Error)
     expect(function() {
-      return getCmdRsp(5, '0')
+      return getCmdRsp(5, "0")
     }).not.to.throw(Error)
     expect(function() {
       return getCmdRsp(5, 0x00)
     }).not.to.throw(Error)
     expect(function() {
-      return getCmdRsp(5, 'Rsp')
+      return getCmdRsp(5, "Rsp")
     }).not.to.throw(Error)
     expect(function() {
-      return getCmdRsp('5', 0)
+      return getCmdRsp("5", 0)
     }).not.to.throw(Error)
     expect(function() {
-      return getCmdRsp('5', '0')
+      return getCmdRsp("5", "0")
     }).not.to.throw(Error)
     expect(function() {
-      return getCmdRsp('5', 0x00)
+      return getCmdRsp("5", 0x00)
     }).not.to.throw(Error)
     expect(function() {
-      return getCmdRsp('5', 'Rsp')
+      return getCmdRsp("5", "Rsp")
     }).not.to.throw(Error)
     expect(function() {
       return getCmdRsp(0x0005, 0)
     }).not.to.throw(Error)
     expect(function() {
-      return getCmdRsp(0x0005, '0')
+      return getCmdRsp(0x0005, "0")
     }).not.to.throw(Error)
     expect(function() {
       return getCmdRsp(0x0005, 0x00)
     }).not.to.throw(Error)
     expect(function() {
-      return getCmdRsp(0x0005, 'Rsp')
+      return getCmdRsp(0x0005, "Rsp")
     }).not.to.throw(Error)
     expect(function() {
-      return getCmdRsp('genScenes', 0)
+      return getCmdRsp("genScenes", 0)
     }).not.to.throw(Error)
     expect(function() {
-      return getCmdRsp('genScenes', '0')
+      return getCmdRsp("genScenes", "0")
     }).not.to.throw(Error)
     expect(function() {
-      return getCmdRsp('genScenes', 0x00)
+      return getCmdRsp("genScenes", 0x00)
     }).not.to.throw(Error)
     expect(function() {
-      return getCmdRsp('genScenes', 'Rsp')
+      return getCmdRsp("genScenes", "Rsp")
     }).not.to.throw(Error)
   })
 
-  it('should throw TypeError if input rspId is not a number and not a string', function() {
+  it("should throw TypeError if input rspId is not a number and not a string", function() {
     expect(function() {
       return getCmdRsp()
     }).to.throw(TypeError)
@@ -1041,28 +1041,28 @@ describe('#.getCmdRsp', function() {
       return getCmdRsp()
     }).to.throw(TypeError)
     expect(function() {
-      return getCmdRsp('5', undefined)
+      return getCmdRsp("5", undefined)
     }).to.throw(TypeError)
     expect(function() {
-      return getCmdRsp('5', null)
+      return getCmdRsp("5", null)
     }).to.throw(TypeError)
     expect(function() {
-      return getCmdRsp('5', NaN)
+      return getCmdRsp("5", NaN)
     }).to.throw(TypeError)
     expect(function() {
-      return getCmdRsp('5', [])
+      return getCmdRsp("5", [])
     }).to.throw(TypeError)
     expect(function() {
-      return getCmdRsp('5', {})
+      return getCmdRsp("5", {})
     }).to.throw(TypeError)
     expect(function() {
-      return getCmdRsp('5', true)
+      return getCmdRsp("5", true)
     }).to.throw(TypeError)
     expect(function() {
-      return getCmdRsp('5', new Date())
+      return getCmdRsp("5", new Date())
     }).to.throw(TypeError)
     expect(function() {
-      return getCmdRsp('5', function() {})
+      return getCmdRsp("5", function() {})
     }).to.throw(TypeError)
 
     expect(function() {
@@ -1097,87 +1097,87 @@ describe('#.getCmdRsp', function() {
       return getCmdRsp()
     }).to.throw(TypeError)
     expect(function() {
-      return getCmdRsp('genScenes', undefined)
+      return getCmdRsp("genScenes", undefined)
     }).to.throw(TypeError)
     expect(function() {
-      return getCmdRsp('genScenes', null)
+      return getCmdRsp("genScenes", null)
     }).to.throw(TypeError)
     expect(function() {
-      return getCmdRsp('genScenes', NaN)
+      return getCmdRsp("genScenes", NaN)
     }).to.throw(TypeError)
     expect(function() {
-      return getCmdRsp('genScenes', [])
+      return getCmdRsp("genScenes", [])
     }).to.throw(TypeError)
     expect(function() {
-      return getCmdRsp('genScenes', {})
+      return getCmdRsp("genScenes", {})
     }).to.throw(TypeError)
     expect(function() {
-      return getCmdRsp('genScenes', true)
+      return getCmdRsp("genScenes", true)
     }).to.throw(TypeError)
     expect(function() {
-      return getCmdRsp('genScenes', new Date())
+      return getCmdRsp("genScenes", new Date())
     }).to.throw(TypeError)
     expect(function() {
-      return getCmdRsp('genScenes', function() {})
+      return getCmdRsp("genScenes", function() {})
     }).to.throw(TypeError)
 
     expect(function() {
       return getCmdRsp(5, 0)
     }).not.to.throw(Error)
     expect(function() {
-      return getCmdRsp(5, '0')
+      return getCmdRsp(5, "0")
     }).not.to.throw(Error)
     expect(function() {
       return getCmdRsp(5, 0x00)
     }).not.to.throw(Error)
     expect(function() {
-      return getCmdRsp(5, 'Rsp')
+      return getCmdRsp(5, "Rsp")
     }).not.to.throw(Error)
     expect(function() {
-      return getCmdRsp('5', 0)
+      return getCmdRsp("5", 0)
     }).not.to.throw(Error)
     expect(function() {
-      return getCmdRsp('5', '0')
+      return getCmdRsp("5", "0")
     }).not.to.throw(Error)
     expect(function() {
-      return getCmdRsp('5', 0x00)
+      return getCmdRsp("5", 0x00)
     }).not.to.throw(Error)
     expect(function() {
-      return getCmdRsp('5', 'Rsp')
+      return getCmdRsp("5", "Rsp")
     }).not.to.throw(Error)
     expect(function() {
       return getCmdRsp(0x0005, 0)
     }).not.to.throw(Error)
     expect(function() {
-      return getCmdRsp(0x0005, '0')
+      return getCmdRsp(0x0005, "0")
     }).not.to.throw(Error)
     expect(function() {
       return getCmdRsp(0x0005, 0x00)
     }).not.to.throw(Error)
     expect(function() {
-      return getCmdRsp(0x0005, 'Rsp')
+      return getCmdRsp(0x0005, "Rsp")
     }).not.to.throw(Error)
     expect(function() {
-      return getCmdRsp('genScenes', 0)
+      return getCmdRsp("genScenes", 0)
     }).not.to.throw(Error)
     expect(function() {
-      return getCmdRsp('genScenes', '0')
+      return getCmdRsp("genScenes", "0")
     }).not.to.throw(Error)
     expect(function() {
-      return getCmdRsp('genScenes', 0x00)
+      return getCmdRsp("genScenes", 0x00)
     }).not.to.throw(Error)
     expect(function() {
-      return getCmdRsp('genScenes', 'Rsp')
+      return getCmdRsp("genScenes", "Rsp")
     }).not.to.throw(Error)
   })
 })
 
-describe('#.attrList', function() {
-  it('should be a function', function() {
-    expect(attrList).to.be.a('function')
+describe("#.attrList", function() {
+  it("should be a function", function() {
+    expect(attrList).to.be.a("function")
   })
 
-  it('should throw TypeError if input cId is not a number and not a string', function() {
+  it("should throw TypeError if input cId is not a number and not a string", function() {
     expect(function() {
       return attrList()
     }).to.throw(TypeError)
@@ -1210,26 +1210,26 @@ describe('#.attrList', function() {
       return attrList(3)
     }).not.to.throw(Error)
     expect(function() {
-      return attrList('3')
+      return attrList("3")
     }).not.to.throw(Error)
     expect(function() {
       return attrList(0x0003)
     }).not.to.throw(Error)
     expect(function() {
-      return attrList('0x0003')
+      return attrList("0x0003")
     }).not.to.throw(Error)
     expect(function() {
-      return attrList('genIdentify')
+      return attrList("genIdentify")
     }).not.to.throw(Error)
   })
 })
 
-describe('#.attr', function() {
-  it('should be a function', function() {
-    expect(attr).to.be.a('function')
+describe("#.attr", function() {
+  it("should be a function", function() {
+    expect(attr).to.be.a("function")
   })
 
-  it('should throw TypeError if input cId is not a number and not a string', function() {
+  it("should throw TypeError if input cId is not a number and not a string", function() {
     expect(function() {
       return attr()
     }).to.throw(TypeError)
@@ -1262,28 +1262,28 @@ describe('#.attr', function() {
       return attr()
     }).to.throw(TypeError)
     expect(function() {
-      return attr(undefined, '2')
+      return attr(undefined, "2")
     }).to.throw(TypeError)
     expect(function() {
-      return attr(null, '2')
+      return attr(null, "2")
     }).to.throw(TypeError)
     expect(function() {
-      return attr(NaN, '2')
+      return attr(NaN, "2")
     }).to.throw(TypeError)
     expect(function() {
-      return attr([], '2')
+      return attr([], "2")
     }).to.throw(TypeError)
     expect(function() {
-      return attr({}, '2')
+      return attr({}, "2")
     }).to.throw(TypeError)
     expect(function() {
-      return attr(true, '2')
+      return attr(true, "2")
     }).to.throw(TypeError)
     expect(function() {
-      return attr(new Date(), '2')
+      return attr(new Date(), "2")
     }).to.throw(TypeError)
     expect(function() {
-      return attr(function() {}, '2')
+      return attr(function() {}, "2")
     }).to.throw(TypeError)
 
     expect(function() {
@@ -1318,81 +1318,81 @@ describe('#.attr', function() {
       return attr()
     }).to.throw(TypeError)
     expect(function() {
-      return attr(undefined, 'currentGroup')
+      return attr(undefined, "currentGroup")
     }).to.throw(TypeError)
     expect(function() {
-      return attr(null, 'currentGroup')
+      return attr(null, "currentGroup")
     }).to.throw(TypeError)
     expect(function() {
-      return attr(NaN, 'currentGroup')
+      return attr(NaN, "currentGroup")
     }).to.throw(TypeError)
     expect(function() {
-      return attr([], 'currentGroup')
+      return attr([], "currentGroup")
     }).to.throw(TypeError)
     expect(function() {
-      return attr({}, 'currentGroup')
+      return attr({}, "currentGroup")
     }).to.throw(TypeError)
     expect(function() {
-      return attr(true, 'currentGroup')
+      return attr(true, "currentGroup")
     }).to.throw(TypeError)
     expect(function() {
-      return attr(new Date(), 'currentGroup')
+      return attr(new Date(), "currentGroup")
     }).to.throw(TypeError)
     expect(function() {
-      return attr(function() {}, 'currentGroup')
+      return attr(function() {}, "currentGroup")
     }).to.throw(TypeError)
 
     expect(function() {
       return attr(5, 2)
     }).not.to.throw(Error)
     expect(function() {
-      return attr(5, '2')
+      return attr(5, "2")
     }).not.to.throw(Error)
     expect(function() {
       return attr(5, 0x0002)
     }).not.to.throw(Error)
     expect(function() {
-      return attr(5, 'currentGroup')
+      return attr(5, "currentGroup")
     }).not.to.throw(Error)
     expect(function() {
-      return attr('5', 2)
+      return attr("5", 2)
     }).not.to.throw(Error)
     expect(function() {
-      return attr('5', '2')
+      return attr("5", "2")
     }).not.to.throw(Error)
     expect(function() {
-      return attr('5', 0x0002)
+      return attr("5", 0x0002)
     }).not.to.throw(Error)
     expect(function() {
-      return attr('5', 'currentGroup')
+      return attr("5", "currentGroup")
     }).not.to.throw(Error)
     expect(function() {
       return attr(0x0005, 2)
     }).not.to.throw(Error)
     expect(function() {
-      return attr(0x0005, '2')
+      return attr(0x0005, "2")
     }).not.to.throw(Error)
     expect(function() {
       return attr(0x0005, 0x0002)
     }).not.to.throw(Error)
     expect(function() {
-      return attr(0x0005, 'currentGroup')
+      return attr(0x0005, "currentGroup")
     }).not.to.throw(Error)
     expect(function() {
-      return attr('genScenes', 2)
+      return attr("genScenes", 2)
     }).not.to.throw(Error)
     expect(function() {
-      return attr('genScenes', '2')
+      return attr("genScenes", "2")
     }).not.to.throw(Error)
     expect(function() {
-      return attr('genScenes', 0x0002)
+      return attr("genScenes", 0x0002)
     }).not.to.throw(Error)
     expect(function() {
-      return attr('genScenes', 'currentGroup')
+      return attr("genScenes", "currentGroup")
     }).not.to.throw(Error)
   })
 
-  it('should throw TypeError if input attrId is not a number and not a string', function() {
+  it("should throw TypeError if input attrId is not a number and not a string", function() {
     expect(function() {
       return attr()
     }).to.throw(TypeError)
@@ -1425,28 +1425,28 @@ describe('#.attr', function() {
       return attr()
     }).to.throw(TypeError)
     expect(function() {
-      return attr('5', undefined)
+      return attr("5", undefined)
     }).to.throw(TypeError)
     expect(function() {
-      return attr('5', null)
+      return attr("5", null)
     }).to.throw(TypeError)
     expect(function() {
-      return attr('5', NaN)
+      return attr("5", NaN)
     }).to.throw(TypeError)
     expect(function() {
-      return attr('5', [])
+      return attr("5", [])
     }).to.throw(TypeError)
     expect(function() {
-      return attr('5', {})
+      return attr("5", {})
     }).to.throw(TypeError)
     expect(function() {
-      return attr('5', true)
+      return attr("5", true)
     }).to.throw(TypeError)
     expect(function() {
-      return attr('5', new Date())
+      return attr("5", new Date())
     }).to.throw(TypeError)
     expect(function() {
-      return attr('5', function() {})
+      return attr("5", function() {})
     }).to.throw(TypeError)
 
     expect(function() {
@@ -1481,87 +1481,87 @@ describe('#.attr', function() {
       return attr()
     }).to.throw(TypeError)
     expect(function() {
-      return attr('genScenes', undefined)
+      return attr("genScenes", undefined)
     }).to.throw(TypeError)
     expect(function() {
-      return attr('genScenes', null)
+      return attr("genScenes", null)
     }).to.throw(TypeError)
     expect(function() {
-      return attr('genScenes', NaN)
+      return attr("genScenes", NaN)
     }).to.throw(TypeError)
     expect(function() {
-      return attr('genScenes', [])
+      return attr("genScenes", [])
     }).to.throw(TypeError)
     expect(function() {
-      return attr('genScenes', {})
+      return attr("genScenes", {})
     }).to.throw(TypeError)
     expect(function() {
-      return attr('genScenes', true)
+      return attr("genScenes", true)
     }).to.throw(TypeError)
     expect(function() {
-      return attr('genScenes', new Date())
+      return attr("genScenes", new Date())
     }).to.throw(TypeError)
     expect(function() {
-      return attr('genScenes', function() {})
+      return attr("genScenes", function() {})
     }).to.throw(TypeError)
 
     expect(function() {
       return attr(5, 2)
     }).not.to.throw(Error)
     expect(function() {
-      return attr(5, '2')
+      return attr(5, "2")
     }).not.to.throw(Error)
     expect(function() {
       return attr(5, 0x0002)
     }).not.to.throw(Error)
     expect(function() {
-      return attr(5, 'currentGroup')
+      return attr(5, "currentGroup")
     }).not.to.throw(Error)
     expect(function() {
-      return attr('5', 2)
+      return attr("5", 2)
     }).not.to.throw(Error)
     expect(function() {
-      return attr('5', '2')
+      return attr("5", "2")
     }).not.to.throw(Error)
     expect(function() {
-      return attr('5', 0x0002)
+      return attr("5", 0x0002)
     }).not.to.throw(Error)
     expect(function() {
-      return attr('5', 'currentGroup')
+      return attr("5", "currentGroup")
     }).not.to.throw(Error)
     expect(function() {
       return attr(0x0005, 2)
     }).not.to.throw(Error)
     expect(function() {
-      return attr(0x0005, '2')
+      return attr(0x0005, "2")
     }).not.to.throw(Error)
     expect(function() {
       return attr(0x0005, 0x0002)
     }).not.to.throw(Error)
     expect(function() {
-      return attr(0x0005, 'currentGroup')
+      return attr(0x0005, "currentGroup")
     }).not.to.throw(Error)
     expect(function() {
-      return attr('genScenes', 2)
+      return attr("genScenes", 2)
     }).not.to.throw(Error)
     expect(function() {
-      return attr('genScenes', '2')
+      return attr("genScenes", "2")
     }).not.to.throw(Error)
     expect(function() {
-      return attr('genScenes', 0x0002)
+      return attr("genScenes", 0x0002)
     }).not.to.throw(Error)
     expect(function() {
-      return attr('genScenes', 'currentGroup')
+      return attr("genScenes", "currentGroup")
     }).not.to.throw(Error)
   })
 })
 
-describe('#.attrType', function() {
-  it('should be a function', function() {
-    expect(attrType).to.be.a('function')
+describe("#.attrType", function() {
+  it("should be a function", function() {
+    expect(attrType).to.be.a("function")
   })
 
-  it('should throw TypeError if input cId is not a number and not a string', function() {
+  it("should throw TypeError if input cId is not a number and not a string", function() {
     expect(function() {
       return attrType()
     }).to.throw(TypeError)
@@ -1594,28 +1594,28 @@ describe('#.attrType', function() {
       return attrType()
     }).to.throw(TypeError)
     expect(function() {
-      return attrType(undefined, '2')
+      return attrType(undefined, "2")
     }).to.throw(TypeError)
     expect(function() {
-      return attrType(null, '2')
+      return attrType(null, "2")
     }).to.throw(TypeError)
     expect(function() {
-      return attrType(NaN, '2')
+      return attrType(NaN, "2")
     }).to.throw(TypeError)
     expect(function() {
-      return attrType([], '2')
+      return attrType([], "2")
     }).to.throw(TypeError)
     expect(function() {
-      return attrType({}, '2')
+      return attrType({}, "2")
     }).to.throw(TypeError)
     expect(function() {
-      return attrType(true, '2')
+      return attrType(true, "2")
     }).to.throw(TypeError)
     expect(function() {
-      return attrType(new Date(), '2')
+      return attrType(new Date(), "2")
     }).to.throw(TypeError)
     expect(function() {
-      return attrType(function() {}, '2')
+      return attrType(function() {}, "2")
     }).to.throw(TypeError)
 
     expect(function() {
@@ -1650,81 +1650,81 @@ describe('#.attrType', function() {
       return attrType()
     }).to.throw(TypeError)
     expect(function() {
-      return attrType(undefined, 'currentGroup')
+      return attrType(undefined, "currentGroup")
     }).to.throw(TypeError)
     expect(function() {
-      return attrType(null, 'currentGroup')
+      return attrType(null, "currentGroup")
     }).to.throw(TypeError)
     expect(function() {
-      return attrType(NaN, 'currentGroup')
+      return attrType(NaN, "currentGroup")
     }).to.throw(TypeError)
     expect(function() {
-      return attrType([], 'currentGroup')
+      return attrType([], "currentGroup")
     }).to.throw(TypeError)
     expect(function() {
-      return attrType({}, 'currentGroup')
+      return attrType({}, "currentGroup")
     }).to.throw(TypeError)
     expect(function() {
-      return attrType(true, 'currentGroup')
+      return attrType(true, "currentGroup")
     }).to.throw(TypeError)
     expect(function() {
-      return attrType(new Date(), 'currentGroup')
+      return attrType(new Date(), "currentGroup")
     }).to.throw(TypeError)
     expect(function() {
-      return attrType(function() {}, 'currentGroup')
+      return attrType(function() {}, "currentGroup")
     }).to.throw(TypeError)
 
     expect(function() {
       return attrType(5, 2)
     }).not.to.throw(Error)
     expect(function() {
-      return attrType(5, '2')
+      return attrType(5, "2")
     }).not.to.throw(Error)
     expect(function() {
       return attrType(5, 0x0002)
     }).not.to.throw(Error)
     expect(function() {
-      return attrType(5, 'currentGroup')
+      return attrType(5, "currentGroup")
     }).not.to.throw(Error)
     expect(function() {
-      return attrType('5', 2)
+      return attrType("5", 2)
     }).not.to.throw(Error)
     expect(function() {
-      return attrType('5', '2')
+      return attrType("5", "2")
     }).not.to.throw(Error)
     expect(function() {
-      return attrType('5', 0x0002)
+      return attrType("5", 0x0002)
     }).not.to.throw(Error)
     expect(function() {
-      return attrType('5', 'currentGroup')
+      return attrType("5", "currentGroup")
     }).not.to.throw(Error)
     expect(function() {
       return attrType(0x0005, 2)
     }).not.to.throw(Error)
     expect(function() {
-      return attrType(0x0005, '2')
+      return attrType(0x0005, "2")
     }).not.to.throw(Error)
     expect(function() {
       return attrType(0x0005, 0x0002)
     }).not.to.throw(Error)
     expect(function() {
-      return attrType(0x0005, 'currentGroup')
+      return attrType(0x0005, "currentGroup")
     }).not.to.throw(Error)
     expect(function() {
-      return attrType('genScenes', 2)
+      return attrType("genScenes", 2)
     }).not.to.throw(Error)
     expect(function() {
-      return attrType('genScenes', '2')
+      return attrType("genScenes", "2")
     }).not.to.throw(Error)
     expect(function() {
-      return attrType('genScenes', 0x0002)
+      return attrType("genScenes", 0x0002)
     }).not.to.throw(Error)
     expect(function() {
-      return attrType('genScenes', 'currentGroup')
+      return attrType("genScenes", "currentGroup")
     }).not.to.throw(Error)
   })
 
-  it('should throw TypeError if input attrId is not a number and not a string', function() {
+  it("should throw TypeError if input attrId is not a number and not a string", function() {
     expect(function() {
       return attrType()
     }).to.throw(TypeError)
@@ -1757,28 +1757,28 @@ describe('#.attrType', function() {
       return attrType()
     }).to.throw(TypeError)
     expect(function() {
-      return attrType('5', undefined)
+      return attrType("5", undefined)
     }).to.throw(TypeError)
     expect(function() {
-      return attrType('5', null)
+      return attrType("5", null)
     }).to.throw(TypeError)
     expect(function() {
-      return attrType('5', NaN)
+      return attrType("5", NaN)
     }).to.throw(TypeError)
     expect(function() {
-      return attrType('5', [])
+      return attrType("5", [])
     }).to.throw(TypeError)
     expect(function() {
-      return attrType('5', {})
+      return attrType("5", {})
     }).to.throw(TypeError)
     expect(function() {
-      return attrType('5', true)
+      return attrType("5", true)
     }).to.throw(TypeError)
     expect(function() {
-      return attrType('5', new Date())
+      return attrType("5", new Date())
     }).to.throw(TypeError)
     expect(function() {
-      return attrType('5', function() {})
+      return attrType("5", function() {})
     }).to.throw(TypeError)
 
     expect(function() {
@@ -1813,87 +1813,87 @@ describe('#.attrType', function() {
       return attrType()
     }).to.throw(TypeError)
     expect(function() {
-      return attrType('genScenes', undefined)
+      return attrType("genScenes", undefined)
     }).to.throw(TypeError)
     expect(function() {
-      return attrType('genScenes', null)
+      return attrType("genScenes", null)
     }).to.throw(TypeError)
     expect(function() {
-      return attrType('genScenes', NaN)
+      return attrType("genScenes", NaN)
     }).to.throw(TypeError)
     expect(function() {
-      return attrType('genScenes', [])
+      return attrType("genScenes", [])
     }).to.throw(TypeError)
     expect(function() {
-      return attrType('genScenes', {})
+      return attrType("genScenes", {})
     }).to.throw(TypeError)
     expect(function() {
-      return attrType('genScenes', true)
+      return attrType("genScenes", true)
     }).to.throw(TypeError)
     expect(function() {
-      return attrType('genScenes', new Date())
+      return attrType("genScenes", new Date())
     }).to.throw(TypeError)
     expect(function() {
-      return attrType('genScenes', function() {})
+      return attrType("genScenes", function() {})
     }).to.throw(TypeError)
 
     expect(function() {
       return attrType(5, 2)
     }).not.to.throw(Error)
     expect(function() {
-      return attrType(5, '2')
+      return attrType(5, "2")
     }).not.to.throw(Error)
     expect(function() {
       return attrType(5, 0x0002)
     }).not.to.throw(Error)
     expect(function() {
-      return attrType(5, 'currentGroup')
+      return attrType(5, "currentGroup")
     }).not.to.throw(Error)
     expect(function() {
-      return attrType('5', 2)
+      return attrType("5", 2)
     }).not.to.throw(Error)
     expect(function() {
-      return attrType('5', '2')
+      return attrType("5", "2")
     }).not.to.throw(Error)
     expect(function() {
-      return attrType('5', 0x0002)
+      return attrType("5", 0x0002)
     }).not.to.throw(Error)
     expect(function() {
-      return attrType('5', 'currentGroup')
+      return attrType("5", "currentGroup")
     }).not.to.throw(Error)
     expect(function() {
       return attrType(0x0005, 2)
     }).not.to.throw(Error)
     expect(function() {
-      return attrType(0x0005, '2')
+      return attrType(0x0005, "2")
     }).not.to.throw(Error)
     expect(function() {
       return attrType(0x0005, 0x0002)
     }).not.to.throw(Error)
     expect(function() {
-      return attrType(0x0005, 'currentGroup')
+      return attrType(0x0005, "currentGroup")
     }).not.to.throw(Error)
     expect(function() {
-      return attrType('genScenes', 2)
+      return attrType("genScenes", 2)
     }).not.to.throw(Error)
     expect(function() {
-      return attrType('genScenes', '2')
+      return attrType("genScenes", "2")
     }).not.to.throw(Error)
     expect(function() {
-      return attrType('genScenes', 0x0002)
+      return attrType("genScenes", 0x0002)
     }).not.to.throw(Error)
     expect(function() {
-      return attrType('genScenes', 'currentGroup')
+      return attrType("genScenes", "currentGroup")
     }).not.to.throw(Error)
   })
 })
 
-describe('#.dataType', function() {
-  it('should be a function', function() {
-    expect(dataType).to.be.a('function')
+describe("#.dataType", function() {
+  it("should be a function", function() {
+    expect(dataType).to.be.a("function")
   })
 
-  it('should throw TypeError if input type is not a number and not a string', function() {
+  it("should throw TypeError if input type is not a number and not a string", function() {
     expect(function() {
       return dataType()
     }).to.throw(TypeError)
@@ -1926,16 +1926,16 @@ describe('#.dataType', function() {
       return dataType(11)
     }).not.to.throw(Error)
     expect(function() {
-      return dataType('11')
+      return dataType("11")
     }).not.to.throw(Error)
     expect(function() {
       return dataType(0x0b)
     }).not.to.throw(Error)
     expect(function() {
-      return dataType('0x0b')
+      return dataType("0x0b")
     }).not.to.throw(Error)
     expect(function() {
-      return dataType('DATA32')
+      return dataType("DATA32")
     }).not.to.throw(Error)
   })
 })
