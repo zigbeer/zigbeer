@@ -1,59 +1,145 @@
-import { Enum } from './enum'
+import { Enum } from "./enum"
 
-import * as common from './definitions/common.json'
-import * as clusterDefs from './definitions/cluster_defs.json'
+import * as common from "./definitions/common.json"
+import * as clusterDefs from "./definitions/cluster_defs.json"
 
-type ClusterName = keyof typeof clusterDefs
+/* type DataTypeNames = keyof typeof common.dataType */
+type DataTypeNames = string
 
 interface ClusterDef {
-  attrId: Record<string, { id: number; type: string }> | null // Actually type should be keyof typeof common.dataType
-  cmd: Record<string, number> | null
-  cmdRsp: Record<string, number> | null
+  attrId?: Record<string, { id: number; type: DataTypeNames }>
+  cmd?: Record<string, number>
+  cmdRsp?: Record<string, number>
 }
-const _clusterDefs: Record<string, ClusterDef | undefined> = clusterDefs
+const _clusterDefs = clusterDefs as Record<string, ClusterDef | undefined>
 
-/*************************************************************************************************/
-/*** Loading Enumerations                                                                      ***/
-/*************************************************************************************************/
-export const _common = common
+/* interface CommonJSON {
+  profileId: Record<keyof typeof common.profileId, number>
+  foundation: Record<keyof typeof common.foundation, number>
+  dataType: Record<keyof typeof common.dataType, number>
+  status: Record<keyof typeof common.status, number>
+  clusterId: Record<keyof typeof common.clusterId, number>
+  haDevId: Record<keyof typeof common.haDevId, number>
+  [key: string]: Record<string, number>
+} */
+interface CommonJSON {
+  profileId: Record<string, number>
+  foundation: Record<string, number>
+  dataType: Record<string, number>
+  status: Record<string, number>
+  clusterId: Record<string, number>
+  haDevId: Record<string, number>
+  [key: string]: Record<string, number>
+}
+/**
+ * The whole common.json
+ */
+export const _common: CommonJSON = common
+/**
+ * The zigbee profile ID lookup
+ *
+ * key: 2-letter profile name, value: numeric ID
+ *
+ * example: `{ key: "HA", value: 260 }`
+ */
 export const profileId = new Enum(_common.profileId)
+/**
+ * The foundation command ID lookup
+ *
+ * key: 2-letter profile name, value: numeric ID
+ *
+ * example: `{ key: "read", value: 0 }`
+ */
 export const foundationId = new Enum(_common.foundation)
+/**
+ * The datatype ID lookup
+ *
+ * key: DataType name, value: numeric ID
+ *
+ * example: `{ key: "uint8", value: 32 }`
+ */
 export const dataTypeId = new Enum(_common.dataType)
+/**
+ * The status ID lookup
+ *
+ * key: status name, value: numeric ID
+ *
+ * example: `{ key: "success", value: 0 }`
+ */
 export const statusId = new Enum(_common.status)
+/**
+ * The cluster ID lookup
+ *
+ * key: status name, value: numeric ID
+ *
+ * example: `{ key: "genOnOff", value: 6 }`
+ */
 export const clusterId = new Enum(_common.clusterId)
-export const deviceId: Record<string, Enum<string, number>> = {
+/**
+ * Zigbee device ID lookups, per profile name
+ */
+export const deviceId: {
+  HA: Enum<keyof typeof _common.cluster, number>
+  [key: string]: Enum<string, number>
+} = {
+  /**
+   * The device ID lookup of Home Automation profile
+   *
+   * key: status name, value: numeric ID
+   *
+   * example: `{ key: "onOffOutput", value: 2 }`
+   */
   HA: new Enum(_common.haDevId)
 }
 
 function isValidArgType(param: any): param is string | number {
-  if (typeof param === 'string') {
+  if (typeof param === "string") {
     return true
   }
-  if (typeof param === 'number') {
+  if (typeof param === "number") {
     return !isNaN(param)
   }
   return false
 }
 
-const isNil = (val: any): val is null | undefined => val == undefined
-
 const assertAndParse = (val: any, name: string): string | number => {
   if (!isValidArgType(val))
-    throw new TypeError(name + ' should be a number or a string.')
+    throw new TypeError(name + " should be a number or a string.")
   const num = parseInt(val as string, 10)
   return isNaN(num) ? val : num
 }
+
 type AttributeName = string
 type AttributeID = number
-type AttributeType = string
+type AttributeType = DataTypeNames
 type CommandName = string
 type CommandID = number
 type CommandResponseName = string
 type CommandResponseID = number
 interface NewFormatCluster {
+  /**
+   * key: Attribute Name, value: numeric ID
+   *
+   * example: `{ key: "modelId", value: 5 }`
+   */
   attr: Enum<AttributeName, AttributeID>
+  /**
+   * key: Attribute Name, value: DataType Name
+   *
+   * example: `{ key: "uint8", value: 32 }`
+   */
   attrType: Enum<AttributeName, AttributeType>
+  /**
+   * key: Functional Command Name, value: numeric ID
+   *
+   * example: `{ key: "view", value: 1 }`
+   */
   cmd?: Enum<CommandName, CommandID>
+  /**
+   * key: Functional Command Response Name, value: numeric ID
+   *
+   * example: `{ key: "viewRsp", value: 1 }`
+   */
   cmdRsp?: Enum<CommandResponseName, CommandResponseID>
 }
 
@@ -63,8 +149,8 @@ function clusterWithNewFormat({
   cmdRsp
 }: ClusterDef): NewFormatCluster {
   type AttrID = NonNullable<typeof attrId>
-  const attrs: Record<keyof AttrID, AttrID[string]['id']> = {}
-  const attrTypes: Record<keyof AttrID, AttrID[string]['type']> = {}
+  const attrs: Record<keyof AttrID, AttrID[string]["id"]> = {}
+  const attrTypes: Record<keyof AttrID, AttrID[string]["type"]> = {}
 
   for (const name in attrId) {
     const { id, type } = attrId[name]
@@ -84,11 +170,11 @@ const newFormatClusters = new Map()
 
 type AnyClusterName = keyof typeof _common.clusterId
 
-/*************************************************************************************************/
-/*** zclId Methods                                                                             ***/
-/*************************************************************************************************/
+/**
+ * Get cluster description by name
+ * */
 export function _getCluster(
-  cluster: AnyClusterName
+  cluster: AnyClusterName | string
 ): NewFormatCluster | undefined {
   const readyCluster = newFormatClusters.get(cluster)
   if (readyCluster) return readyCluster
@@ -102,141 +188,163 @@ export function _getCluster(
   return newCluster
 }
 
-export function profile(profId: string | number) {
-  profId = assertAndParse(profId, 'profId')
+/**
+ * Get cluster description by name|id|id as string
+ */
+function getClusterDescription(cId: string | number) {
+  cId = assertAndParse(cId, "cId")
 
-  return profileId.get(profId) // { key: 'HA', value: 260 }
+  const cName = clusterId.getKey(cId)
+  if (!cName) return
+
+  return _getCluster(cName)
 }
 
+/**
+ * Get profile entry by name|id|id as string
+ *
+ * example: `{ key: 'HA', value: 260 }`
+ * */
+export function profile(profId: string | number) {
+  profId = assertAndParse(profId, "profId")
+
+  return profileId.get(profId)
+}
+
+/**
+ * Get device entry of profile by two name|id|id as string
+ *
+ * example: `{ key: "onOffOutput", value: 2 }`
+ * */
 export function device(profId: string | number, devId: string | number) {
-  profId = assertAndParse(profId, 'profId')
-  devId = assertAndParse(devId, 'devId')
+  profId = assertAndParse(profId, "profId")
+  devId = assertAndParse(devId, "devId")
 
   const profItem = profileId.get(profId)
   if (!profItem) return
 
-  return deviceId[profItem.key].get(devId) // { key: 'ON_OFF_SWITCH', value: 0 }
+  return deviceId[profItem.key].get(devId)
 }
 
 /**
  * Get cluster entry by name|id|id as string
+ *
+ * example: `{ key: "genOnOff", value: 6 }`
  * */
 export function cluster(cId: string | number) {
-  cId = assertAndParse(cId, 'cId')
+  cId = assertAndParse(cId, "cId")
 
-  return clusterId.get(cId) // { key: 'genBasic', value: 0 }
+  return clusterId.get(cId)
 }
 
 /**
  * Get foundation command entry by name|id|id as string
+ *
+ * example: `{ key: "read", value: 0 }`
  * */
 export function foundation(cmdId: string | number) {
-  cmdId = assertAndParse(cmdId, 'cmdId')
+  cmdId = assertAndParse(cmdId, "cmdId")
 
-  return foundationId.get(cmdId) // { key: 'read', value: 0 }
+  return foundationId.get(cmdId)
 }
 
 /**
  * Get functional command entry of cluster by two name|id|id as string
+ *
+ * example: `{ key: "view", value: 1 }`
  * */
 export function functional(cId: string | number, cmdId: string | number) {
-  cId = assertAndParse(cId, 'cId')
-  cmdId = assertAndParse(cmdId, 'cmdId')
+  cmdId = assertAndParse(cmdId, "cmdId")
 
-  const cItem = clusterId.get(cId)
-  if (!cItem) return
+  const cInfo = getClusterDescription(cId)
+  if (!cInfo || !cInfo.cmd) return
 
-  const cInfo = _getCluster(cItem.key)
-  if (!cInfo || isNil(cInfo.cmd)) return
-
-  return cInfo.cmd.get(cmdId) // { key: 'view', value: 1 }
+  return cInfo.cmd.get(cmdId)
 }
 
 /**
  * Get functional (command) response entry of cluster by two name|id|id as string
+ *
+ * example: `{ key: "viewRsp", value: 1 }`
  * */
 export function getCmdRsp(cId: string | number, rspId: string | number) {
-  cId = assertAndParse(cId, 'cId')
-  rspId = assertAndParse(rspId, 'rspId')
+  rspId = assertAndParse(rspId, "rspId")
 
-  const cItem = clusterId.get(cId)
-  if (!cItem) return
+  const cInfo = getClusterDescription(cId)
+  if (!cInfo || !cInfo.cmdRsp) return
 
-  const cInfo = _getCluster(cItem.key)
-  if (!cInfo || isNil(cInfo.cmdRsp)) return
-
-  return cInfo.cmdRsp.get(rspId) // { key: 'viewRsp', value: 1 }
+  return cInfo.cmdRsp.get(rspId)
 }
 
 /**
  * Get an array of all attributes, with numeric ID and numeric type of cluster by name|id|id as string
  * */
 export function attrList(cId: string | number) {
-  const cItem = cluster(cId)
-  const clst = cItem ? _getCluster(cItem.key) : undefined
+  const cInfo = getClusterDescription(cId)
+  if (!cInfo || !cInfo.attr) return
 
-  if (!cItem || !clst) return
-
-  return clst.attr.enums.map(function(item) {
-    const attrId = item.value
-    const type = attrType(cItem.key, attrId)
-    const dataType = type ? type.value : 255
+  return cInfo.attr.enums.map((attr, i) => {
+    const attrId = attr.value
+    const attrTypeName = cInfo.attrType.enums[i].value
+    const _dataType = dataTypeId.values.get(attrTypeName)
+    // Because zero is a valid type id
+    const dataType = _dataType !== undefined ? _dataType : 255
     return { attrId, dataType }
   })
 }
 
 /**
  * Get an attribute entry, with numeric ID and numeric type of cluster by two name|id|id as string
+ *
+ * example: `{ key: "modelId", value: 5 }`
  * */
 export function attr(cId: string | number, attrId: string | number) {
-  cId = assertAndParse(cId, 'cId')
-  attrId = assertAndParse(attrId, 'attrId')
+  attrId = assertAndParse(attrId, "attrId")
 
-  const cItem = clusterId.get(cId)
-  if (!cItem) return
-
-  const cInfo = _getCluster(cItem.key)
-  if (!cInfo || isNil(cInfo.attr)) return
+  const cInfo = getClusterDescription(cId)
+  if (!cInfo || !cInfo.attr) return
 
   return cInfo.attr.get(attrId) // { key: 'modelId', value: 5 }
 }
 
 /**
  * Get the type entry of an attribute by two name|id|id as string
+ *
+ * example: `{ key: "uint8", value: 32 }`
  * */
 export function attrType(cId: string | number, attrId: string | number) {
-  cId = assertAndParse(cId, 'cId')
-  attrId = assertAndParse(attrId, 'attrId')
+  attrId = assertAndParse(attrId, "attrId")
 
-  const cItem = clusterId.get(cId)
-  if (!cItem) return
+  const cInfo = getClusterDescription(cId)
+  if (!cInfo || !cInfo.attr) return
 
-  const cInfo = _getCluster(cItem.key)
-  if (!cInfo || isNil(cInfo.attr)) return
-
-  const attrName = cInfo.attr.get(attrId)
+  const attrName = cInfo.attr.getKey(attrId)
   if (!attrName) return
 
-  const attrItem = cInfo.attrType.get(attrName.key)
-  if (!attrItem) return
+  const attrTypeName = cInfo.attrType.values.get(attrName)
+  if (!attrTypeName) return
 
-  return dataTypeId.byKey.get(attrItem.value) // { key: 'CHAR_STR', value: 66 }
+  return dataTypeId.byKey.get(attrTypeName)
 }
 
 /**
  * Get a dataType entry by name|id|id as string
+ *
+ * example: `{ key: "uint8", value: 32 }`
  * */
 export function dataType(type: string | number) {
-  type = assertAndParse(type, 'type')
+  type = assertAndParse(type, "type")
 
-  return dataTypeId.get(type) // { key: 'DATA8', value: 8 }
+  return dataTypeId.get(type)
 }
 
 /**
  * Get a status entry by name|id|id as string
+ *
+ * example: `{ key: "genOnOff", value: 6 }`
  * */
 export function status(status: string | number) {
-  status = assertAndParse(status, 'status')
+  status = assertAndParse(status, "status")
 
-  return statusId.get(status) // { key: 'DATA8', value: 8 }
+  return statusId.get(status)
 }
