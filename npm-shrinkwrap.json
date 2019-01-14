@@ -22,9 +22,9 @@
       }
     },
     "@serialport/bindings": {
-      "version": "2.0.5",
-      "resolved": "https://registry.npmjs.org/@serialport/bindings/-/bindings-2.0.5.tgz",
-      "integrity": "sha512-s/H5rkbe5GA1csSKkeY4Ov0wKBSjUZTRjM14JxpuR66/zdufAfJP0jk4lwaSa2yV5+QDarMn1PrHnKSXg+hHLg==",
+      "version": "2.0.6",
+      "resolved": "https://registry.npmjs.org/@serialport/bindings/-/bindings-2.0.6.tgz",
+      "integrity": "sha512-MVdPLnWND8FaKByR+djw0rL6wyKuOYyZwBH87Ok+mo5rkObJRwF4fucfWuvSDjRgQFGX1SK5DWe9HxQ6BxSpWw==",
       "requires": {
         "@serialport/binding-abstract": "^2.0.4",
         "@serialport/parser-readline": "^2.0.2",
@@ -682,12 +682,12 @@
       "integrity": "sha512-RS9R6R35NYgQn++fkDWaOmqGoj4Ek9gGs+DPxNUZKuwE183xjJroKvyo1IzVFeXvUrvmALy6FWD5xrdJT25gMg=="
     },
     "serialport": {
-      "version": "7.1.2",
-      "resolved": "https://registry.npmjs.org/serialport/-/serialport-7.1.2.tgz",
-      "integrity": "sha512-0mrpRbyC3cdQ5rWXawvs2XyMoZzBawnTx5oBx+9hUkU66DvUjlEGtrEdwIwoXNE+p9i2JQsZudpwkMMNbyzQYQ==",
+      "version": "7.1.3",
+      "resolved": "https://registry.npmjs.org/serialport/-/serialport-7.1.3.tgz",
+      "integrity": "sha512-gT4db1SqrGCxW43lLpENO3WJJwhGK9DlP1ilKDHwYtHqfWssgzoDyI8n+KQHFVxMx51PPU3A5mMgwPRrA7IHCQ==",
       "requires": {
         "@serialport/binding-mock": "^2.0.4",
-        "@serialport/bindings": "^2.0.5",
+        "@serialport/bindings": "^2.0.6",
         "@serialport/parser-byte-length": "^2.0.2",
         "@serialport/parser-cctalk": "^2.0.2",
         "@serialport/parser-delimiter": "^2.0.2",
