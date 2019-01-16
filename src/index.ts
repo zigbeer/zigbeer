@@ -18,6 +18,7 @@ const _clusterDefs = clusterDefs as Record<string, ClusterDef | undefined>
   foundation: Record<keyof typeof common.foundation, number>
   dataType: Record<keyof typeof common.dataType, number>
   status: Record<keyof typeof common.status, number>
+  otaStatus: Record<keyof typeof common.otaStatus, number>
   clusterId: Record<keyof typeof common.clusterId, number>
   haDevId: Record<keyof typeof common.haDevId, number>
   [key: string]: Record<string, number>
@@ -27,6 +28,7 @@ interface CommonJSON {
   foundation: Record<string, number>
   dataType: Record<string, number>
   status: Record<string, number>
+  otaStatus: Record<string, number>
   clusterId: Record<string, number>
   haDevId: Record<string, number>
   [key: string]: Record<string, number>
@@ -67,6 +69,14 @@ export const dataTypeId = new Enum(_common.dataType)
  * example: `{ key: "success", value: 0 }`
  */
 export const statusId = new Enum(_common.status)
+/**
+ * The OTA update status ID lookup
+ *
+ * key: status name, value: numeric ID
+ *
+ * example: `{ key: "ABORT", value: 149 }`
+ */
+export const otaStatusId = new Enum(_common.otaStatus)
 /**
  * The cluster ID lookup
  *
@@ -347,4 +357,15 @@ export function status(status: string | number) {
   status = assertAndParse(status, "status")
 
   return statusId.get(status)
+}
+
+/**
+ * Get a OTA update status entry by name|id|id as string
+ *
+ * example: `{ key: "ABORT", value: 149 }`
+ * */
+export function otaStatus(otaStatus: string | number) {
+  otaStatus = assertAndParse(otaStatus, "otaStatus")
+
+  return otaStatusId.get(otaStatus)
 }

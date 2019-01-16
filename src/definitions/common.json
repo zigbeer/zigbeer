@@ -289,5 +289,16 @@
     "softwareFailure": 193,
     "calibrationError": 194,
     "unsupportedCluster": 195
+  },
+  "otaStatus": {
+      "SUCCESS": 0,
+      "ABORT": 149,
+      "NOT_AUTHORIZED": 126,
+      "INVALID_IMAGE": 150,
+      "WAIT_FOR_DATA": 151,
+      "NO_IMAGE_AVAILABLE": 152,
+      "MALFORMED_COMMAND": 128,
+      "UNSUP_CLUSTER_COMMAND": 129,
+      "REQUIRE_MORE_IMAGE": 153
   }
 }
