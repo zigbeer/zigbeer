@@ -75,6 +75,16 @@ If you know of any hacks that aren't listed here, please submit a PR to this doc
    3. Ask IKEA what the meaning of these command IDs is, and why they are in this cluster.
    4. Follow up with issue https://github.com/Koenkk/zigbee2mqtt/issues/102
 
+1. [@kirovilya] copying [`this.vars.attrData = this.vars.structElms`](https://github.com/ZigBeans/zcl-packet/commit/a2b39c1b5239317bf8cd58ebf665319a5c039456) in the `attrValStruct` parser
+
+   This is allegedly necessitated by [`notifData.data[attrIdString] = rec.attrData` here](https://github.com/zigbeer/zigbee-shepherd/blob/b536bcdc4fe89b6433c58a8ba09672c88b0002c6/lib/shepherd.js#L131), wherein only the attrData is put on the event object. If this is the case, `attrVal` parser would also fail to report its `elmVals` field.
+
+   However, [parsing-framing tests](https://github.com/zigbeer/zcl-packet/blob/351c4204ab64a21668b01f8da68063a50835fe9c/test/zcl.test.js#L175-L177) suggest that these fields end up in an object under the `attrData` field, and so should be accessible on the event without this modification.
+
+   **Solution**:
+   1. Revert commit https://github.com/ZigBeans/zcl-packet/commit/a2b39c1b5239317bf8cd58ebf665319a5c039456#diff-9f0b814c660e5e38b20eed3e82ba2512R731
+   2. Try to access this value in the event handler.
+
 
 [@splitice]: https://github.com/splitice
 [@kirovilya]: https://github.com/kirovilya
