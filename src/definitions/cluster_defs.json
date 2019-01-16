@@ -111,10 +111,7 @@
       "getSceneMembership": 6,
       "enhancedAdd": 64,
       "enhancedView": 65,
-      "copy": 66,
-      "tradfriArrowSingle": 7,
-      "tradfriArrowHold": 8,
-      "tradfriArrowRelease": 9
+      "copy": 66
     },
     "cmdRsp": {
       "addRsp": 0,
