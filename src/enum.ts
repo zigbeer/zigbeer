@@ -33,13 +33,17 @@ export class Enum<K extends string, T> {
    * Prioritizes key over value in case of conflict.
    */
   getKey(query: string | T | K) {
-    return (this.values.has(query as K) && query as K) || this.keys.get(query as T)
+    return (
+      (this.values.has(query as K) && (query as K)) || this.keys.get(query as T)
+    )
   }
   /**
    * Attempt to get a value, by key or value.
    * Prioritizes **value** in case of conflict.
    */
   getValue(query: string | K | T) {
-    return (this.keys.has(query as T) && query as T) || this.values.get(query as K)
+    return (
+      (this.keys.has(query as T) && (query as T)) || this.values.get(query as K)
+    )
   }
 }
