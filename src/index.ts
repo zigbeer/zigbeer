@@ -38,7 +38,7 @@ interface CommonJSON {
  */
 export const _common: CommonJSON = common
 /**
- * The zigbee profile ID lookup
+ * The Zigbee profile ID lookup
  *
  * key: 2-letter profile name, value: numeric ID
  *
