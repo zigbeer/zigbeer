@@ -1,1941 +1,1929 @@
 const { expect } = require("chai")
 
-const {
-  profile,
-  device,
-  cluster,
-  foundation,
-  functional,
-  _getCluster,
-  getCmdRsp,
-  attr,
-  attrType,
-  dataType,
-  attrList
-} = require("../src")
+const zclId = require("../src/legacy")
 
 describe("#._getCluster", function() {
   it("should be a function", function() {
-    expect(_getCluster).to.be.a("function")
+    expect(zclId._getCluster).to.be.a("function")
   })
 })
 
 describe("#.profile", function() {
   it("should be a function", function() {
-    expect(profile).to.be.a("function")
+    expect(zclId.profile).to.be.a("function")
   })
 
   it("should throw TypeError if input profId is not a number and not a string", function() {
     expect(function() {
-      return profile()
+      return zclId.profile()
     }).to.throw(TypeError)
     expect(function() {
-      return profile(undefined)
+      return zclId.profile(undefined)
     }).to.throw(TypeError)
     expect(function() {
-      return profile(null)
+      return zclId.profile(null)
     }).to.throw(TypeError)
     expect(function() {
-      return profile(NaN)
+      return zclId.profile(NaN)
     }).to.throw(TypeError)
     expect(function() {
-      return profile([])
+      return zclId.profile([])
     }).to.throw(TypeError)
     expect(function() {
-      return profile({})
+      return zclId.profile({})
     }).to.throw(TypeError)
     expect(function() {
-      return profile(true)
+      return zclId.profile(true)
     }).to.throw(TypeError)
     expect(function() {
-      return profile(new Date())
+      return zclId.profile(new Date())
     }).to.throw(TypeError)
     expect(function() {
-      return profile(function() {})
+      return zclId.profile(function() {})
     }).to.throw(TypeError)
 
     expect(function() {
-      return profile(260)
+      return zclId.profile(260)
     }).not.to.throw(Error)
     expect(function() {
-      return profile("260")
+      return zclId.profile("260")
     }).not.to.throw(Error)
     expect(function() {
-      return profile(0x0104)
+      return zclId.profile(0x0104)
     }).not.to.throw(Error)
     expect(function() {
-      return profile("0x0104")
+      return zclId.profile("0x0104")
     }).not.to.throw(Error)
     expect(function() {
-      return profile("HA")
+      return zclId.profile("HA")
     }).not.to.throw(Error)
   })
 })
 
 describe("#.device", function() {
   it("should be a function", function() {
-    expect(device).to.be.a("function")
+    expect(zclId.device).to.be.a("function")
   })
 
   it("should throw TypeError if input profId is not a number and not a string", function() {
     expect(function() {
-      return device()
+      return zclId.device()
     }).to.throw(TypeError)
     expect(function() {
-      return device(undefined, 5)
+      return zclId.device(undefined, 5)
     }).to.throw(TypeError)
     expect(function() {
-      return device(null, 5)
+      return zclId.device(null, 5)
     }).to.throw(TypeError)
     expect(function() {
-      return device(NaN, 5)
+      return zclId.device(NaN, 5)
     }).to.throw(TypeError)
     expect(function() {
-      return device([], 5)
+      return zclId.device([], 5)
     }).to.throw(TypeError)
     expect(function() {
-      return device({}, 5)
+      return zclId.device({}, 5)
     }).to.throw(TypeError)
     expect(function() {
-      return device(true, 5)
+      return zclId.device(true, 5)
     }).to.throw(TypeError)
     expect(function() {
-      return device(new Date(), 5)
+      return zclId.device(new Date(), 5)
     }).to.throw(TypeError)
     expect(function() {
-      return device(function() {}, 5)
-    }).to.throw(TypeError)
-
-    expect(function() {
-      return device()
-    }).to.throw(TypeError)
-    expect(function() {
-      return device(undefined, "5")
-    }).to.throw(TypeError)
-    expect(function() {
-      return device(null, "5")
-    }).to.throw(TypeError)
-    expect(function() {
-      return device(NaN, "5")
-    }).to.throw(TypeError)
-    expect(function() {
-      return device([], "5")
-    }).to.throw(TypeError)
-    expect(function() {
-      return device({}, "5")
-    }).to.throw(TypeError)
-    expect(function() {
-      return device(true, "5")
-    }).to.throw(TypeError)
-    expect(function() {
-      return device(new Date(), "5")
-    }).to.throw(TypeError)
-    expect(function() {
-      return device(function() {}, "5")
+      return zclId.device(function() {}, 5)
     }).to.throw(TypeError)
 
     expect(function() {
-      return device()
+      return zclId.device()
     }).to.throw(TypeError)
     expect(function() {
-      return device(undefined, 0x0005)
+      return zclId.device(undefined, "5")
     }).to.throw(TypeError)
     expect(function() {
-      return device(null, 0x0005)
+      return zclId.device(null, "5")
     }).to.throw(TypeError)
     expect(function() {
-      return device(NaN, 0x0005)
+      return zclId.device(NaN, "5")
     }).to.throw(TypeError)
     expect(function() {
-      return device([], 0x0005)
+      return zclId.device([], "5")
     }).to.throw(TypeError)
     expect(function() {
-      return device({}, 0x0005)
+      return zclId.device({}, "5")
     }).to.throw(TypeError)
     expect(function() {
-      return device(true, 0x0005)
+      return zclId.device(true, "5")
     }).to.throw(TypeError)
     expect(function() {
-      return device(new Date(), 0x0005)
+      return zclId.device(new Date(), "5")
     }).to.throw(TypeError)
     expect(function() {
-      return device(function() {}, 0x0005)
-    }).to.throw(TypeError)
-
-    expect(function() {
-      return device()
-    }).to.throw(TypeError)
-    expect(function() {
-      return device(undefined, "CONFIGURATION_TOOL")
-    }).to.throw(TypeError)
-    expect(function() {
-      return device(null, "CONFIGURATION_TOOL")
-    }).to.throw(TypeError)
-    expect(function() {
-      return device(NaN, "CONFIGURATION_TOOL")
-    }).to.throw(TypeError)
-    expect(function() {
-      return device([], "CONFIGURATION_TOOL")
-    }).to.throw(TypeError)
-    expect(function() {
-      return device({}, "CONFIGURATION_TOOL")
-    }).to.throw(TypeError)
-    expect(function() {
-      return device(true, "CONFIGURATION_TOOL")
-    }).to.throw(TypeError)
-    expect(function() {
-      return device(new Date(), "CONFIGURATION_TOOL")
-    }).to.throw(TypeError)
-    expect(function() {
-      return device(function() {}, "CONFIGURATION_TOOL")
+      return zclId.device(function() {}, "5")
     }).to.throw(TypeError)
 
     expect(function() {
-      return device(260, 5)
+      return zclId.device()
+    }).to.throw(TypeError)
+    expect(function() {
+      return zclId.device(undefined, 0x0005)
+    }).to.throw(TypeError)
+    expect(function() {
+      return zclId.device(null, 0x0005)
+    }).to.throw(TypeError)
+    expect(function() {
+      return zclId.device(NaN, 0x0005)
+    }).to.throw(TypeError)
+    expect(function() {
+      return zclId.device([], 0x0005)
+    }).to.throw(TypeError)
+    expect(function() {
+      return zclId.device({}, 0x0005)
+    }).to.throw(TypeError)
+    expect(function() {
+      return zclId.device(true, 0x0005)
+    }).to.throw(TypeError)
+    expect(function() {
+      return zclId.device(new Date(), 0x0005)
+    }).to.throw(TypeError)
+    expect(function() {
+      return zclId.device(function() {}, 0x0005)
+    }).to.throw(TypeError)
+
+    expect(function() {
+      return zclId.device()
+    }).to.throw(TypeError)
+    expect(function() {
+      return zclId.device(undefined, "CONFIGURATION_TOOL")
+    }).to.throw(TypeError)
+    expect(function() {
+      return zclId.device(null, "CONFIGURATION_TOOL")
+    }).to.throw(TypeError)
+    expect(function() {
+      return zclId.device(NaN, "CONFIGURATION_TOOL")
+    }).to.throw(TypeError)
+    expect(function() {
+      return zclId.device([], "CONFIGURATION_TOOL")
+    }).to.throw(TypeError)
+    expect(function() {
+      return zclId.device({}, "CONFIGURATION_TOOL")
+    }).to.throw(TypeError)
+    expect(function() {
+      return zclId.device(true, "CONFIGURATION_TOOL")
+    }).to.throw(TypeError)
+    expect(function() {
+      return zclId.device(new Date(), "CONFIGURATION_TOOL")
+    }).to.throw(TypeError)
+    expect(function() {
+      return zclId.device(function() {}, "CONFIGURATION_TOOL")
+    }).to.throw(TypeError)
+
+    expect(function() {
+      return zclId.device(260, 5)
     }).not.to.throw(Error)
     expect(function() {
-      return device(260, "5")
+      return zclId.device(260, "5")
     }).not.to.throw(Error)
     expect(function() {
-      return device(260, 0x0005)
+      return zclId.device(260, 0x0005)
     }).not.to.throw(Error)
     expect(function() {
-      return device(260, "CONFIGURATION_TOOL")
+      return zclId.device(260, "CONFIGURATION_TOOL")
     }).not.to.throw(Error)
     expect(function() {
-      return device("260", 5)
+      return zclId.device("260", 5)
     }).not.to.throw(Error)
     expect(function() {
-      return device("260", "5")
+      return zclId.device("260", "5")
     }).not.to.throw(Error)
     expect(function() {
-      return device("260", 0x0005)
+      return zclId.device("260", 0x0005)
     }).not.to.throw(Error)
     expect(function() {
-      return device("260", "CONFIGURATION_TOOL")
+      return zclId.device("260", "CONFIGURATION_TOOL")
     }).not.to.throw(Error)
     expect(function() {
-      return device(0x104, 5)
+      return zclId.device(0x104, 5)
     }).not.to.throw(Error)
     expect(function() {
-      return device(0x104, "5")
+      return zclId.device(0x104, "5")
     }).not.to.throw(Error)
     expect(function() {
-      return device(0x104, 0x0005)
+      return zclId.device(0x104, 0x0005)
     }).not.to.throw(Error)
     expect(function() {
-      return device(0x104, "CONFIGURATION_TOOL")
+      return zclId.device(0x104, "CONFIGURATION_TOOL")
     }).not.to.throw(Error)
     expect(function() {
-      return device("HA", 5)
+      return zclId.device("HA", 5)
     }).not.to.throw(Error)
     expect(function() {
-      return device("HA", "5")
+      return zclId.device("HA", "5")
     }).not.to.throw(Error)
     expect(function() {
-      return device("HA", 0x0005)
+      return zclId.device("HA", 0x0005)
     }).not.to.throw(Error)
     expect(function() {
-      return device("HA", "CONFIGURATION_TOOL")
+      return zclId.device("HA", "CONFIGURATION_TOOL")
     }).not.to.throw(Error)
   })
 
   it("should throw TypeError if input devId is not a number and not a string", function() {
     expect(function() {
-      return device()
+      return zclId.device()
     }).to.throw(TypeError)
     expect(function() {
-      return device(260, undefined)
+      return zclId.device(260, undefined)
     }).to.throw(TypeError)
     expect(function() {
-      return device(260, null)
+      return zclId.device(260, null)
     }).to.throw(TypeError)
     expect(function() {
-      return device(260, NaN)
+      return zclId.device(260, NaN)
     }).to.throw(TypeError)
     expect(function() {
-      return device(260, [])
+      return zclId.device(260, [])
     }).to.throw(TypeError)
     expect(function() {
-      return device(260, {})
+      return zclId.device(260, {})
     }).to.throw(TypeError)
     expect(function() {
-      return device(260, true)
+      return zclId.device(260, true)
     }).to.throw(TypeError)
     expect(function() {
-      return device(260, new Date())
+      return zclId.device(260, new Date())
     }).to.throw(TypeError)
     expect(function() {
-      return device(260, function() {})
-    }).to.throw(TypeError)
-
-    expect(function() {
-      return device()
-    }).to.throw(TypeError)
-    expect(function() {
-      return device("260", undefined)
-    }).to.throw(TypeError)
-    expect(function() {
-      return device("260", null)
-    }).to.throw(TypeError)
-    expect(function() {
-      return device("260", NaN)
-    }).to.throw(TypeError)
-    expect(function() {
-      return device("260", [])
-    }).to.throw(TypeError)
-    expect(function() {
-      return device("260", {})
-    }).to.throw(TypeError)
-    expect(function() {
-      return device("260", true)
-    }).to.throw(TypeError)
-    expect(function() {
-      return device("260", new Date())
-    }).to.throw(TypeError)
-    expect(function() {
-      return device("260", function() {})
+      return zclId.device(260, function() {})
     }).to.throw(TypeError)
 
     expect(function() {
-      return device()
+      return zclId.device()
     }).to.throw(TypeError)
     expect(function() {
-      return device(0x0104, undefined)
+      return zclId.device("260", undefined)
     }).to.throw(TypeError)
     expect(function() {
-      return device(0x0104, null)
+      return zclId.device("260", null)
     }).to.throw(TypeError)
     expect(function() {
-      return device(0x0104, NaN)
+      return zclId.device("260", NaN)
     }).to.throw(TypeError)
     expect(function() {
-      return device(0x0104, [])
+      return zclId.device("260", [])
     }).to.throw(TypeError)
     expect(function() {
-      return device(0x0104, {})
+      return zclId.device("260", {})
     }).to.throw(TypeError)
     expect(function() {
-      return device(0x0104, true)
+      return zclId.device("260", true)
     }).to.throw(TypeError)
     expect(function() {
-      return device(0x0104, new Date())
+      return zclId.device("260", new Date())
     }).to.throw(TypeError)
     expect(function() {
-      return device(0x0104, function() {})
-    }).to.throw(TypeError)
-
-    expect(function() {
-      return device()
-    }).to.throw(TypeError)
-    expect(function() {
-      return device("HA", undefined)
-    }).to.throw(TypeError)
-    expect(function() {
-      return device("HA", null)
-    }).to.throw(TypeError)
-    expect(function() {
-      return device("HA", NaN)
-    }).to.throw(TypeError)
-    expect(function() {
-      return device("HA", [])
-    }).to.throw(TypeError)
-    expect(function() {
-      return device("HA", {})
-    }).to.throw(TypeError)
-    expect(function() {
-      return device("HA", true)
-    }).to.throw(TypeError)
-    expect(function() {
-      return device("HA", new Date())
-    }).to.throw(TypeError)
-    expect(function() {
-      return device("HA", function() {})
+      return zclId.device("260", function() {})
     }).to.throw(TypeError)
 
     expect(function() {
-      return device(260, 5)
+      return zclId.device()
+    }).to.throw(TypeError)
+    expect(function() {
+      return zclId.device(0x0104, undefined)
+    }).to.throw(TypeError)
+    expect(function() {
+      return zclId.device(0x0104, null)
+    }).to.throw(TypeError)
+    expect(function() {
+      return zclId.device(0x0104, NaN)
+    }).to.throw(TypeError)
+    expect(function() {
+      return zclId.device(0x0104, [])
+    }).to.throw(TypeError)
+    expect(function() {
+      return zclId.device(0x0104, {})
+    }).to.throw(TypeError)
+    expect(function() {
+      return zclId.device(0x0104, true)
+    }).to.throw(TypeError)
+    expect(function() {
+      return zclId.device(0x0104, new Date())
+    }).to.throw(TypeError)
+    expect(function() {
+      return zclId.device(0x0104, function() {})
+    }).to.throw(TypeError)
+
+    expect(function() {
+      return zclId.device()
+    }).to.throw(TypeError)
+    expect(function() {
+      return zclId.device("HA", undefined)
+    }).to.throw(TypeError)
+    expect(function() {
+      return zclId.device("HA", null)
+    }).to.throw(TypeError)
+    expect(function() {
+      return zclId.device("HA", NaN)
+    }).to.throw(TypeError)
+    expect(function() {
+      return zclId.device("HA", [])
+    }).to.throw(TypeError)
+    expect(function() {
+      return zclId.device("HA", {})
+    }).to.throw(TypeError)
+    expect(function() {
+      return zclId.device("HA", true)
+    }).to.throw(TypeError)
+    expect(function() {
+      return zclId.device("HA", new Date())
+    }).to.throw(TypeError)
+    expect(function() {
+      return zclId.device("HA", function() {})
+    }).to.throw(TypeError)
+
+    expect(function() {
+      return zclId.device(260, 5)
     }).not.to.throw(Error)
     expect(function() {
-      return device(260, "5")
+      return zclId.device(260, "5")
     }).not.to.throw(Error)
     expect(function() {
-      return device(260, 0x0005)
+      return zclId.device(260, 0x0005)
     }).not.to.throw(Error)
     expect(function() {
-      return device(260, "CONFIGURATION_TOOL")
+      return zclId.device(260, "CONFIGURATION_TOOL")
     }).not.to.throw(Error)
     expect(function() {
-      return device("260", 5)
+      return zclId.device("260", 5)
     }).not.to.throw(Error)
     expect(function() {
-      return device("260", "5")
+      return zclId.device("260", "5")
     }).not.to.throw(Error)
     expect(function() {
-      return device("260", 0x0005)
+      return zclId.device("260", 0x0005)
     }).not.to.throw(Error)
     expect(function() {
-      return device("260", "CONFIGURATION_TOOL")
+      return zclId.device("260", "CONFIGURATION_TOOL")
     }).not.to.throw(Error)
     expect(function() {
-      return device(0x104, 5)
+      return zclId.device(0x104, 5)
     }).not.to.throw(Error)
     expect(function() {
-      return device(0x104, "5")
+      return zclId.device(0x104, "5")
     }).not.to.throw(Error)
     expect(function() {
-      return device(0x104, 0x0005)
+      return zclId.device(0x104, 0x0005)
     }).not.to.throw(Error)
     expect(function() {
-      return device(0x104, "CONFIGURATION_TOOL")
+      return zclId.device(0x104, "CONFIGURATION_TOOL")
     }).not.to.throw(Error)
     expect(function() {
-      return device("HA", 5)
+      return zclId.device("HA", 5)
     }).not.to.throw(Error)
     expect(function() {
-      return device("HA", "5")
+      return zclId.device("HA", "5")
     }).not.to.throw(Error)
     expect(function() {
-      return device("HA", 0x0005)
+      return zclId.device("HA", 0x0005)
     }).not.to.throw(Error)
     expect(function() {
-      return device("HA", "CONFIGURATION_TOOL")
+      return zclId.device("HA", "CONFIGURATION_TOOL")
     }).not.to.throw(Error)
   })
 })
 
 describe("#.cluster", function() {
   it("should be a function", function() {
-    expect(cluster).to.be.a("function")
+    expect(zclId.cluster).to.be.a("function")
   })
 
   it("should throw TypeError if input cId is not a number and not a string", function() {
     expect(function() {
-      return cluster()
+      return zclId.cluster()
     }).to.throw(TypeError)
     expect(function() {
-      return cluster(undefined)
+      return zclId.cluster(undefined)
     }).to.throw(TypeError)
     expect(function() {
-      return cluster(null)
+      return zclId.cluster(null)
     }).to.throw(TypeError)
     expect(function() {
-      return cluster(NaN)
+      return zclId.cluster(NaN)
     }).to.throw(TypeError)
     expect(function() {
-      return cluster([])
+      return zclId.cluster([])
     }).to.throw(TypeError)
     expect(function() {
-      return cluster({})
+      return zclId.cluster({})
     }).to.throw(TypeError)
     expect(function() {
-      return cluster(true)
+      return zclId.cluster(true)
     }).to.throw(TypeError)
     expect(function() {
-      return cluster(new Date())
+      return zclId.cluster(new Date())
     }).to.throw(TypeError)
     expect(function() {
-      return cluster(function() {})
+      return zclId.cluster(function() {})
     }).to.throw(TypeError)
 
     expect(function() {
-      return cluster(3)
+      return zclId.cluster(3)
     }).not.to.throw(Error)
     expect(function() {
-      return cluster("3")
+      return zclId.cluster("3")
     }).not.to.throw(Error)
     expect(function() {
-      return cluster(0x0003)
+      return zclId.cluster(0x0003)
     }).not.to.throw(Error)
     expect(function() {
-      return cluster("0x0003")
+      return zclId.cluster("0x0003")
     }).not.to.throw(Error)
     expect(function() {
-      return cluster("genIdentify")
+      return zclId.cluster("genIdentify")
     }).not.to.throw(Error)
   })
 })
 
 describe("#.foundation", function() {
   it("should be a function", function() {
-    expect(foundation).to.be.a("function")
+    expect(zclId.foundation).to.be.a("function")
   })
 
   it("should throw TypeError if input cmdId is not a number and not a string", function() {
     expect(function() {
-      return foundation()
+      return zclId.foundation()
     }).to.throw(TypeError)
     expect(function() {
-      return foundation(undefined)
+      return zclId.foundation(undefined)
     }).to.throw(TypeError)
     expect(function() {
-      return foundation(null)
+      return zclId.foundation(null)
     }).to.throw(TypeError)
     expect(function() {
-      return foundation(NaN)
+      return zclId.foundation(NaN)
     }).to.throw(TypeError)
     expect(function() {
-      return foundation([])
+      return zclId.foundation([])
     }).to.throw(TypeError)
     expect(function() {
-      return foundation({})
+      return zclId.foundation({})
     }).to.throw(TypeError)
     expect(function() {
-      return foundation(true)
+      return zclId.foundation(true)
     }).to.throw(TypeError)
     expect(function() {
-      return foundation(new Date())
+      return zclId.foundation(new Date())
     }).to.throw(TypeError)
     expect(function() {
-      return foundation(function() {})
+      return zclId.foundation(function() {})
     }).to.throw(TypeError)
 
     expect(function() {
-      return foundation(3)
+      return zclId.foundation(3)
     }).not.to.throw(Error)
     expect(function() {
-      return foundation("3")
+      return zclId.foundation("3")
     }).not.to.throw(Error)
     expect(function() {
-      return foundation(0x0003)
+      return zclId.foundation(0x0003)
     }).not.to.throw(Error)
     expect(function() {
-      return foundation("0x0003")
+      return zclId.foundation("0x0003")
     }).not.to.throw(Error)
     expect(function() {
-      return foundation("writeUndiv")
+      return zclId.foundation("writeUndiv")
     }).not.to.throw(Error)
   })
 })
 
 describe("#.functional", function() {
   it("should be a function", function() {
-    expect(functional).to.be.a("function")
+    expect(zclId.functional).to.be.a("function")
   })
 
   it("should throw TypeError if input cId is not a number and not a string", function() {
     expect(function() {
-      return functional()
+      return zclId.functional()
     }).to.throw(TypeError)
     expect(function() {
-      return functional(undefined, 5)
+      return zclId.functional(undefined, 5)
     }).to.throw(TypeError)
     expect(function() {
-      return functional(null, 5)
+      return zclId.functional(null, 5)
     }).to.throw(TypeError)
     expect(function() {
-      return functional(NaN, 5)
+      return zclId.functional(NaN, 5)
     }).to.throw(TypeError)
     expect(function() {
-      return functional([], 5)
+      return zclId.functional([], 5)
     }).to.throw(TypeError)
     expect(function() {
-      return functional({}, 5)
+      return zclId.functional({}, 5)
     }).to.throw(TypeError)
     expect(function() {
-      return functional(true, 5)
+      return zclId.functional(true, 5)
     }).to.throw(TypeError)
     expect(function() {
-      return functional(new Date(), 5)
+      return zclId.functional(new Date(), 5)
     }).to.throw(TypeError)
     expect(function() {
-      return functional(function() {}, 5)
-    }).to.throw(TypeError)
-
-    expect(function() {
-      return functional()
-    }).to.throw(TypeError)
-    expect(function() {
-      return functional(undefined, "5")
-    }).to.throw(TypeError)
-    expect(function() {
-      return functional(null, "5")
-    }).to.throw(TypeError)
-    expect(function() {
-      return functional(NaN, "5")
-    }).to.throw(TypeError)
-    expect(function() {
-      return functional([], "5")
-    }).to.throw(TypeError)
-    expect(function() {
-      return functional({}, "5")
-    }).to.throw(TypeError)
-    expect(function() {
-      return functional(true, "5")
-    }).to.throw(TypeError)
-    expect(function() {
-      return functional(new Date(), "5")
-    }).to.throw(TypeError)
-    expect(function() {
-      return functional(function() {}, "5")
+      return zclId.functional(function() {}, 5)
     }).to.throw(TypeError)
 
     expect(function() {
-      return functional()
+      return zclId.functional()
     }).to.throw(TypeError)
     expect(function() {
-      return functional(undefined, 0x0005)
+      return zclId.functional(undefined, "5")
     }).to.throw(TypeError)
     expect(function() {
-      return functional(null, 0x0005)
+      return zclId.functional(null, "5")
     }).to.throw(TypeError)
     expect(function() {
-      return functional(NaN, 0x0005)
+      return zclId.functional(NaN, "5")
     }).to.throw(TypeError)
     expect(function() {
-      return functional([], 0x0005)
+      return zclId.functional([], "5")
     }).to.throw(TypeError)
     expect(function() {
-      return functional({}, 0x0005)
+      return zclId.functional({}, "5")
     }).to.throw(TypeError)
     expect(function() {
-      return functional(true, 0x0005)
+      return zclId.functional(true, "5")
     }).to.throw(TypeError)
     expect(function() {
-      return functional(new Date(), 0x0005)
+      return zclId.functional(new Date(), "5")
     }).to.throw(TypeError)
     expect(function() {
-      return functional(function() {}, 0x0005)
-    }).to.throw(TypeError)
-
-    expect(function() {
-      return functional()
-    }).to.throw(TypeError)
-    expect(function() {
-      return functional(undefined, "writeNoRsp")
-    }).to.throw(TypeError)
-    expect(function() {
-      return functional(null, "writeNoRsp")
-    }).to.throw(TypeError)
-    expect(function() {
-      return functional(NaN, "writeNoRsp")
-    }).to.throw(TypeError)
-    expect(function() {
-      return functional([], "writeNoRsp")
-    }).to.throw(TypeError)
-    expect(function() {
-      return functional({}, "writeNoRsp")
-    }).to.throw(TypeError)
-    expect(function() {
-      return functional(true, "writeNoRsp")
-    }).to.throw(TypeError)
-    expect(function() {
-      return functional(new Date(), "writeNoRsp")
-    }).to.throw(TypeError)
-    expect(function() {
-      return functional(function() {}, "writeNoRsp")
+      return zclId.functional(function() {}, "5")
     }).to.throw(TypeError)
 
     expect(function() {
-      return functional(5, 5)
+      return zclId.functional()
+    }).to.throw(TypeError)
+    expect(function() {
+      return zclId.functional(undefined, 0x0005)
+    }).to.throw(TypeError)
+    expect(function() {
+      return zclId.functional(null, 0x0005)
+    }).to.throw(TypeError)
+    expect(function() {
+      return zclId.functional(NaN, 0x0005)
+    }).to.throw(TypeError)
+    expect(function() {
+      return zclId.functional([], 0x0005)
+    }).to.throw(TypeError)
+    expect(function() {
+      return zclId.functional({}, 0x0005)
+    }).to.throw(TypeError)
+    expect(function() {
+      return zclId.functional(true, 0x0005)
+    }).to.throw(TypeError)
+    expect(function() {
+      return zclId.functional(new Date(), 0x0005)
+    }).to.throw(TypeError)
+    expect(function() {
+      return zclId.functional(function() {}, 0x0005)
+    }).to.throw(TypeError)
+
+    expect(function() {
+      return zclId.functional()
+    }).to.throw(TypeError)
+    expect(function() {
+      return zclId.functional(undefined, "writeNoRsp")
+    }).to.throw(TypeError)
+    expect(function() {
+      return zclId.functional(null, "writeNoRsp")
+    }).to.throw(TypeError)
+    expect(function() {
+      return zclId.functional(NaN, "writeNoRsp")
+    }).to.throw(TypeError)
+    expect(function() {
+      return zclId.functional([], "writeNoRsp")
+    }).to.throw(TypeError)
+    expect(function() {
+      return zclId.functional({}, "writeNoRsp")
+    }).to.throw(TypeError)
+    expect(function() {
+      return zclId.functional(true, "writeNoRsp")
+    }).to.throw(TypeError)
+    expect(function() {
+      return zclId.functional(new Date(), "writeNoRsp")
+    }).to.throw(TypeError)
+    expect(function() {
+      return zclId.functional(function() {}, "writeNoRsp")
+    }).to.throw(TypeError)
+
+    expect(function() {
+      return zclId.functional(5, 5)
     }).not.to.throw(Error)
     expect(function() {
-      return functional(5, "5")
+      return zclId.functional(5, "5")
     }).not.to.throw(Error)
     expect(function() {
-      return functional(5, 0x05)
+      return zclId.functional(5, 0x05)
     }).not.to.throw(Error)
     expect(function() {
-      return functional(5, "recall")
+      return zclId.functional(5, "recall")
     }).not.to.throw(Error)
     expect(function() {
-      return functional("5", 5)
+      return zclId.functional("5", 5)
     }).not.to.throw(Error)
     expect(function() {
-      return functional("5", "5")
+      return zclId.functional("5", "5")
     }).not.to.throw(Error)
     expect(function() {
-      return functional("5", 0x05)
+      return zclId.functional("5", 0x05)
     }).not.to.throw(Error)
     expect(function() {
-      return functional("5", "recall")
+      return zclId.functional("5", "recall")
     }).not.to.throw(Error)
     expect(function() {
-      return functional(0x0005, 5)
+      return zclId.functional(0x0005, 5)
     }).not.to.throw(Error)
     expect(function() {
-      return functional(0x0005, "5")
+      return zclId.functional(0x0005, "5")
     }).not.to.throw(Error)
     expect(function() {
-      return functional(0x0005, 0x05)
+      return zclId.functional(0x0005, 0x05)
     }).not.to.throw(Error)
     expect(function() {
-      return functional(0x0005, "recall")
+      return zclId.functional(0x0005, "recall")
     }).not.to.throw(Error)
     expect(function() {
-      return functional("genScenes", 5)
+      return zclId.functional("genScenes", 5)
     }).not.to.throw(Error)
     expect(function() {
-      return functional("genScenes", "5")
+      return zclId.functional("genScenes", "5")
     }).not.to.throw(Error)
     expect(function() {
-      return functional("genScenes", 0x05)
+      return zclId.functional("genScenes", 0x05)
     }).not.to.throw(Error)
     expect(function() {
-      return functional("genScenes", "recall")
+      return zclId.functional("genScenes", "recall")
     }).not.to.throw(Error)
   })
 
   it("should throw TypeError if input cmdId is not a number and not a string", function() {
     expect(function() {
-      return functional()
+      return zclId.functional()
     }).to.throw(TypeError)
     expect(function() {
-      return functional(5, undefined)
+      return zclId.functional(5, undefined)
     }).to.throw(TypeError)
     expect(function() {
-      return functional(5, null)
+      return zclId.functional(5, null)
     }).to.throw(TypeError)
     expect(function() {
-      return functional(5, NaN)
+      return zclId.functional(5, NaN)
     }).to.throw(TypeError)
     expect(function() {
-      return functional(5, [])
+      return zclId.functional(5, [])
     }).to.throw(TypeError)
     expect(function() {
-      return functional(5, {})
+      return zclId.functional(5, {})
     }).to.throw(TypeError)
     expect(function() {
-      return functional(5, true)
+      return zclId.functional(5, true)
     }).to.throw(TypeError)
     expect(function() {
-      return functional(5, new Date())
+      return zclId.functional(5, new Date())
     }).to.throw(TypeError)
     expect(function() {
-      return functional(5, function() {})
-    }).to.throw(TypeError)
-
-    expect(function() {
-      return functional()
-    }).to.throw(TypeError)
-    expect(function() {
-      return functional("5", undefined)
-    }).to.throw(TypeError)
-    expect(function() {
-      return functional("5", null)
-    }).to.throw(TypeError)
-    expect(function() {
-      return functional("5", NaN)
-    }).to.throw(TypeError)
-    expect(function() {
-      return functional("5", [])
-    }).to.throw(TypeError)
-    expect(function() {
-      return functional("5", {})
-    }).to.throw(TypeError)
-    expect(function() {
-      return functional("5", true)
-    }).to.throw(TypeError)
-    expect(function() {
-      return functional("5", new Date())
-    }).to.throw(TypeError)
-    expect(function() {
-      return functional("5", function() {})
+      return zclId.functional(5, function() {})
     }).to.throw(TypeError)
 
     expect(function() {
-      return functional()
+      return zclId.functional()
     }).to.throw(TypeError)
     expect(function() {
-      return functional(0x0005, undefined)
+      return zclId.functional("5", undefined)
     }).to.throw(TypeError)
     expect(function() {
-      return functional(0x0005, null)
+      return zclId.functional("5", null)
     }).to.throw(TypeError)
     expect(function() {
-      return functional(0x0005, NaN)
+      return zclId.functional("5", NaN)
     }).to.throw(TypeError)
     expect(function() {
-      return functional(0x0005, [])
+      return zclId.functional("5", [])
     }).to.throw(TypeError)
     expect(function() {
-      return functional(0x0005, {})
+      return zclId.functional("5", {})
     }).to.throw(TypeError)
     expect(function() {
-      return functional(0x0005, true)
+      return zclId.functional("5", true)
     }).to.throw(TypeError)
     expect(function() {
-      return functional(0x0005, new Date())
+      return zclId.functional("5", new Date())
     }).to.throw(TypeError)
     expect(function() {
-      return functional(0x0005, function() {})
-    }).to.throw(TypeError)
-
-    expect(function() {
-      return functional()
-    }).to.throw(TypeError)
-    expect(function() {
-      return functional("genScenes", undefined)
-    }).to.throw(TypeError)
-    expect(function() {
-      return functional("genScenes", null)
-    }).to.throw(TypeError)
-    expect(function() {
-      return functional("genScenes", NaN)
-    }).to.throw(TypeError)
-    expect(function() {
-      return functional("genScenes", [])
-    }).to.throw(TypeError)
-    expect(function() {
-      return functional("genScenes", {})
-    }).to.throw(TypeError)
-    expect(function() {
-      return functional("genScenes", true)
-    }).to.throw(TypeError)
-    expect(function() {
-      return functional("genScenes", new Date())
-    }).to.throw(TypeError)
-    expect(function() {
-      return functional("genScenes", function() {})
+      return zclId.functional("5", function() {})
     }).to.throw(TypeError)
 
     expect(function() {
-      return functional(5, 5)
+      return zclId.functional()
+    }).to.throw(TypeError)
+    expect(function() {
+      return zclId.functional(0x0005, undefined)
+    }).to.throw(TypeError)
+    expect(function() {
+      return zclId.functional(0x0005, null)
+    }).to.throw(TypeError)
+    expect(function() {
+      return zclId.functional(0x0005, NaN)
+    }).to.throw(TypeError)
+    expect(function() {
+      return zclId.functional(0x0005, [])
+    }).to.throw(TypeError)
+    expect(function() {
+      return zclId.functional(0x0005, {})
+    }).to.throw(TypeError)
+    expect(function() {
+      return zclId.functional(0x0005, true)
+    }).to.throw(TypeError)
+    expect(function() {
+      return zclId.functional(0x0005, new Date())
+    }).to.throw(TypeError)
+    expect(function() {
+      return zclId.functional(0x0005, function() {})
+    }).to.throw(TypeError)
+
+    expect(function() {
+      return zclId.functional()
+    }).to.throw(TypeError)
+    expect(function() {
+      return zclId.functional("genScenes", undefined)
+    }).to.throw(TypeError)
+    expect(function() {
+      return zclId.functional("genScenes", null)
+    }).to.throw(TypeError)
+    expect(function() {
+      return zclId.functional("genScenes", NaN)
+    }).to.throw(TypeError)
+    expect(function() {
+      return zclId.functional("genScenes", [])
+    }).to.throw(TypeError)
+    expect(function() {
+      return zclId.functional("genScenes", {})
+    }).to.throw(TypeError)
+    expect(function() {
+      return zclId.functional("genScenes", true)
+    }).to.throw(TypeError)
+    expect(function() {
+      return zclId.functional("genScenes", new Date())
+    }).to.throw(TypeError)
+    expect(function() {
+      return zclId.functional("genScenes", function() {})
+    }).to.throw(TypeError)
+
+    expect(function() {
+      return zclId.functional(5, 5)
     }).not.to.throw(Error)
     expect(function() {
-      return functional(5, "5")
+      return zclId.functional(5, "5")
     }).not.to.throw(Error)
     expect(function() {
-      return functional(5, 0x05)
+      return zclId.functional(5, 0x05)
     }).not.to.throw(Error)
     expect(function() {
-      return functional(5, "recall")
+      return zclId.functional(5, "recall")
     }).not.to.throw(Error)
     expect(function() {
-      return functional("5", 5)
+      return zclId.functional("5", 5)
     }).not.to.throw(Error)
     expect(function() {
-      return functional("5", "5")
+      return zclId.functional("5", "5")
     }).not.to.throw(Error)
     expect(function() {
-      return functional("5", 0x05)
+      return zclId.functional("5", 0x05)
     }).not.to.throw(Error)
     expect(function() {
-      return functional("5", "recall")
+      return zclId.functional("5", "recall")
     }).not.to.throw(Error)
     expect(function() {
-      return functional(0x0005, 5)
+      return zclId.functional(0x0005, 5)
     }).not.to.throw(Error)
     expect(function() {
-      return functional(0x0005, "5")
+      return zclId.functional(0x0005, "5")
     }).not.to.throw(Error)
     expect(function() {
-      return functional(0x0005, 0x05)
+      return zclId.functional(0x0005, 0x05)
     }).not.to.throw(Error)
     expect(function() {
-      return functional(0x0005, "recall")
+      return zclId.functional(0x0005, "recall")
     }).not.to.throw(Error)
     expect(function() {
-      return functional("genScenes", 5)
+      return zclId.functional("genScenes", 5)
     }).not.to.throw(Error)
     expect(function() {
-      return functional("genScenes", "5")
+      return zclId.functional("genScenes", "5")
     }).not.to.throw(Error)
     expect(function() {
-      return functional("genScenes", 0x05)
+      return zclId.functional("genScenes", 0x05)
     }).not.to.throw(Error)
     expect(function() {
-      return functional("genScenes", "recall")
+      return zclId.functional("genScenes", "recall")
     }).not.to.throw(Error)
   })
 })
 
 describe("#.getCmdRsp", function() {
   it("should be a function", function() {
-    expect(getCmdRsp).to.be.a("function")
+    expect(zclId.getCmdRsp).to.be.a("function")
   })
 
   it("should throw TypeError if input cId is not a number and not a string", function() {
     expect(function() {
-      return getCmdRsp()
+      return zclId.getCmdRsp()
     }).to.throw(TypeError)
     expect(function() {
-      return getCmdRsp(undefined, 0)
+      return zclId.getCmdRsp(undefined, 0)
     }).to.throw(TypeError)
     expect(function() {
-      return getCmdRsp(null, 0)
+      return zclId.getCmdRsp(null, 0)
     }).to.throw(TypeError)
     expect(function() {
-      return getCmdRsp(NaN, 0)
+      return zclId.getCmdRsp(NaN, 0)
     }).to.throw(TypeError)
     expect(function() {
-      return getCmdRsp([], 0)
+      return zclId.getCmdRsp([], 0)
     }).to.throw(TypeError)
     expect(function() {
-      return getCmdRsp({}, 0)
+      return zclId.getCmdRsp({}, 0)
     }).to.throw(TypeError)
     expect(function() {
-      return getCmdRsp(true, 0)
+      return zclId.getCmdRsp(true, 0)
     }).to.throw(TypeError)
     expect(function() {
-      return getCmdRsp(new Date(), 0)
+      return zclId.getCmdRsp(new Date(), 0)
     }).to.throw(TypeError)
     expect(function() {
-      return getCmdRsp(function() {}, 0)
-    }).to.throw(TypeError)
-
-    expect(function() {
-      return getCmdRsp()
-    }).to.throw(TypeError)
-    expect(function() {
-      return getCmdRsp(undefined, "0")
-    }).to.throw(TypeError)
-    expect(function() {
-      return getCmdRsp(null, "0")
-    }).to.throw(TypeError)
-    expect(function() {
-      return getCmdRsp(NaN, "0")
-    }).to.throw(TypeError)
-    expect(function() {
-      return getCmdRsp([], "0")
-    }).to.throw(TypeError)
-    expect(function() {
-      return getCmdRsp({}, "0")
-    }).to.throw(TypeError)
-    expect(function() {
-      return getCmdRsp(true, "0")
-    }).to.throw(TypeError)
-    expect(function() {
-      return getCmdRsp(new Date(), "0")
-    }).to.throw(TypeError)
-    expect(function() {
-      return getCmdRsp(function() {}, "0")
+      return zclId.getCmdRsp(function() {}, 0)
     }).to.throw(TypeError)
 
     expect(function() {
-      return getCmdRsp()
+      return zclId.getCmdRsp()
     }).to.throw(TypeError)
     expect(function() {
-      return getCmdRsp(undefined, 0x00)
+      return zclId.getCmdRsp(undefined, "0")
     }).to.throw(TypeError)
     expect(function() {
-      return getCmdRsp(null, 0x00)
+      return zclId.getCmdRsp(null, "0")
     }).to.throw(TypeError)
     expect(function() {
-      return getCmdRsp(NaN, 0x00)
+      return zclId.getCmdRsp(NaN, "0")
     }).to.throw(TypeError)
     expect(function() {
-      return getCmdRsp([], 0x00)
+      return zclId.getCmdRsp([], "0")
     }).to.throw(TypeError)
     expect(function() {
-      return getCmdRsp({}, 0x00)
+      return zclId.getCmdRsp({}, "0")
     }).to.throw(TypeError)
     expect(function() {
-      return getCmdRsp(true, 0x00)
+      return zclId.getCmdRsp(true, "0")
     }).to.throw(TypeError)
     expect(function() {
-      return getCmdRsp(new Date(), 0x00)
+      return zclId.getCmdRsp(new Date(), "0")
     }).to.throw(TypeError)
     expect(function() {
-      return getCmdRsp(function() {}, 0x00)
-    }).to.throw(TypeError)
-
-    expect(function() {
-      return getCmdRsp()
-    }).to.throw(TypeError)
-    expect(function() {
-      return getCmdRsp(undefined, "Rsp")
-    }).to.throw(TypeError)
-    expect(function() {
-      return getCmdRsp(null, "Rsp")
-    }).to.throw(TypeError)
-    expect(function() {
-      return getCmdRsp(NaN, "Rsp")
-    }).to.throw(TypeError)
-    expect(function() {
-      return getCmdRsp([], "Rsp")
-    }).to.throw(TypeError)
-    expect(function() {
-      return getCmdRsp({}, "Rsp")
-    }).to.throw(TypeError)
-    expect(function() {
-      return getCmdRsp(true, "Rsp")
-    }).to.throw(TypeError)
-    expect(function() {
-      return getCmdRsp(new Date(), "Rsp")
-    }).to.throw(TypeError)
-    expect(function() {
-      return getCmdRsp(function() {}, "Rsp")
+      return zclId.getCmdRsp(function() {}, "0")
     }).to.throw(TypeError)
 
     expect(function() {
-      return getCmdRsp(5, 0)
+      return zclId.getCmdRsp()
+    }).to.throw(TypeError)
+    expect(function() {
+      return zclId.getCmdRsp(undefined, 0x00)
+    }).to.throw(TypeError)
+    expect(function() {
+      return zclId.getCmdRsp(null, 0x00)
+    }).to.throw(TypeError)
+    expect(function() {
+      return zclId.getCmdRsp(NaN, 0x00)
+    }).to.throw(TypeError)
+    expect(function() {
+      return zclId.getCmdRsp([], 0x00)
+    }).to.throw(TypeError)
+    expect(function() {
+      return zclId.getCmdRsp({}, 0x00)
+    }).to.throw(TypeError)
+    expect(function() {
+      return zclId.getCmdRsp(true, 0x00)
+    }).to.throw(TypeError)
+    expect(function() {
+      return zclId.getCmdRsp(new Date(), 0x00)
+    }).to.throw(TypeError)
+    expect(function() {
+      return zclId.getCmdRsp(function() {}, 0x00)
+    }).to.throw(TypeError)
+
+    expect(function() {
+      return zclId.getCmdRsp()
+    }).to.throw(TypeError)
+    expect(function() {
+      return zclId.getCmdRsp(undefined, "Rsp")
+    }).to.throw(TypeError)
+    expect(function() {
+      return zclId.getCmdRsp(null, "Rsp")
+    }).to.throw(TypeError)
+    expect(function() {
+      return zclId.getCmdRsp(NaN, "Rsp")
+    }).to.throw(TypeError)
+    expect(function() {
+      return zclId.getCmdRsp([], "Rsp")
+    }).to.throw(TypeError)
+    expect(function() {
+      return zclId.getCmdRsp({}, "Rsp")
+    }).to.throw(TypeError)
+    expect(function() {
+      return zclId.getCmdRsp(true, "Rsp")
+    }).to.throw(TypeError)
+    expect(function() {
+      return zclId.getCmdRsp(new Date(), "Rsp")
+    }).to.throw(TypeError)
+    expect(function() {
+      return zclId.getCmdRsp(function() {}, "Rsp")
+    }).to.throw(TypeError)
+
+    expect(function() {
+      return zclId.getCmdRsp(5, 0)
     }).not.to.throw(Error)
     expect(function() {
-      return getCmdRsp(5, "0")
+      return zclId.getCmdRsp(5, "0")
     }).not.to.throw(Error)
     expect(function() {
-      return getCmdRsp(5, 0x00)
+      return zclId.getCmdRsp(5, 0x00)
     }).not.to.throw(Error)
     expect(function() {
-      return getCmdRsp(5, "Rsp")
+      return zclId.getCmdRsp(5, "Rsp")
     }).not.to.throw(Error)
     expect(function() {
-      return getCmdRsp("5", 0)
+      return zclId.getCmdRsp("5", 0)
     }).not.to.throw(Error)
     expect(function() {
-      return getCmdRsp("5", "0")
+      return zclId.getCmdRsp("5", "0")
     }).not.to.throw(Error)
     expect(function() {
-      return getCmdRsp("5", 0x00)
+      return zclId.getCmdRsp("5", 0x00)
     }).not.to.throw(Error)
     expect(function() {
-      return getCmdRsp("5", "Rsp")
+      return zclId.getCmdRsp("5", "Rsp")
     }).not.to.throw(Error)
     expect(function() {
-      return getCmdRsp(0x0005, 0)
+      return zclId.getCmdRsp(0x0005, 0)
     }).not.to.throw(Error)
     expect(function() {
-      return getCmdRsp(0x0005, "0")
+      return zclId.getCmdRsp(0x0005, "0")
     }).not.to.throw(Error)
     expect(function() {
-      return getCmdRsp(0x0005, 0x00)
+      return zclId.getCmdRsp(0x0005, 0x00)
     }).not.to.throw(Error)
     expect(function() {
-      return getCmdRsp(0x0005, "Rsp")
+      return zclId.getCmdRsp(0x0005, "Rsp")
     }).not.to.throw(Error)
     expect(function() {
-      return getCmdRsp("genScenes", 0)
+      return zclId.getCmdRsp("genScenes", 0)
     }).not.to.throw(Error)
     expect(function() {
-      return getCmdRsp("genScenes", "0")
+      return zclId.getCmdRsp("genScenes", "0")
     }).not.to.throw(Error)
     expect(function() {
-      return getCmdRsp("genScenes", 0x00)
+      return zclId.getCmdRsp("genScenes", 0x00)
     }).not.to.throw(Error)
     expect(function() {
-      return getCmdRsp("genScenes", "Rsp")
+      return zclId.getCmdRsp("genScenes", "Rsp")
     }).not.to.throw(Error)
   })
 
   it("should throw TypeError if input rspId is not a number and not a string", function() {
     expect(function() {
-      return getCmdRsp()
+      return zclId.getCmdRsp()
     }).to.throw(TypeError)
     expect(function() {
-      return getCmdRsp(5, undefined)
+      return zclId.getCmdRsp(5, undefined)
     }).to.throw(TypeError)
     expect(function() {
-      return getCmdRsp(5, null)
+      return zclId.getCmdRsp(5, null)
     }).to.throw(TypeError)
     expect(function() {
-      return getCmdRsp(5, NaN)
+      return zclId.getCmdRsp(5, NaN)
     }).to.throw(TypeError)
     expect(function() {
-      return getCmdRsp(5, [])
+      return zclId.getCmdRsp(5, [])
     }).to.throw(TypeError)
     expect(function() {
-      return getCmdRsp(5, {})
+      return zclId.getCmdRsp(5, {})
     }).to.throw(TypeError)
     expect(function() {
-      return getCmdRsp(5, true)
+      return zclId.getCmdRsp(5, true)
     }).to.throw(TypeError)
     expect(function() {
-      return getCmdRsp(5, new Date())
+      return zclId.getCmdRsp(5, new Date())
     }).to.throw(TypeError)
     expect(function() {
-      return getCmdRsp(5, function() {})
-    }).to.throw(TypeError)
-
-    expect(function() {
-      return getCmdRsp()
-    }).to.throw(TypeError)
-    expect(function() {
-      return getCmdRsp("5", undefined)
-    }).to.throw(TypeError)
-    expect(function() {
-      return getCmdRsp("5", null)
-    }).to.throw(TypeError)
-    expect(function() {
-      return getCmdRsp("5", NaN)
-    }).to.throw(TypeError)
-    expect(function() {
-      return getCmdRsp("5", [])
-    }).to.throw(TypeError)
-    expect(function() {
-      return getCmdRsp("5", {})
-    }).to.throw(TypeError)
-    expect(function() {
-      return getCmdRsp("5", true)
-    }).to.throw(TypeError)
-    expect(function() {
-      return getCmdRsp("5", new Date())
-    }).to.throw(TypeError)
-    expect(function() {
-      return getCmdRsp("5", function() {})
+      return zclId.getCmdRsp(5, function() {})
     }).to.throw(TypeError)
 
     expect(function() {
-      return getCmdRsp()
+      return zclId.getCmdRsp()
     }).to.throw(TypeError)
     expect(function() {
-      return getCmdRsp(0x0005, undefined)
+      return zclId.getCmdRsp("5", undefined)
     }).to.throw(TypeError)
     expect(function() {
-      return getCmdRsp(0x0005, null)
+      return zclId.getCmdRsp("5", null)
     }).to.throw(TypeError)
     expect(function() {
-      return getCmdRsp(0x0005, NaN)
+      return zclId.getCmdRsp("5", NaN)
     }).to.throw(TypeError)
     expect(function() {
-      return getCmdRsp(0x0005, [])
+      return zclId.getCmdRsp("5", [])
     }).to.throw(TypeError)
     expect(function() {
-      return getCmdRsp(0x0005, {})
+      return zclId.getCmdRsp("5", {})
     }).to.throw(TypeError)
     expect(function() {
-      return getCmdRsp(0x0005, true)
+      return zclId.getCmdRsp("5", true)
     }).to.throw(TypeError)
     expect(function() {
-      return getCmdRsp(0x0005, new Date())
+      return zclId.getCmdRsp("5", new Date())
     }).to.throw(TypeError)
     expect(function() {
-      return getCmdRsp(0x0005, function() {})
-    }).to.throw(TypeError)
-
-    expect(function() {
-      return getCmdRsp()
-    }).to.throw(TypeError)
-    expect(function() {
-      return getCmdRsp("genScenes", undefined)
-    }).to.throw(TypeError)
-    expect(function() {
-      return getCmdRsp("genScenes", null)
-    }).to.throw(TypeError)
-    expect(function() {
-      return getCmdRsp("genScenes", NaN)
-    }).to.throw(TypeError)
-    expect(function() {
-      return getCmdRsp("genScenes", [])
-    }).to.throw(TypeError)
-    expect(function() {
-      return getCmdRsp("genScenes", {})
-    }).to.throw(TypeError)
-    expect(function() {
-      return getCmdRsp("genScenes", true)
-    }).to.throw(TypeError)
-    expect(function() {
-      return getCmdRsp("genScenes", new Date())
-    }).to.throw(TypeError)
-    expect(function() {
-      return getCmdRsp("genScenes", function() {})
+      return zclId.getCmdRsp("5", function() {})
     }).to.throw(TypeError)
 
     expect(function() {
-      return getCmdRsp(5, 0)
+      return zclId.getCmdRsp()
+    }).to.throw(TypeError)
+    expect(function() {
+      return zclId.getCmdRsp(0x0005, undefined)
+    }).to.throw(TypeError)
+    expect(function() {
+      return zclId.getCmdRsp(0x0005, null)
+    }).to.throw(TypeError)
+    expect(function() {
+      return zclId.getCmdRsp(0x0005, NaN)
+    }).to.throw(TypeError)
+    expect(function() {
+      return zclId.getCmdRsp(0x0005, [])
+    }).to.throw(TypeError)
+    expect(function() {
+      return zclId.getCmdRsp(0x0005, {})
+    }).to.throw(TypeError)
+    expect(function() {
+      return zclId.getCmdRsp(0x0005, true)
+    }).to.throw(TypeError)
+    expect(function() {
+      return zclId.getCmdRsp(0x0005, new Date())
+    }).to.throw(TypeError)
+    expect(function() {
+      return zclId.getCmdRsp(0x0005, function() {})
+    }).to.throw(TypeError)
+
+    expect(function() {
+      return zclId.getCmdRsp()
+    }).to.throw(TypeError)
+    expect(function() {
+      return zclId.getCmdRsp("genScenes", undefined)
+    }).to.throw(TypeError)
+    expect(function() {
+      return zclId.getCmdRsp("genScenes", null)
+    }).to.throw(TypeError)
+    expect(function() {
+      return zclId.getCmdRsp("genScenes", NaN)
+    }).to.throw(TypeError)
+    expect(function() {
+      return zclId.getCmdRsp("genScenes", [])
+    }).to.throw(TypeError)
+    expect(function() {
+      return zclId.getCmdRsp("genScenes", {})
+    }).to.throw(TypeError)
+    expect(function() {
+      return zclId.getCmdRsp("genScenes", true)
+    }).to.throw(TypeError)
+    expect(function() {
+      return zclId.getCmdRsp("genScenes", new Date())
+    }).to.throw(TypeError)
+    expect(function() {
+      return zclId.getCmdRsp("genScenes", function() {})
+    }).to.throw(TypeError)
+
+    expect(function() {
+      return zclId.getCmdRsp(5, 0)
     }).not.to.throw(Error)
     expect(function() {
-      return getCmdRsp(5, "0")
+      return zclId.getCmdRsp(5, "0")
     }).not.to.throw(Error)
     expect(function() {
-      return getCmdRsp(5, 0x00)
+      return zclId.getCmdRsp(5, 0x00)
     }).not.to.throw(Error)
     expect(function() {
-      return getCmdRsp(5, "Rsp")
+      return zclId.getCmdRsp(5, "Rsp")
     }).not.to.throw(Error)
     expect(function() {
-      return getCmdRsp("5", 0)
+      return zclId.getCmdRsp("5", 0)
     }).not.to.throw(Error)
     expect(function() {
-      return getCmdRsp("5", "0")
+      return zclId.getCmdRsp("5", "0")
     }).not.to.throw(Error)
     expect(function() {
-      return getCmdRsp("5", 0x00)
+      return zclId.getCmdRsp("5", 0x00)
     }).not.to.throw(Error)
     expect(function() {
-      return getCmdRsp("5", "Rsp")
+      return zclId.getCmdRsp("5", "Rsp")
     }).not.to.throw(Error)
     expect(function() {
-      return getCmdRsp(0x0005, 0)
+      return zclId.getCmdRsp(0x0005, 0)
     }).not.to.throw(Error)
     expect(function() {
-      return getCmdRsp(0x0005, "0")
+      return zclId.getCmdRsp(0x0005, "0")
     }).not.to.throw(Error)
     expect(function() {
-      return getCmdRsp(0x0005, 0x00)
+      return zclId.getCmdRsp(0x0005, 0x00)
     }).not.to.throw(Error)
     expect(function() {
-      return getCmdRsp(0x0005, "Rsp")
+      return zclId.getCmdRsp(0x0005, "Rsp")
     }).not.to.throw(Error)
     expect(function() {
-      return getCmdRsp("genScenes", 0)
+      return zclId.getCmdRsp("genScenes", 0)
     }).not.to.throw(Error)
     expect(function() {
-      return getCmdRsp("genScenes", "0")
+      return zclId.getCmdRsp("genScenes", "0")
     }).not.to.throw(Error)
     expect(function() {
-      return getCmdRsp("genScenes", 0x00)
+      return zclId.getCmdRsp("genScenes", 0x00)
     }).not.to.throw(Error)
     expect(function() {
-      return getCmdRsp("genScenes", "Rsp")
+      return zclId.getCmdRsp("genScenes", "Rsp")
     }).not.to.throw(Error)
   })
 })
 
 describe("#.attrList", function() {
   it("should be a function", function() {
-    expect(attrList).to.be.a("function")
+    expect(zclId.attrList).to.be.a("function")
   })
 
   it("should throw TypeError if input cId is not a number and not a string", function() {
     expect(function() {
-      return attrList()
+      return zclId.attrList()
     }).to.throw(TypeError)
     expect(function() {
-      return attrList(undefined)
+      return zclId.attrList(undefined)
     }).to.throw(TypeError)
     expect(function() {
-      return attrList(null)
+      return zclId.attrList(null)
     }).to.throw(TypeError)
     expect(function() {
-      return attrList(NaN)
+      return zclId.attrList(NaN)
     }).to.throw(TypeError)
     expect(function() {
-      return attrList([])
+      return zclId.attrList([])
     }).to.throw(TypeError)
     expect(function() {
-      return attrList({})
+      return zclId.attrList({})
     }).to.throw(TypeError)
     expect(function() {
-      return attrList(true)
+      return zclId.attrList(true)
     }).to.throw(TypeError)
     expect(function() {
-      return attrList(new Date())
+      return zclId.attrList(new Date())
     }).to.throw(TypeError)
     expect(function() {
-      return attrList(function() {})
+      return zclId.attrList(function() {})
     }).to.throw(TypeError)
 
     expect(function() {
-      return attrList(3)
+      return zclId.attrList(3)
     }).not.to.throw(Error)
     expect(function() {
-      return attrList("3")
+      return zclId.attrList("3")
     }).not.to.throw(Error)
     expect(function() {
-      return attrList(0x0003)
+      return zclId.attrList(0x0003)
     }).not.to.throw(Error)
     expect(function() {
-      return attrList("0x0003")
+      return zclId.attrList("0x0003")
     }).not.to.throw(Error)
     expect(function() {
-      return attrList("genIdentify")
+      return zclId.attrList("genIdentify")
     }).not.to.throw(Error)
   })
 })
 
 describe("#.attr", function() {
   it("should be a function", function() {
-    expect(attr).to.be.a("function")
+    expect(zclId.attr).to.be.a("function")
   })
 
   it("should throw TypeError if input cId is not a number and not a string", function() {
     expect(function() {
-      return attr()
+      return zclId.attr()
     }).to.throw(TypeError)
     expect(function() {
-      return attr(undefined, 2)
+      return zclId.attr(undefined, 2)
     }).to.throw(TypeError)
     expect(function() {
-      return attr(null, 2)
+      return zclId.attr(null, 2)
     }).to.throw(TypeError)
     expect(function() {
-      return attr(NaN, 2)
+      return zclId.attr(NaN, 2)
     }).to.throw(TypeError)
     expect(function() {
-      return attr([], 2)
+      return zclId.attr([], 2)
     }).to.throw(TypeError)
     expect(function() {
-      return attr({}, 2)
+      return zclId.attr({}, 2)
     }).to.throw(TypeError)
     expect(function() {
-      return attr(true, 2)
+      return zclId.attr(true, 2)
     }).to.throw(TypeError)
     expect(function() {
-      return attr(new Date(), 2)
+      return zclId.attr(new Date(), 2)
     }).to.throw(TypeError)
     expect(function() {
-      return attr(function() {}, 2)
-    }).to.throw(TypeError)
-
-    expect(function() {
-      return attr()
-    }).to.throw(TypeError)
-    expect(function() {
-      return attr(undefined, "2")
-    }).to.throw(TypeError)
-    expect(function() {
-      return attr(null, "2")
-    }).to.throw(TypeError)
-    expect(function() {
-      return attr(NaN, "2")
-    }).to.throw(TypeError)
-    expect(function() {
-      return attr([], "2")
-    }).to.throw(TypeError)
-    expect(function() {
-      return attr({}, "2")
-    }).to.throw(TypeError)
-    expect(function() {
-      return attr(true, "2")
-    }).to.throw(TypeError)
-    expect(function() {
-      return attr(new Date(), "2")
-    }).to.throw(TypeError)
-    expect(function() {
-      return attr(function() {}, "2")
+      return zclId.attr(function() {}, 2)
     }).to.throw(TypeError)
 
     expect(function() {
-      return attr()
+      return zclId.attr()
     }).to.throw(TypeError)
     expect(function() {
-      return attr(undefined, 0x0002)
+      return zclId.attr(undefined, "2")
     }).to.throw(TypeError)
     expect(function() {
-      return attr(null, 0x0002)
+      return zclId.attr(null, "2")
     }).to.throw(TypeError)
     expect(function() {
-      return attr(NaN, 0x0002)
+      return zclId.attr(NaN, "2")
     }).to.throw(TypeError)
     expect(function() {
-      return attr([], 0x0002)
+      return zclId.attr([], "2")
     }).to.throw(TypeError)
     expect(function() {
-      return attr({}, 0x0002)
+      return zclId.attr({}, "2")
     }).to.throw(TypeError)
     expect(function() {
-      return attr(true, 0x0002)
+      return zclId.attr(true, "2")
     }).to.throw(TypeError)
     expect(function() {
-      return attr(new Date(), 0x0002)
+      return zclId.attr(new Date(), "2")
     }).to.throw(TypeError)
     expect(function() {
-      return attr(function() {}, 0x0002)
-    }).to.throw(TypeError)
-
-    expect(function() {
-      return attr()
-    }).to.throw(TypeError)
-    expect(function() {
-      return attr(undefined, "currentGroup")
-    }).to.throw(TypeError)
-    expect(function() {
-      return attr(null, "currentGroup")
-    }).to.throw(TypeError)
-    expect(function() {
-      return attr(NaN, "currentGroup")
-    }).to.throw(TypeError)
-    expect(function() {
-      return attr([], "currentGroup")
-    }).to.throw(TypeError)
-    expect(function() {
-      return attr({}, "currentGroup")
-    }).to.throw(TypeError)
-    expect(function() {
-      return attr(true, "currentGroup")
-    }).to.throw(TypeError)
-    expect(function() {
-      return attr(new Date(), "currentGroup")
-    }).to.throw(TypeError)
-    expect(function() {
-      return attr(function() {}, "currentGroup")
+      return zclId.attr(function() {}, "2")
     }).to.throw(TypeError)
 
     expect(function() {
-      return attr(5, 2)
+      return zclId.attr()
+    }).to.throw(TypeError)
+    expect(function() {
+      return zclId.attr(undefined, 0x0002)
+    }).to.throw(TypeError)
+    expect(function() {
+      return zclId.attr(null, 0x0002)
+    }).to.throw(TypeError)
+    expect(function() {
+      return zclId.attr(NaN, 0x0002)
+    }).to.throw(TypeError)
+    expect(function() {
+      return zclId.attr([], 0x0002)
+    }).to.throw(TypeError)
+    expect(function() {
+      return zclId.attr({}, 0x0002)
+    }).to.throw(TypeError)
+    expect(function() {
+      return zclId.attr(true, 0x0002)
+    }).to.throw(TypeError)
+    expect(function() {
+      return zclId.attr(new Date(), 0x0002)
+    }).to.throw(TypeError)
+    expect(function() {
+      return zclId.attr(function() {}, 0x0002)
+    }).to.throw(TypeError)
+
+    expect(function() {
+      return zclId.attr()
+    }).to.throw(TypeError)
+    expect(function() {
+      return zclId.attr(undefined, "currentGroup")
+    }).to.throw(TypeError)
+    expect(function() {
+      return zclId.attr(null, "currentGroup")
+    }).to.throw(TypeError)
+    expect(function() {
+      return zclId.attr(NaN, "currentGroup")
+    }).to.throw(TypeError)
+    expect(function() {
+      return zclId.attr([], "currentGroup")
+    }).to.throw(TypeError)
+    expect(function() {
+      return zclId.attr({}, "currentGroup")
+    }).to.throw(TypeError)
+    expect(function() {
+      return zclId.attr(true, "currentGroup")
+    }).to.throw(TypeError)
+    expect(function() {
+      return zclId.attr(new Date(), "currentGroup")
+    }).to.throw(TypeError)
+    expect(function() {
+      return zclId.attr(function() {}, "currentGroup")
+    }).to.throw(TypeError)
+
+    expect(function() {
+      return zclId.attr(5, 2)
     }).not.to.throw(Error)
     expect(function() {
-      return attr(5, "2")
+      return zclId.attr(5, "2")
     }).not.to.throw(Error)
     expect(function() {
-      return attr(5, 0x0002)
+      return zclId.attr(5, 0x0002)
     }).not.to.throw(Error)
     expect(function() {
-      return attr(5, "currentGroup")
+      return zclId.attr(5, "currentGroup")
     }).not.to.throw(Error)
     expect(function() {
-      return attr("5", 2)
+      return zclId.attr("5", 2)
     }).not.to.throw(Error)
     expect(function() {
-      return attr("5", "2")
+      return zclId.attr("5", "2")
     }).not.to.throw(Error)
     expect(function() {
-      return attr("5", 0x0002)
+      return zclId.attr("5", 0x0002)
     }).not.to.throw(Error)
     expect(function() {
-      return attr("5", "currentGroup")
+      return zclId.attr("5", "currentGroup")
     }).not.to.throw(Error)
     expect(function() {
-      return attr(0x0005, 2)
+      return zclId.attr(0x0005, 2)
     }).not.to.throw(Error)
     expect(function() {
-      return attr(0x0005, "2")
+      return zclId.attr(0x0005, "2")
     }).not.to.throw(Error)
     expect(function() {
-      return attr(0x0005, 0x0002)
+      return zclId.attr(0x0005, 0x0002)
     }).not.to.throw(Error)
     expect(function() {
-      return attr(0x0005, "currentGroup")
+      return zclId.attr(0x0005, "currentGroup")
     }).not.to.throw(Error)
     expect(function() {
-      return attr("genScenes", 2)
+      return zclId.attr("genScenes", 2)
     }).not.to.throw(Error)
     expect(function() {
-      return attr("genScenes", "2")
+      return zclId.attr("genScenes", "2")
     }).not.to.throw(Error)
     expect(function() {
-      return attr("genScenes", 0x0002)
+      return zclId.attr("genScenes", 0x0002)
     }).not.to.throw(Error)
     expect(function() {
-      return attr("genScenes", "currentGroup")
+      return zclId.attr("genScenes", "currentGroup")
     }).not.to.throw(Error)
   })
 
   it("should throw TypeError if input attrId is not a number and not a string", function() {
     expect(function() {
-      return attr()
+      return zclId.attr()
     }).to.throw(TypeError)
     expect(function() {
-      return attr(5, undefined)
+      return zclId.attr(5, undefined)
     }).to.throw(TypeError)
     expect(function() {
-      return attr(5, null)
+      return zclId.attr(5, null)
     }).to.throw(TypeError)
     expect(function() {
-      return attr(5, NaN)
+      return zclId.attr(5, NaN)
     }).to.throw(TypeError)
     expect(function() {
-      return attr(5, [])
+      return zclId.attr(5, [])
     }).to.throw(TypeError)
     expect(function() {
-      return attr(5, {})
+      return zclId.attr(5, {})
     }).to.throw(TypeError)
     expect(function() {
-      return attr(5, true)
+      return zclId.attr(5, true)
     }).to.throw(TypeError)
     expect(function() {
-      return attr(5, new Date())
+      return zclId.attr(5, new Date())
     }).to.throw(TypeError)
     expect(function() {
-      return attr(5, function() {})
-    }).to.throw(TypeError)
-
-    expect(function() {
-      return attr()
-    }).to.throw(TypeError)
-    expect(function() {
-      return attr("5", undefined)
-    }).to.throw(TypeError)
-    expect(function() {
-      return attr("5", null)
-    }).to.throw(TypeError)
-    expect(function() {
-      return attr("5", NaN)
-    }).to.throw(TypeError)
-    expect(function() {
-      return attr("5", [])
-    }).to.throw(TypeError)
-    expect(function() {
-      return attr("5", {})
-    }).to.throw(TypeError)
-    expect(function() {
-      return attr("5", true)
-    }).to.throw(TypeError)
-    expect(function() {
-      return attr("5", new Date())
-    }).to.throw(TypeError)
-    expect(function() {
-      return attr("5", function() {})
+      return zclId.attr(5, function() {})
     }).to.throw(TypeError)
 
     expect(function() {
-      return attr()
+      return zclId.attr()
     }).to.throw(TypeError)
     expect(function() {
-      return attr(0x0005, undefined)
+      return zclId.attr("5", undefined)
     }).to.throw(TypeError)
     expect(function() {
-      return attr(0x0005, null)
+      return zclId.attr("5", null)
     }).to.throw(TypeError)
     expect(function() {
-      return attr(0x0005, NaN)
+      return zclId.attr("5", NaN)
     }).to.throw(TypeError)
     expect(function() {
-      return attr(0x0005, [])
+      return zclId.attr("5", [])
     }).to.throw(TypeError)
     expect(function() {
-      return attr(0x0005, {})
+      return zclId.attr("5", {})
     }).to.throw(TypeError)
     expect(function() {
-      return attr(0x0005, true)
+      return zclId.attr("5", true)
     }).to.throw(TypeError)
     expect(function() {
-      return attr(0x0005, new Date())
+      return zclId.attr("5", new Date())
     }).to.throw(TypeError)
     expect(function() {
-      return attr(0x0005, function() {})
-    }).to.throw(TypeError)
-
-    expect(function() {
-      return attr()
-    }).to.throw(TypeError)
-    expect(function() {
-      return attr("genScenes", undefined)
-    }).to.throw(TypeError)
-    expect(function() {
-      return attr("genScenes", null)
-    }).to.throw(TypeError)
-    expect(function() {
-      return attr("genScenes", NaN)
-    }).to.throw(TypeError)
-    expect(function() {
-      return attr("genScenes", [])
-    }).to.throw(TypeError)
-    expect(function() {
-      return attr("genScenes", {})
-    }).to.throw(TypeError)
-    expect(function() {
-      return attr("genScenes", true)
-    }).to.throw(TypeError)
-    expect(function() {
-      return attr("genScenes", new Date())
-    }).to.throw(TypeError)
-    expect(function() {
-      return attr("genScenes", function() {})
+      return zclId.attr("5", function() {})
     }).to.throw(TypeError)
 
     expect(function() {
-      return attr(5, 2)
+      return zclId.attr()
+    }).to.throw(TypeError)
+    expect(function() {
+      return zclId.attr(0x0005, undefined)
+    }).to.throw(TypeError)
+    expect(function() {
+      return zclId.attr(0x0005, null)
+    }).to.throw(TypeError)
+    expect(function() {
+      return zclId.attr(0x0005, NaN)
+    }).to.throw(TypeError)
+    expect(function() {
+      return zclId.attr(0x0005, [])
+    }).to.throw(TypeError)
+    expect(function() {
+      return zclId.attr(0x0005, {})
+    }).to.throw(TypeError)
+    expect(function() {
+      return zclId.attr(0x0005, true)
+    }).to.throw(TypeError)
+    expect(function() {
+      return zclId.attr(0x0005, new Date())
+    }).to.throw(TypeError)
+    expect(function() {
+      return zclId.attr(0x0005, function() {})
+    }).to.throw(TypeError)
+
+    expect(function() {
+      return zclId.attr()
+    }).to.throw(TypeError)
+    expect(function() {
+      return zclId.attr("genScenes", undefined)
+    }).to.throw(TypeError)
+    expect(function() {
+      return zclId.attr("genScenes", null)
+    }).to.throw(TypeError)
+    expect(function() {
+      return zclId.attr("genScenes", NaN)
+    }).to.throw(TypeError)
+    expect(function() {
+      return zclId.attr("genScenes", [])
+    }).to.throw(TypeError)
+    expect(function() {
+      return zclId.attr("genScenes", {})
+    }).to.throw(TypeError)
+    expect(function() {
+      return zclId.attr("genScenes", true)
+    }).to.throw(TypeError)
+    expect(function() {
+      return zclId.attr("genScenes", new Date())
+    }).to.throw(TypeError)
+    expect(function() {
+      return zclId.attr("genScenes", function() {})
+    }).to.throw(TypeError)
+
+    expect(function() {
+      return zclId.attr(5, 2)
     }).not.to.throw(Error)
     expect(function() {
-      return attr(5, "2")
+      return zclId.attr(5, "2")
     }).not.to.throw(Error)
     expect(function() {
-      return attr(5, 0x0002)
+      return zclId.attr(5, 0x0002)
     }).not.to.throw(Error)
     expect(function() {
-      return attr(5, "currentGroup")
+      return zclId.attr(5, "currentGroup")
     }).not.to.throw(Error)
     expect(function() {
-      return attr("5", 2)
+      return zclId.attr("5", 2)
     }).not.to.throw(Error)
     expect(function() {
-      return attr("5", "2")
+      return zclId.attr("5", "2")
     }).not.to.throw(Error)
     expect(function() {
-      return attr("5", 0x0002)
+      return zclId.attr("5", 0x0002)
     }).not.to.throw(Error)
     expect(function() {
-      return attr("5", "currentGroup")
+      return zclId.attr("5", "currentGroup")
     }).not.to.throw(Error)
     expect(function() {
-      return attr(0x0005, 2)
+      return zclId.attr(0x0005, 2)
     }).not.to.throw(Error)
     expect(function() {
-      return attr(0x0005, "2")
+      return zclId.attr(0x0005, "2")
     }).not.to.throw(Error)
     expect(function() {
-      return attr(0x0005, 0x0002)
+      return zclId.attr(0x0005, 0x0002)
     }).not.to.throw(Error)
     expect(function() {
-      return attr(0x0005, "currentGroup")
+      return zclId.attr(0x0005, "currentGroup")
     }).not.to.throw(Error)
     expect(function() {
-      return attr("genScenes", 2)
+      return zclId.attr("genScenes", 2)
     }).not.to.throw(Error)
     expect(function() {
-      return attr("genScenes", "2")
+      return zclId.attr("genScenes", "2")
     }).not.to.throw(Error)
     expect(function() {
-      return attr("genScenes", 0x0002)
+      return zclId.attr("genScenes", 0x0002)
     }).not.to.throw(Error)
     expect(function() {
-      return attr("genScenes", "currentGroup")
+      return zclId.attr("genScenes", "currentGroup")
     }).not.to.throw(Error)
   })
 })
 
 describe("#.attrType", function() {
   it("should be a function", function() {
-    expect(attrType).to.be.a("function")
+    expect(zclId.attrType).to.be.a("function")
   })
 
   it("should throw TypeError if input cId is not a number and not a string", function() {
     expect(function() {
-      return attrType()
+      return zclId.attrType()
     }).to.throw(TypeError)
     expect(function() {
-      return attrType(undefined, 2)
+      return zclId.attrType(undefined, 2)
     }).to.throw(TypeError)
     expect(function() {
-      return attrType(null, 2)
+      return zclId.attrType(null, 2)
     }).to.throw(TypeError)
     expect(function() {
-      return attrType(NaN, 2)
+      return zclId.attrType(NaN, 2)
     }).to.throw(TypeError)
     expect(function() {
-      return attrType([], 2)
+      return zclId.attrType([], 2)
     }).to.throw(TypeError)
     expect(function() {
-      return attrType({}, 2)
+      return zclId.attrType({}, 2)
     }).to.throw(TypeError)
     expect(function() {
-      return attrType(true, 2)
+      return zclId.attrType(true, 2)
     }).to.throw(TypeError)
     expect(function() {
-      return attrType(new Date(), 2)
+      return zclId.attrType(new Date(), 2)
     }).to.throw(TypeError)
     expect(function() {
-      return attrType(function() {}, 2)
-    }).to.throw(TypeError)
-
-    expect(function() {
-      return attrType()
-    }).to.throw(TypeError)
-    expect(function() {
-      return attrType(undefined, "2")
-    }).to.throw(TypeError)
-    expect(function() {
-      return attrType(null, "2")
-    }).to.throw(TypeError)
-    expect(function() {
-      return attrType(NaN, "2")
-    }).to.throw(TypeError)
-    expect(function() {
-      return attrType([], "2")
-    }).to.throw(TypeError)
-    expect(function() {
-      return attrType({}, "2")
-    }).to.throw(TypeError)
-    expect(function() {
-      return attrType(true, "2")
-    }).to.throw(TypeError)
-    expect(function() {
-      return attrType(new Date(), "2")
-    }).to.throw(TypeError)
-    expect(function() {
-      return attrType(function() {}, "2")
+      return zclId.attrType(function() {}, 2)
     }).to.throw(TypeError)
 
     expect(function() {
-      return attrType()
+      return zclId.attrType()
     }).to.throw(TypeError)
     expect(function() {
-      return attrType(undefined, 0x0002)
+      return zclId.attrType(undefined, "2")
     }).to.throw(TypeError)
     expect(function() {
-      return attrType(null, 0x0002)
+      return zclId.attrType(null, "2")
     }).to.throw(TypeError)
     expect(function() {
-      return attrType(NaN, 0x0002)
+      return zclId.attrType(NaN, "2")
     }).to.throw(TypeError)
     expect(function() {
-      return attrType([], 0x0002)
+      return zclId.attrType([], "2")
     }).to.throw(TypeError)
     expect(function() {
-      return attrType({}, 0x0002)
+      return zclId.attrType({}, "2")
     }).to.throw(TypeError)
     expect(function() {
-      return attrType(true, 0x0002)
+      return zclId.attrType(true, "2")
     }).to.throw(TypeError)
     expect(function() {
-      return attrType(new Date(), 0x0002)
+      return zclId.attrType(new Date(), "2")
     }).to.throw(TypeError)
     expect(function() {
-      return attrType(function() {}, 0x0002)
-    }).to.throw(TypeError)
-
-    expect(function() {
-      return attrType()
-    }).to.throw(TypeError)
-    expect(function() {
-      return attrType(undefined, "currentGroup")
-    }).to.throw(TypeError)
-    expect(function() {
-      return attrType(null, "currentGroup")
-    }).to.throw(TypeError)
-    expect(function() {
-      return attrType(NaN, "currentGroup")
-    }).to.throw(TypeError)
-    expect(function() {
-      return attrType([], "currentGroup")
-    }).to.throw(TypeError)
-    expect(function() {
-      return attrType({}, "currentGroup")
-    }).to.throw(TypeError)
-    expect(function() {
-      return attrType(true, "currentGroup")
-    }).to.throw(TypeError)
-    expect(function() {
-      return attrType(new Date(), "currentGroup")
-    }).to.throw(TypeError)
-    expect(function() {
-      return attrType(function() {}, "currentGroup")
+      return zclId.attrType(function() {}, "2")
     }).to.throw(TypeError)
 
     expect(function() {
-      return attrType(5, 2)
+      return zclId.attrType()
+    }).to.throw(TypeError)
+    expect(function() {
+      return zclId.attrType(undefined, 0x0002)
+    }).to.throw(TypeError)
+    expect(function() {
+      return zclId.attrType(null, 0x0002)
+    }).to.throw(TypeError)
+    expect(function() {
+      return zclId.attrType(NaN, 0x0002)
+    }).to.throw(TypeError)
+    expect(function() {
+      return zclId.attrType([], 0x0002)
+    }).to.throw(TypeError)
+    expect(function() {
+      return zclId.attrType({}, 0x0002)
+    }).to.throw(TypeError)
+    expect(function() {
+      return zclId.attrType(true, 0x0002)
+    }).to.throw(TypeError)
+    expect(function() {
+      return zclId.attrType(new Date(), 0x0002)
+    }).to.throw(TypeError)
+    expect(function() {
+      return zclId.attrType(function() {}, 0x0002)
+    }).to.throw(TypeError)
+
+    expect(function() {
+      return zclId.attrType()
+    }).to.throw(TypeError)
+    expect(function() {
+      return zclId.attrType(undefined, "currentGroup")
+    }).to.throw(TypeError)
+    expect(function() {
+      return zclId.attrType(null, "currentGroup")
+    }).to.throw(TypeError)
+    expect(function() {
+      return zclId.attrType(NaN, "currentGroup")
+    }).to.throw(TypeError)
+    expect(function() {
+      return zclId.attrType([], "currentGroup")
+    }).to.throw(TypeError)
+    expect(function() {
+      return zclId.attrType({}, "currentGroup")
+    }).to.throw(TypeError)
+    expect(function() {
+      return zclId.attrType(true, "currentGroup")
+    }).to.throw(TypeError)
+    expect(function() {
+      return zclId.attrType(new Date(), "currentGroup")
+    }).to.throw(TypeError)
+    expect(function() {
+      return zclId.attrType(function() {}, "currentGroup")
+    }).to.throw(TypeError)
+
+    expect(function() {
+      return zclId.attrType(5, 2)
     }).not.to.throw(Error)
     expect(function() {
-      return attrType(5, "2")
+      return zclId.attrType(5, "2")
     }).not.to.throw(Error)
     expect(function() {
-      return attrType(5, 0x0002)
+      return zclId.attrType(5, 0x0002)
     }).not.to.throw(Error)
     expect(function() {
-      return attrType(5, "currentGroup")
+      return zclId.attrType(5, "currentGroup")
     }).not.to.throw(Error)
     expect(function() {
-      return attrType("5", 2)
+      return zclId.attrType("5", 2)
     }).not.to.throw(Error)
     expect(function() {
-      return attrType("5", "2")
+      return zclId.attrType("5", "2")
     }).not.to.throw(Error)
     expect(function() {
-      return attrType("5", 0x0002)
+      return zclId.attrType("5", 0x0002)
     }).not.to.throw(Error)
     expect(function() {
-      return attrType("5", "currentGroup")
+      return zclId.attrType("5", "currentGroup")
     }).not.to.throw(Error)
     expect(function() {
-      return attrType(0x0005, 2)
+      return zclId.attrType(0x0005, 2)
     }).not.to.throw(Error)
     expect(function() {
-      return attrType(0x0005, "2")
+      return zclId.attrType(0x0005, "2")
     }).not.to.throw(Error)
     expect(function() {
-      return attrType(0x0005, 0x0002)
+      return zclId.attrType(0x0005, 0x0002)
     }).not.to.throw(Error)
     expect(function() {
-      return attrType(0x0005, "currentGroup")
+      return zclId.attrType(0x0005, "currentGroup")
     }).not.to.throw(Error)
     expect(function() {
-      return attrType("genScenes", 2)
+      return zclId.attrType("genScenes", 2)
     }).not.to.throw(Error)
     expect(function() {
-      return attrType("genScenes", "2")
+      return zclId.attrType("genScenes", "2")
     }).not.to.throw(Error)
     expect(function() {
-      return attrType("genScenes", 0x0002)
+      return zclId.attrType("genScenes", 0x0002)
     }).not.to.throw(Error)
     expect(function() {
-      return attrType("genScenes", "currentGroup")
+      return zclId.attrType("genScenes", "currentGroup")
     }).not.to.throw(Error)
   })
 
   it("should throw TypeError if input attrId is not a number and not a string", function() {
     expect(function() {
-      return attrType()
+      return zclId.attrType()
     }).to.throw(TypeError)
     expect(function() {
-      return attrType(5, undefined)
+      return zclId.attrType(5, undefined)
     }).to.throw(TypeError)
     expect(function() {
-      return attrType(5, null)
+      return zclId.attrType(5, null)
     }).to.throw(TypeError)
     expect(function() {
-      return attrType(5, NaN)
+      return zclId.attrType(5, NaN)
     }).to.throw(TypeError)
     expect(function() {
-      return attrType(5, [])
+      return zclId.attrType(5, [])
     }).to.throw(TypeError)
     expect(function() {
-      return attrType(5, {})
+      return zclId.attrType(5, {})
     }).to.throw(TypeError)
     expect(function() {
-      return attrType(5, true)
+      return zclId.attrType(5, true)
     }).to.throw(TypeError)
     expect(function() {
-      return attrType(5, new Date())
+      return zclId.attrType(5, new Date())
     }).to.throw(TypeError)
     expect(function() {
-      return attrType(5, function() {})
-    }).to.throw(TypeError)
-
-    expect(function() {
-      return attrType()
-    }).to.throw(TypeError)
-    expect(function() {
-      return attrType("5", undefined)
-    }).to.throw(TypeError)
-    expect(function() {
-      return attrType("5", null)
-    }).to.throw(TypeError)
-    expect(function() {
-      return attrType("5", NaN)
-    }).to.throw(TypeError)
-    expect(function() {
-      return attrType("5", [])
-    }).to.throw(TypeError)
-    expect(function() {
-      return attrType("5", {})
-    }).to.throw(TypeError)
-    expect(function() {
-      return attrType("5", true)
-    }).to.throw(TypeError)
-    expect(function() {
-      return attrType("5", new Date())
-    }).to.throw(TypeError)
-    expect(function() {
-      return attrType("5", function() {})
+      return zclId.attrType(5, function() {})
     }).to.throw(TypeError)
 
     expect(function() {
-      return attrType()
+      return zclId.attrType()
     }).to.throw(TypeError)
     expect(function() {
-      return attrType(0x0005, undefined)
+      return zclId.attrType("5", undefined)
     }).to.throw(TypeError)
     expect(function() {
-      return attrType(0x0005, null)
+      return zclId.attrType("5", null)
     }).to.throw(TypeError)
     expect(function() {
-      return attrType(0x0005, NaN)
+      return zclId.attrType("5", NaN)
     }).to.throw(TypeError)
     expect(function() {
-      return attrType(0x0005, [])
+      return zclId.attrType("5", [])
     }).to.throw(TypeError)
     expect(function() {
-      return attrType(0x0005, {})
+      return zclId.attrType("5", {})
     }).to.throw(TypeError)
     expect(function() {
-      return attrType(0x0005, true)
+      return zclId.attrType("5", true)
     }).to.throw(TypeError)
     expect(function() {
-      return attrType(0x0005, new Date())
+      return zclId.attrType("5", new Date())
     }).to.throw(TypeError)
     expect(function() {
-      return attrType(0x0005, function() {})
-    }).to.throw(TypeError)
-
-    expect(function() {
-      return attrType()
-    }).to.throw(TypeError)
-    expect(function() {
-      return attrType("genScenes", undefined)
-    }).to.throw(TypeError)
-    expect(function() {
-      return attrType("genScenes", null)
-    }).to.throw(TypeError)
-    expect(function() {
-      return attrType("genScenes", NaN)
-    }).to.throw(TypeError)
-    expect(function() {
-      return attrType("genScenes", [])
-    }).to.throw(TypeError)
-    expect(function() {
-      return attrType("genScenes", {})
-    }).to.throw(TypeError)
-    expect(function() {
-      return attrType("genScenes", true)
-    }).to.throw(TypeError)
-    expect(function() {
-      return attrType("genScenes", new Date())
-    }).to.throw(TypeError)
-    expect(function() {
-      return attrType("genScenes", function() {})
+      return zclId.attrType("5", function() {})
     }).to.throw(TypeError)
 
     expect(function() {
-      return attrType(5, 2)
+      return zclId.attrType()
+    }).to.throw(TypeError)
+    expect(function() {
+      return zclId.attrType(0x0005, undefined)
+    }).to.throw(TypeError)
+    expect(function() {
+      return zclId.attrType(0x0005, null)
+    }).to.throw(TypeError)
+    expect(function() {
+      return zclId.attrType(0x0005, NaN)
+    }).to.throw(TypeError)
+    expect(function() {
+      return zclId.attrType(0x0005, [])
+    }).to.throw(TypeError)
+    expect(function() {
+      return zclId.attrType(0x0005, {})
+    }).to.throw(TypeError)
+    expect(function() {
+      return zclId.attrType(0x0005, true)
+    }).to.throw(TypeError)
+    expect(function() {
+      return zclId.attrType(0x0005, new Date())
+    }).to.throw(TypeError)
+    expect(function() {
+      return zclId.attrType(0x0005, function() {})
+    }).to.throw(TypeError)
+
+    expect(function() {
+      return zclId.attrType()
+    }).to.throw(TypeError)
+    expect(function() {
+      return zclId.attrType("genScenes", undefined)
+    }).to.throw(TypeError)
+    expect(function() {
+      return zclId.attrType("genScenes", null)
+    }).to.throw(TypeError)
+    expect(function() {
+      return zclId.attrType("genScenes", NaN)
+    }).to.throw(TypeError)
+    expect(function() {
+      return zclId.attrType("genScenes", [])
+    }).to.throw(TypeError)
+    expect(function() {
+      return zclId.attrType("genScenes", {})
+    }).to.throw(TypeError)
+    expect(function() {
+      return zclId.attrType("genScenes", true)
+    }).to.throw(TypeError)
+    expect(function() {
+      return zclId.attrType("genScenes", new Date())
+    }).to.throw(TypeError)
+    expect(function() {
+      return zclId.attrType("genScenes", function() {})
+    }).to.throw(TypeError)
+
+    expect(function() {
+      return zclId.attrType(5, 2)
     }).not.to.throw(Error)
     expect(function() {
-      return attrType(5, "2")
+      return zclId.attrType(5, "2")
     }).not.to.throw(Error)
     expect(function() {
-      return attrType(5, 0x0002)
+      return zclId.attrType(5, 0x0002)
     }).not.to.throw(Error)
     expect(function() {
-      return attrType(5, "currentGroup")
+      return zclId.attrType(5, "currentGroup")
     }).not.to.throw(Error)
     expect(function() {
-      return attrType("5", 2)
+      return zclId.attrType("5", 2)
     }).not.to.throw(Error)
     expect(function() {
-      return attrType("5", "2")
+      return zclId.attrType("5", "2")
     }).not.to.throw(Error)
     expect(function() {
-      return attrType("5", 0x0002)
+      return zclId.attrType("5", 0x0002)
     }).not.to.throw(Error)
     expect(function() {
-      return attrType("5", "currentGroup")
+      return zclId.attrType("5", "currentGroup")
     }).not.to.throw(Error)
     expect(function() {
-      return attrType(0x0005, 2)
+      return zclId.attrType(0x0005, 2)
     }).not.to.throw(Error)
     expect(function() {
-      return attrType(0x0005, "2")
+      return zclId.attrType(0x0005, "2")
     }).not.to.throw(Error)
     expect(function() {
-      return attrType(0x0005, 0x0002)
+      return zclId.attrType(0x0005, 0x0002)
     }).not.to.throw(Error)
     expect(function() {
-      return attrType(0x0005, "currentGroup")
+      return zclId.attrType(0x0005, "currentGroup")
     }).not.to.throw(Error)
     expect(function() {
-      return attrType("genScenes", 2)
+      return zclId.attrType("genScenes", 2)
     }).not.to.throw(Error)
     expect(function() {
-      return attrType("genScenes", "2")
+      return zclId.attrType("genScenes", "2")
     }).not.to.throw(Error)
     expect(function() {
-      return attrType("genScenes", 0x0002)
+      return zclId.attrType("genScenes", 0x0002)
     }).not.to.throw(Error)
     expect(function() {
-      return attrType("genScenes", "currentGroup")
+      return zclId.attrType("genScenes", "currentGroup")
     }).not.to.throw(Error)
   })
 })
 
 describe("#.dataType", function() {
   it("should be a function", function() {
-    expect(dataType).to.be.a("function")
+    expect(zclId.dataType).to.be.a("function")
   })
 
   it("should throw TypeError if input type is not a number and not a string", function() {
     expect(function() {
-      return dataType()
+      return zclId.dataType()
     }).to.throw(TypeError)
     expect(function() {
-      return dataType(undefined)
+      return zclId.dataType(undefined)
     }).to.throw(TypeError)
     expect(function() {
-      return dataType(null)
+      return zclId.dataType(null)
     }).to.throw(TypeError)
     expect(function() {
-      return dataType(NaN)
+      return zclId.dataType(NaN)
     }).to.throw(TypeError)
     expect(function() {
-      return dataType([])
+      return zclId.dataType([])
     }).to.throw(TypeError)
     expect(function() {
-      return dataType({})
+      return zclId.dataType({})
     }).to.throw(TypeError)
     expect(function() {
-      return dataType(true)
+      return zclId.dataType(true)
     }).to.throw(TypeError)
     expect(function() {
-      return dataType(new Date())
+      return zclId.dataType(new Date())
     }).to.throw(TypeError)
     expect(function() {
-      return dataType(function() {})
+      return zclId.dataType(function() {})
     }).to.throw(TypeError)
 
     expect(function() {
-      return dataType(11)
+      return zclId.dataType(11)
     }).not.to.throw(Error)
     expect(function() {
-      return dataType("11")
+      return zclId.dataType("11")
     }).not.to.throw(Error)
     expect(function() {
-      return dataType(0x0b)
+      return zclId.dataType(0x0b)
     }).not.to.throw(Error)
     expect(function() {
-      return dataType("0x0b")
+      return zclId.dataType("0x0b")
     }).not.to.throw(Error)
     expect(function() {
-      return dataType("DATA32")
+      return zclId.dataType("DATA32")
     }).not.to.throw(Error)
   })
 })
