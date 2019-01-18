@@ -212,13 +212,24 @@
       "calcPeriod": { "id": 22, "type": "uint16" },
       "numRSSIMeasurements": { "id": 23, "type": "uint16" }
     },
-    "cmd": { "setAbsolute": 0, "setDevCfg": 1, "getDevCfg": 2, "getData": 3 },
+    "cmd": {
+      "setAbsolute": 0,
+      "setDevCfg": 1,
+      "getDevCfg": 2,
+      "getData": 3,
+      "rssiRsp": 4,
+      "sendPings": 5,
+      "anchorNodeAnnounce": 6
+    },
     "cmdRsp": {
       "devCfgRsp": 0,
       "dataRsp": 1,
       "dataNotif": 2,
       "compactDataNotif": 3,
-      "rssiPing": 4
+      "rssiPing": 4,
+      "rssiReq": 5,
+      "reportRssiMeas": 6,
+      "reqOwnLocation": 7
     }
   },
   "genAnalogInput": {
@@ -405,27 +416,17 @@
       "imageStamp": { "id": 10, "type": "uint32" }
     },
     "cmd": {
-      "imageNotify": 0,
       "queryNextImageReq": 1,
-      "queryNextImageRsp": 2,
       "imageBlockReq": 3,
       "imagePageReq": 4,
-      "imageBlockRsp": 5,
       "upgradeEndReq": 6,
-      "upgradeEndRsp": 7,
-      "querySpecificFileReq": 8,
-      "querySpecificFileRsp": 9
+      "querySpecificFileReq": 8
     },
     "cmdRsp": {
       "imageNotify": 0,
-      "queryNextImageReq": 1,
       "queryNextImageRsp": 2,
-      "imageBlockReq": 3,
-      "imagePageReq": 4,
       "imageBlockRsp": 5,
-      "upgradeEndReq": 6,
       "upgradeEndRsp": 7,
-      "querySpecificFileReq": 8,
       "querySpecificFileRsp": 9
     }
   },
@@ -789,7 +790,9 @@
       "enhancedStepHue": 66,
       "enhancedMoveToHueAndSaturation": 67,
       "colorLoopSet": 68,
-      "stopMoveStep": 71
+      "stopMoveStep": 71,
+      "moveColorTemp": 75,
+      "stepColorTemp": 76
     }
   },
   "lightingBallastCfg": {

@@ -82,9 +82,31 @@ If you know of any hacks that aren't listed here, please submit a PR to this doc
    However, [parsing-framing tests](https://github.com/zigbeer/zcl-packet/blob/351c4204ab64a21668b01f8da68063a50835fe9c/test/zcl.test.js#L175-L177) suggest that these fields end up in an object under the `attrData` field, and so should be accessible on the event without this modification.
 
    **Solution**:
+
    1. Revert commit https://github.com/ZigBeans/zcl-packet/commit/a2b39c1b5239317bf8cd58ebf665319a5c039456#diff-9f0b814c660e5e38b20eed3e82ba2512R731
    2. Try to access this value in the event handler.
 
+1. [@splitice] added multiple zcl_meta entries for the same command, `imageBlockRsp`
+   ```json
+   "imageBlockRspSuccess": {
+     "params": [
+       { "status": "uint8" },
+       { "manufacturerCode": "uint16" },
+       { "imageType": "uint16" },
+       { "fileVersion": "uint32" },
+       { "fileOffset": "uint32" },
+       { "dataLen": "preLenUint8" },
+       { "data": "dynUint8" }
+     ],
+     "dir": 1
+   },
+   "imageBlockRspAbort": {
+     "params": [{ "status": "uint8" }],
+     "dir": 1
+   },
+   ```
+   **Solution**:
+   Make the structure of `params` suitable for variable data shapes.
 
 [@splitice]: https://github.com/splitice
 [@kirovilya]: https://github.com/kirovilya
