@@ -3,16 +3,20 @@ export interface EnumItem<K, T> {
   value: T
 }
 
-export class Enum<K extends string, T> {
+const id = <T>(x: T): T => x
+
+export class Enum<K extends string, T, V = T> {
   keys: Map<T, K> = new Map()
   values: Map<K, T> = new Map()
   byKey: Map<K, EnumItem<K, T>> = new Map()
   byValue: Map<T, EnumItem<K, T>> = new Map()
   enums: EnumItem<K, T>[] = []
-  constructor(obj: Record<K, T>) {
+  constructor(obj: Record<K, T>)
+  constructor(obj: Record<K, V>, fn: (v: V) => T)
+  constructor(obj: Record<K, V>, fn?: (v: V) => T) {
     const { keys, values, byKey, byValue, enums } = this
     for (const key in obj) {
-      const value = obj[key]
+      const value: T = fn ? fn(obj[key]) : ((obj[key] as unknown) as T)
       const item = { key, value }
       keys.set(value, key)
       values.set(key, value)
