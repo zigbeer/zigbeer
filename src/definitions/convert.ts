@@ -8,7 +8,7 @@ import clusterDefs = require("./cluster_defs.json")
 const { foundation, clusterId: clusterIDs, ...newCommon } = common
 const { foundation: foundation2, functional } = zclMeta
 
-writeFile(__dirname + "/_common.json", JSON.stringify(newCommon, undefined, 2))
+writeFile(__dirname + "/_common.json", JSON.stringify(newCommon))
 
 const newFoundation: Record<
   string,
@@ -43,10 +43,7 @@ for (const fCmdName in foundation) {
     }
   }
 }
-writeFile(
-  __dirname + "/_foundation.json",
-  JSON.stringify(newFoundation, undefined, 2)
-)
+writeFile(__dirname + "/_foundation.json", JSON.stringify(newFoundation))
 
 for (const clName in clusterDefs) {
   if (!clusterIDs.hasOwnProperty(clName))
@@ -135,7 +132,4 @@ for (const clName in clusterIDs) {
   newClusterDefs[clName] = newClusterDef
 }
 
-writeFile(
-  __dirname + "/_cluster_defs.json",
-  JSON.stringify(newClusterDefs, undefined, 2)
-)
+writeFile(__dirname + "/_cluster_defs.json", JSON.stringify(newClusterDefs))
