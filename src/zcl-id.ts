@@ -1,6 +1,6 @@
 import { Enum } from "./enum"
 
-function isValidArgType(param: any): param is string | number {
+const isValidArgType = (param: any): param is string | number => {
   if (typeof param === "string") {
     return true
   }
@@ -53,37 +53,70 @@ interface NewFormatCluster {
 
 type DataTypeNames = string
 
-interface ClusterDef {
-  attrId?: Record<string, { id: number; type: DataTypeNames }>
-  cmd?: Record<string, number>
-  cmdRsp?: Record<string, number>
+interface CommonJSON {
+  aclMask: Record<string, number>
+  profileId: Record<string, number>
+  direction: Record<string, number>
+  cmdDirection: Record<string, number>
+  haDevId: Record<string, number>
+  dataType: Record<string, number>
+  status: Record<string, number>
+  otaStatus: Record<string, number>
+}
+type FoundationJSON = Record<
+  string,
+  | {
+      id: number
+      params: [string, string][]
+    }
+  | {
+      id: number
+      TODO: 1
+    }
+>
+interface CompleteClusterDefJSON {
+  id: number
+  attrs?: Record<string, { id: number; type: string }>
+  cmd?: Record<
+    string,
+    { id: number; params: [string, string][] } | { id: number; TODO: 1 }
+  >
+  cmdRsp?: Record<
+    string,
+    { id: number; params: [string, string][] } | { id: number; TODO: 1 }
+  >
+}
+interface IncompleteClusterDefJSON {
+  id: number
+  TODO: 2
 }
 
-function clusterWithNewFormat({
-  attrId,
-  cmd,
-  cmdRsp
-}: ClusterDef): NewFormatCluster {
-  type AttrID = NonNullable<typeof attrId>
-  const attrs: Record<keyof AttrID, AttrID[string]["id"]> = {}
-  const attrTypes: Record<keyof AttrID, AttrID[string]["type"]> = {}
+const pickID = <T>(x: { id: T }) => x.id
+const pickType = <T>(x: { type: T }) => x.type
 
-  for (const name in attrId) {
-    const { id, type } = attrId[name]
-    attrs[name] = id
-    attrTypes[name] = type
-  }
+const isComplete = (val: ClusterDefJSON): val is CompleteClusterDefJSON =>
+  !(val as any).TODO
+
+function clusterWithNewFormat(def: ClusterDefJSON): NewFormatCluster {
+  if (!isComplete(def)) return { attr: new Enum({}), attrType: new Enum({}) }
 
   return {
-    attr: new Enum(attrs),
-    attrType: new Enum(attrTypes),
-    cmd: cmd ? new Enum(cmd) : undefined,
-    cmdRsp: cmdRsp ? new Enum(cmdRsp) : undefined
+    attr: new Enum(def.attrs ? def.attrs : {}, pickID),
+    attrType: new Enum(def.attrs ? def.attrs : {}, pickType),
+    cmd: def.cmd ? new Enum(def.cmd, pickID) : undefined,
+    cmdRsp: def.cmdRsp ? new Enum(def.cmdRsp, pickID) : undefined
   }
 }
 
+type ClusterDefJSON = CompleteClusterDefJSON | IncompleteClusterDefJSON
+type ClustedDefsJSON = Record<string, ClusterDefJSON>
+
 export class ZclID {
-  constructor(private common: any, public _clusterDefs: any) {}
+  constructor(
+    private common: CommonJSON,
+    private _foundation: FoundationJSON,
+    private clusterDefs: ClustedDefsJSON
+  ) {}
   /**
    * The Zigbee profile ID lookup
    *
@@ -99,7 +132,7 @@ export class ZclID {
    *
    * example: `{ key: "read", value: 0 }`
    */
-  foundationId = new Enum(this.common.foundation)
+  foundationId = new Enum(this._foundation, pickID)
   /**
    * The datatype ID lookup
    *
@@ -131,7 +164,7 @@ export class ZclID {
    *
    * example: `{ key: "genOnOff", value: 6 }`
    */
-  clusterId = new Enum(this.common.clusterId)
+  clusterId = new Enum(this.clusterDefs, pickID)
   /**
    * Zigbee device ID lookups, per profile name
    */
@@ -154,12 +187,12 @@ export class ZclID {
     const readyCluster = this.newFormatClusters.get(cluster)
     if (readyCluster) return readyCluster
 
-    const newClusterDef = this._clusterDefs[cluster]
+    const newClusterDef = this.clusterDefs[cluster]
     if (!newClusterDef) return // throw new Error(`Cluster ${cluster} not found in cluster_defs.json`)
 
     const newCluster = clusterWithNewFormat(newClusterDef)
     this.newFormatClusters.set(cluster, newCluster)
-    delete this._clusterDefs[cluster] // Drop references to original Def to free memory. Do we need this?
+    delete this.clusterDefs[cluster] // Drop references to original Def to free memory. Do we need this?
     return newCluster
   }
 
