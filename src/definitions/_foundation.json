@@ -1,0 +1,101 @@
+{
+  "read": { "id": 0, "params": [["attrId", "uint16"]] },
+  "readRsp": {
+    "id": 1,
+    "params": [["attrId", "uint16"], ["status", "uint8"], ["extra", "readRsp"]]
+  },
+  "write": {
+    "id": 2,
+    "params": [
+      ["attrId", "uint16"],
+      ["dataType", "uint8"],
+      ["attrData", "variable"]
+    ]
+  },
+  "writeUndiv": {
+    "id": 3,
+    "params": [
+      ["attrId", "uint16"],
+      ["dataType", "uint8"],
+      ["attrData", "variable"]
+    ]
+  },
+  "writeRsp": { "id": 4, "params": [["extra", "writeRsp"]] },
+  "writeNoRsp": {
+    "id": 5,
+    "params": [
+      ["attrId", "uint16"],
+      ["dataType", "uint8"],
+      ["attrData", "variable"]
+    ]
+  },
+  "configReport": {
+    "id": 6,
+    "params": [
+      ["direction", "uint8"],
+      ["attrId", "uint16"],
+      ["extra", "configReport"]
+    ]
+  },
+  "configReportRsp": { "id": 7, "params": [["extra", "configReportRsp"]] },
+  "readReportConfig": {
+    "id": 8,
+    "params": [["direction", "uint8"], ["attrId", "uint16"]]
+  },
+  "readReportConfigRsp": {
+    "id": 9,
+    "params": [
+      ["status", "uint8"],
+      ["direction", "uint8"],
+      ["attrId", "uint16"],
+      ["extra", "readReportConfigRsp"]
+    ]
+  },
+  "report": {
+    "id": 10,
+    "params": [
+      ["attrId", "uint16"],
+      ["dataType", "uint8"],
+      ["attrData", "variable"]
+    ]
+  },
+  "defaultRsp": {
+    "id": 11,
+    "params": [["cmdId", "uint8"], ["statusCode", "uint8"]]
+  },
+  "discover": {
+    "id": 12,
+    "params": [["startAttrId", "uint16"], ["maxAttrIds", "uint8"]]
+  },
+  "discoverRsp": {
+    "id": 13,
+    "params": [["attrId", "uint16"], ["dataType", "uint8"]]
+  },
+  "readStruct": {
+    "id": 14,
+    "params": [["attrId", "uint16"], ["selector", "selector"]]
+  },
+  "writeStruct": {
+    "id": 15,
+    "params": [
+      ["attrId", "uint16"],
+      ["selector", "selector"],
+      ["dataType", "uint8"],
+      ["attrData", "multi"]
+    ]
+  },
+  "writeStructRsp": {
+    "id": 16,
+    "params": [
+      ["status", "uint8"],
+      ["attrId", "uint16"],
+      ["selector", "selector"]
+    ]
+  },
+  "discoverCmdsRec": { "id": 17, "TODO": 1 },
+  "discoverCmdsRecRsp": { "id": 18, "TODO": 1 },
+  "discoverCmdsGen": { "id": 19, "TODO": 1 },
+  "discoverCmdsGenRsp": { "id": 20, "TODO": 1 },
+  "discoverAttrsExt": { "id": 21, "TODO": 1 },
+  "discoverAttrsExtRsp": { "id": 22, "TODO": 1 }
+}
