@@ -12,7 +12,8 @@
   },
   "scripts": {
     "test": "mocha -r ts-node/register ",
-    "prepare": "tsc"
+    "prepare": "tsc",
+    "convert": "ts-node --transpile-only src/definitions/convert.ts && prettier --write src/definitions/*.json"
   },
   "repository": {
     "type": "git",
