@@ -3,9 +3,9 @@ cc-znp
 
 The interface for a host to communicate with TI **CC**253X **Z**igBee **N**etwork **P**rocessor(ZNP) over a serial port.  
 
-[![Build Status](https://travis-ci.com/ZigBeans/cc-znp.svg?branch=master)](https://travis-ci.com/ZigBeans/cc-znp)
-[![npm](https://img.shields.io/npm/v/@zigbee/cc-znp.svg?maxAge=2592000)](https://www.npmjs.com/package/@zigbee/cc-znp)
-[![npm](https://img.shields.io/npm/l/@zigbee/cc-znp.svg?maxAge=2592000)](https://www.npmjs.com/package/@zigbee/cc-znp)
+[![Build Status](https://travis-ci.com/zigbeer/cc-znp.svg?branch=master)](https://travis-ci.com/zigbeer/cc-znp)
+[![npm](https://img.shields.io/npm/v/cc-znp.svg?maxAge=2592000)](https://www.npmjs.com/package/cc-znp)
+[![npm](https://img.shields.io/npm/l/cc-znp.svg?maxAge=2592000)](https://www.npmjs.com/package/cc-znp)
 
 <br />
   
@@ -23,7 +23,7 @@ Please visit the [Wiki](https://github.com/zigbeer/cc-znp/wiki).
 
 ## Installation  
 
-> $ npm install @zigbee/cc-znp --save
+> $ npm install cc-znp --save
 
 <br />
 
@@ -35,4 +35,4 @@ See [Usage](https://github.com/zigbeer/cc-znp/wiki#Usage) on the Wiki for detail
   
 ## License  
 
-Licensed under [MIT](https://github.com/ZigBeans/cc-znp/blob/master/LICENSE).  
+Licensed under [MIT](https://github.com/zigbeer/cc-znp/blob/master/LICENSE).  
