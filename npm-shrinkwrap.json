@@ -1,5 +1,5 @@
 {
-  "name": "@zigbee/cc-znp",
+  "name": "cc-znp",
   "version": "0.5.2-2",
   "lockfileVersion": 1,
   "requires": true,
