@@ -1,9 +1,9 @@
 # zigbee-shepherd
 An open source ZigBee gateway solution with node.js
 
-[![Build Status](https://travis-ci.com/ZigBeans/zigbee-shepherd.svg?branch=master)](https://travis-ci.com/ZigBeans/zigbee-shepherd)
-[![npm](https://img.shields.io/npm/v/@zigbee/zigbee-shepherd.svg?maxAge=2592000)](https://www.npmjs.com/package/@zigbee/zigbee-shepherd)
-[![npm](https://img.shields.io/npm/l/@zigbee/zigbee-shepherd.svg?maxAge=2592000)](https://www.npmjs.com/package/@zigbee/zigbee-shepherd)
+[![Build Status](https://travis-ci.com/zigbeer/zigbee-shepherd.svg?branch=master)](https://travis-ci.com/zigbeer/zigbee-shepherd)
+[![npm](https://img.shields.io/npm/v/zigbee-shepherd.svg?maxAge=2592000)](https://www.npmjs.com/package/zigbee-shepherd)
+[![npm](https://img.shields.io/npm/l/zigbee-shepherd.svg?maxAge=2592000)](https://www.npmjs.com/package/zigbee-shepherd)
 
 <br />
 
@@ -15,7 +15,7 @@ Please visit the [Wiki](https://github.com/zigbeer/zigbee-shepherd/wiki).
 
 ## Overview
 
-**zigbee-shepherd** is an open source ZigBee gateway solution with node.js. It uses TI's [CC253X](http://www.ti.com/lsds/ti/wireless_connectivity/zigbee/overview.page) wireless SoC as a [zigbee network processor (ZNP)](http://www.ti.com/lit/an/swra444/swra444.pdf), and takes the ZNP approach with [cc-znp](https://github.com/ZigBeans/cc-znp) to run the CC253X as a coordinator and to run zigbee-shepherd as the host.
+**zigbee-shepherd** is an open source ZigBee gateway solution with node.js. It uses TI's [CC253X](http://www.ti.com/lsds/ti/wireless_connectivity/zigbee/overview.page) wireless SoC as a [zigbee network processor (ZNP)](http://www.ti.com/lit/an/swra444/swra444.pdf), and takes the ZNP approach with [cc-znp](https://github.com/zigbeer/cc-znp) to run the CC253X as a coordinator and to run zigbee-shepherd as the host.
 
 * [**A simple demo webapp**](https://github.com/zigbeer/zigbee-demo#readme)
 
@@ -27,7 +27,7 @@ Please visit the [Wiki](https://github.com/zigbeer/zigbee-shepherd/wiki).
 
 * Install zigbee-shepherd
 
-> $ npm install @zigbee/zigbee-shepherd --save
+> $ npm install zigbee-shepherd --save
 
 * Hardware
     - [SmartRF05EB (with CC2530EM)](http://www.ti.com/tool/cc2530dk)
@@ -43,7 +43,7 @@ Please visit the [Wiki](https://github.com/zigbeer/zigbee-shepherd/wiki).
 ## Usage
 
 ```js
-var ZShepherd = require('@zigbee/zigbee-shepherd');
+var ZShepherd = require('zigbee-shepherd');
 var shepherd = new ZShepherd('/dev/ttyUSB0');  // create a ZigBee server
 
 shepherd.on('ready', function () {
@@ -66,4 +66,4 @@ shepherd.start(function (err) {                // start the server
 
 ## License
 
-Licensed under [MIT](https://github.com/ZigBeans/zigbee-shepherd/blob/master/LICENSE).
+Licensed under [MIT](https://github.com/zigbeer/zigbee-shepherd/blob/master/LICENSE).
