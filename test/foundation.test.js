@@ -1,14 +1,14 @@
 var expect = require('chai').expect,
-    zclId = require('zcl-id'),
     _ = require('busyman');
 
-var zclmeta = require('../lib/zclmeta'),
-    FoundClass = require('../lib/foundation');
+const zclId = require('zcl-id/dist/legacy');
+
+var FoundClass = require('../lib/foundation')(zclId);
 
 var foundCmd = [],
     k;
 
-for (k in zclId._common.foundation) {
+for (k in require('zcl-id/src/definitions/common.json').foundation) {
     foundCmd.push(k);
 }
 
