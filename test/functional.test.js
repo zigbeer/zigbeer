@@ -1,15 +1,16 @@
 var expect = require('chai').expect,
     Chance = require('chance'),
-    chance = new Chance(),
-    zclId = require('zcl-id');
+    chance = new Chance();
 
-var zclmeta = require('../lib/zclmeta'),
-    FuncClass = require('../lib/functional');
+const zclId = require('zcl-id/dist/legacy');
+
+var zclmeta = require('../lib/zclmeta')(zclId),
+    FuncClass = require('../lib/functional')(zclId);
 
 var clusterIds = [],
     k;
 
-for (k in zclId._common.clusterId) {
+for (k in require('zcl-id/src/definitions/common.json').clusterId) {
     clusterIds.push(k);
 }
 
@@ -76,7 +77,7 @@ describe('Functional CmdRsp framer and parser Check', function() {
             });
 
             funcObj = new FuncClass(cluster, 1, cmdRsp);
-            payload = funcObj.frame(args);
+                payload = funcObj.frame(args);                
 
             funcObj.parse(payload, function (err, result) {
                 it(funcObj.cmd + ' frame() and parse() check', function () {

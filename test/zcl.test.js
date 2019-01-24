@@ -1,5 +1,6 @@
-var expect = require('chai').expect,
-    zcl = require('../index');
+var expect = require('chai').expect
+const zclId = require('zcl-id/dist/legacy');
+const zcl = require('../index')(zclId);
 
 describe('APIs Arguments Check for Throwing Error', function() {
     describe('#.frame', function() {
