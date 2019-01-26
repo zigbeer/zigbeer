@@ -1,187 +1,195 @@
-var expect = require('chai').expect
+const expect = require('chai').expect;
 const zclId = require('zcl-id/dist/legacy');
 const zcl = require('../index')(zclId);
-
-describe('APIs Arguments Check for Throwing Error', function() {
-    describe('#.frame', function() {
-        var frameCntl = {frameType:1, manufSpec: 0, direction: 0, disDefaultRsp: 1};
+describe('APIs Arguments Check for Throwing Error', function () {
+    describe('#.frame', function () {
+        const frameCntl = {
+            frameType: 1,
+            manufSpec: 0,
+            direction: 0,
+            disDefaultRsp: 1,
+        };
 
         it('should be a function', function () {
             expect(zcl.frame).to.be.a('function');
         });
 
         it('should throw TypeError if input frameCntl is not an object', function () {
-            expect(function () { return zcl.frame(undefined, 0, 0, 'toggle', {}, 'genOnOff'); }).to.throw(TypeError);
-            expect(function () { return zcl.frame(null, 0, 0, 'toggle', {}, 'genOnOff'); }).to.throw(TypeError);
-            expect(function () { return zcl.frame(NaN, 0, 0, 'toggle', {}, 'genOnOff'); }).to.throw(TypeError);
-            expect(function () { return zcl.frame([], 0, 0, 'toggle', {}, 'genOnOff'); }).to.throw(TypeError);
-            expect(function () { return zcl.frame(true, 0, 0, 'toggle', {}, 'genOnOff'); }).to.throw(TypeError);
-            expect(function () { return zcl.frame(new Date(), 0, 0, 'toggle', {}, 'genOnOff'); }).to.throw(TypeError);
-            expect(function () { return zcl.frame(function () {}, 0, 0, 'toggle', {}, 'genOnOff'); }).to.throw(TypeError);
+            expect(() => zcl.frame(undefined, 0, 0, 'toggle', {}, 'genOnOff')).to.throw(TypeError);
+            expect(() => zcl.frame(null, 0, 0, 'toggle', {}, 'genOnOff')).to.throw(TypeError);
+            expect(() => zcl.frame(NaN, 0, 0, 'toggle', {}, 'genOnOff')).to.throw(TypeError);
+            expect(() => zcl.frame([], 0, 0, 'toggle', {}, 'genOnOff')).to.throw(TypeError);
+            expect(() => zcl.frame(true, 0, 0, 'toggle', {}, 'genOnOff')).to.throw(TypeError);
+            expect(() => zcl.frame(new Date(), 0, 0, 'toggle', {}, 'genOnOff')).to.throw(TypeError);
+            expect(() => zcl.frame(function () {}, 0, 0, 'toggle', {}, 'genOnOff')).to.throw(TypeError);
 
-            expect(function () { return zcl.frame(frameCntl, 0, 0, 'toggle', {}, 'genOnOff'); }).not.to.throw(TypeError);
+            expect(() => zcl.frame(frameCntl, 0, 0, 'toggle', {}, 'genOnOff')).not.to.throw(TypeError);
         });
 
         it('should throw TypeError if input manufCode is not a number', function () {
-            expect(function () { return zcl.frame(frameCntl, undefined, 0, 'toggle', {}, 'genOnOff'); }).to.throw(TypeError);
-            expect(function () { return zcl.frame(frameCntl, null, 0, 'toggle', {}, 'genOnOff'); }).to.throw(TypeError);
-            expect(function () { return zcl.frame(frameCntl, NaN, 0, 'toggle', {}, 'genOnOff'); }).to.throw(TypeError);
-            expect(function () { return zcl.frame(frameCntl, [], 0, 'toggle', {}, 'genOnOff'); }).to.throw(TypeError);
-            expect(function () { return zcl.frame(frameCntl, true, 0, 'toggle', {}, 'genOnOff'); }).to.throw(TypeError);
-            expect(function () { return zcl.frame(frameCntl, new Date(), 0, 'toggle', {}, 'genOnOff'); }).to.throw(TypeError);
-            expect(function () { return zcl.frame(frameCntl, function () {}, 0, 'toggle', {}, 'genOnOff'); }).to.throw(TypeError);
+            expect(() => zcl.frame(frameCntl, undefined, 0, 'toggle', {}, 'genOnOff')).to.throw(TypeError);
+            expect(() => zcl.frame(frameCntl, null, 0, 'toggle', {}, 'genOnOff')).to.throw(TypeError);
+            expect(() => zcl.frame(frameCntl, NaN, 0, 'toggle', {}, 'genOnOff')).to.throw(TypeError);
+            expect(() => zcl.frame(frameCntl, [], 0, 'toggle', {}, 'genOnOff')).to.throw(TypeError);
+            expect(() => zcl.frame(frameCntl, true, 0, 'toggle', {}, 'genOnOff')).to.throw(TypeError);
+            expect(() => zcl.frame(frameCntl, new Date(), 0, 'toggle', {}, 'genOnOff')).to.throw(TypeError);
+            expect(() => zcl.frame(frameCntl, function () {}, 0, 'toggle', {}, 'genOnOff')).to.throw(TypeError);
         });
 
         it('should throw TypeError if input seqNum is not a number', function () {
-            expect(function () { return zcl.frame(frameCntl, 0, undefined, 'toggle', {}, 'genOnOff'); }).to.throw(TypeError);
-            expect(function () { return zcl.frame(frameCntl, 0, null, 'toggle', {}, 'genOnOff'); }).to.throw(TypeError);
-            expect(function () { return zcl.frame(frameCntl, 0, NaN, 'toggle', {}, 'genOnOff'); }).to.throw(TypeError);
-            expect(function () { return zcl.frame(frameCntl, 0, [], 'toggle', {}, 'genOnOff'); }).to.throw(TypeError);
-            expect(function () { return zcl.frame(frameCntl, 0, true, 'toggle', {}, 'genOnOff'); }).to.throw(TypeError);
-            expect(function () { return zcl.frame(frameCntl, 0, new Date(), 'toggle', {}, 'genOnOff'); }).to.throw(TypeError);
-            expect(function () { return zcl.frame(frameCntl, 0, function () {}, 'toggle', {}, 'genOnOff'); }).to.throw(TypeError);
+            expect(() => zcl.frame(frameCntl, 0, undefined, 'toggle', {}, 'genOnOff')).to.throw(TypeError);
+            expect(() => zcl.frame(frameCntl, 0, null, 'toggle', {}, 'genOnOff')).to.throw(TypeError);
+            expect(() => zcl.frame(frameCntl, 0, NaN, 'toggle', {}, 'genOnOff')).to.throw(TypeError);
+            expect(() => zcl.frame(frameCntl, 0, [], 'toggle', {}, 'genOnOff')).to.throw(TypeError);
+            expect(() => zcl.frame(frameCntl, 0, true, 'toggle', {}, 'genOnOff')).to.throw(TypeError);
+            expect(() => zcl.frame(frameCntl, 0, new Date(), 'toggle', {}, 'genOnOff')).to.throw(TypeError);
+            expect(() => zcl.frame(frameCntl, 0, function () {}, 'toggle', {}, 'genOnOff')).to.throw(TypeError);
         });
 
         it('should throw TypeError if input cmd is not a number and not a string', function () {
-            expect(function () { return zcl.frame(frameCntl, 0, 0, undefined, {}, 'genOnOff'); }).to.throw(TypeError);
-            expect(function () { return zcl.frame(frameCntl, 0, 0, null, {}, 'genOnOff'); }).to.throw(TypeError);
-            expect(function () { return zcl.frame(frameCntl, 0, 0, NaN, {}, 'genOnOff'); }).to.throw(TypeError);
-            expect(function () { return zcl.frame(frameCntl, 0, 0, [], {}, 'genOnOff'); }).to.throw(TypeError);
-            expect(function () { return zcl.frame(frameCntl, 0, 0, true, {}, 'genOnOff'); }).to.throw(TypeError);
-            expect(function () { return zcl.frame(frameCntl, 0, 0, new Date(), {}, 'genOnOff'); }).to.throw(TypeError);
-            expect(function () { return zcl.frame(frameCntl, 0, 0, function () {}, {}, 'genOnOff'); }).to.throw(TypeError);
+            expect(() => zcl.frame(frameCntl, 0, 0, undefined, {}, 'genOnOff')).to.throw(TypeError);
+            expect(() => zcl.frame(frameCntl, 0, 0, null, {}, 'genOnOff')).to.throw(TypeError);
+            expect(() => zcl.frame(frameCntl, 0, 0, NaN, {}, 'genOnOff')).to.throw(TypeError);
+            expect(() => zcl.frame(frameCntl, 0, 0, [], {}, 'genOnOff')).to.throw(TypeError);
+            expect(() => zcl.frame(frameCntl, 0, 0, true, {}, 'genOnOff')).to.throw(TypeError);
+            expect(() => zcl.frame(frameCntl, 0, 0, new Date(), {}, 'genOnOff')).to.throw(TypeError);
+            expect(() => zcl.frame(frameCntl, 0, 0, function () {}, {}, 'genOnOff')).to.throw(TypeError);
 
-            expect(function () { return zcl.frame(frameCntl, 0, 0, 'toggle', {}, 'genOnOff'); }).not.to.throw(TypeError);
-            expect(function () { return zcl.frame(frameCntl, 0, 0, 2, {}, 'genOnOff'); }).not.to.throw(TypeError);
+            expect(() => zcl.frame(frameCntl, 0, 0, 'toggle', {}, 'genOnOff')).not.to.throw(TypeError);
+            expect(() => zcl.frame(frameCntl, 0, 0, 2, {}, 'genOnOff')).not.to.throw(TypeError);
         });
 
         it('should throw TypeError if input zclPayload is not an object and not an array', function () {
-            expect(function () { return zcl.frame(frameCntl, 0, 0, 'toggle', undefined, 'genOnOff'); }).to.throw(TypeError);
-            expect(function () { return zcl.frame(frameCntl, 0, 0, 'toggle', null, 'genOnOff'); }).to.throw(TypeError);
-            expect(function () { return zcl.frame(frameCntl, 0, 0, 'toggle', NaN, 'genOnOff'); }).to.throw(TypeError);
-            expect(function () { return zcl.frame(frameCntl, 0, 0, 'toggle', true, 'genOnOff'); }).to.throw(TypeError);
+            expect(() => zcl.frame(frameCntl, 0, 0, 'toggle', undefined, 'genOnOff')).to.throw(TypeError);
+            expect(() => zcl.frame(frameCntl, 0, 0, 'toggle', null, 'genOnOff')).to.throw(TypeError);
+            expect(() => zcl.frame(frameCntl, 0, 0, 'toggle', NaN, 'genOnOff')).to.throw(TypeError);
+            expect(() => zcl.frame(frameCntl, 0, 0, 'toggle', true, 'genOnOff')).to.throw(TypeError);
 
-            expect(function () { return zcl.frame(frameCntl, 0, 0, 'toggle', {}, 'genOnOff'); }).not.to.throw(TypeError);
-            expect(function () { return zcl.frame(frameCntl, 0, 0, 'toggle', [], 'genOnOff'); }).not.to.throw(TypeError);
+            expect(() => zcl.frame(frameCntl, 0, 0, 'toggle', {}, 'genOnOff')).not.to.throw(TypeError);
+            expect(() => zcl.frame(frameCntl, 0, 0, 'toggle', [], 'genOnOff')).not.to.throw(TypeError);
         });
 
         it('should throw TypeError if input clusterId is not a number and not a string', function () {
-            expect(function () { return zcl.frame(frameCntl, 0, 0, 'toggle', {}, undefined); }).to.throw(TypeError);
-            expect(function () { return zcl.frame(frameCntl, 0, 0, 'toggle', {}, null); }).to.throw(TypeError);
-            expect(function () { return zcl.frame(frameCntl, 0, 0, 'toggle', {}, NaN); }).to.throw(TypeError);
-            expect(function () { return zcl.frame(frameCntl, 0, 0, 'toggle', {}, []); }).to.throw(TypeError);
-            expect(function () { return zcl.frame(frameCntl, 0, 0, 'toggle', {}, true); }).to.throw(TypeError);
-            expect(function () { return zcl.frame(frameCntl, 0, 0, 'toggle', {}, new Date()); }).to.throw(TypeError);
-            expect(function () { return zcl.frame(frameCntl, 0, 0, 'toggle', {}, function () {}); }).to.throw(TypeError);
+            expect(() => zcl.frame(frameCntl, 0, 0, 'toggle', {}, undefined)).to.throw(TypeError);
+            expect(() => zcl.frame(frameCntl, 0, 0, 'toggle', {}, null)).to.throw(TypeError);
+            expect(() => zcl.frame(frameCntl, 0, 0, 'toggle', {}, NaN)).to.throw(TypeError);
+            expect(() => zcl.frame(frameCntl, 0, 0, 'toggle', {}, [])).to.throw(TypeError);
+            expect(() => zcl.frame(frameCntl, 0, 0, 'toggle', {}, true)).to.throw(TypeError);
+            expect(() => zcl.frame(frameCntl, 0, 0, 'toggle', {}, new Date())).to.throw(TypeError);
+            expect(() => zcl.frame(frameCntl, 0, 0, 'toggle', {}, function () {})).to.throw(TypeError);
 
-            expect(function () { return zcl.frame(frameCntl, 0, 0, 'toggle', {}, 'genOnOff'); }).not.to.throw(TypeError);
-            expect(function () { return zcl.frame(frameCntl, 0, 0, 'toggle', {}, 6); }).not.to.throw(TypeError);
+            expect(() => zcl.frame(frameCntl, 0, 0, 'toggle', {}, 'genOnOff')).not.to.throw(TypeError);
+            expect(() => zcl.frame(frameCntl, 0, 0, 'toggle', {}, 6)).not.to.throw(TypeError);
         });
     });
 
-    describe('#.parse', function() {
-        var zclBuf = new Buffer([0x11, 0x00, 0x02]);
+    describe('#.parse', function () {
+        const zclBuf = new Buffer([0x11, 0x00, 0x02]);
+
+        const rethrow = (err) => {
+            if (err) throw err;
+        };
 
         it('should be a function', function () {
             expect(zcl.parse).to.be.a('function');
         });
 
         it('should throw TypeError if input zclBuf is not a buffer', function () {
-            expect(function () { return zcl.parse(undefined, 0, function () {}); }).to.throw(TypeError);
-            expect(function () { return zcl.parse(null, 0, function () {}); }).to.throw(TypeError);
-            expect(function () { return zcl.parse(NaN, 0, function () {}); }).to.throw(TypeError);
-            expect(function () { return zcl.parse([], 0, function () {}); }).to.throw(TypeError);
-            expect(function () { return zcl.parse(true, 0, function () {}); }).to.throw(TypeError);
-            expect(function () { return zcl.parse(new Date(), 0, function () {}); }).to.throw(TypeError);
-            expect(function () { return zcl.parse(function () {}, 0, function () {}); }).to.throw(TypeError);
+            expect(() => zcl.parse(undefined, 0, rethrow)).to.throw(TypeError);
+            expect(() => zcl.parse(null, 0, rethrow)).to.throw(TypeError);
+            expect(() => zcl.parse(NaN, 0, rethrow)).to.throw(TypeError);
+            expect(() => zcl.parse([], 0, rethrow)).to.throw(TypeError);
+            expect(() => zcl.parse(true, 0, rethrow)).to.throw(TypeError);
+            expect(() => zcl.parse(new Date(), 0, rethrow)).to.throw(TypeError);
+            expect(() => zcl.parse(function () {}, 0, rethrow)).to.throw(TypeError);
         });
 
         it('should throw TypeError if input clusterId is not a number and not a string', function () {
-            expect(function () { return zcl.parse(zclBuf, undefined, function () {}); }).to.throw(TypeError);
-            expect(function () { return zcl.parse(zclBuf, null, function () {}); }).to.throw(TypeError);
-            expect(function () { return zcl.parse(zclBuf, NaN, function () {}); }).to.throw(TypeError);
-            expect(function () { return zcl.parse(zclBuf, [], function () {}); }).to.throw(TypeError);
-            expect(function () { return zcl.parse(zclBuf, true, function () {}); }).to.throw(TypeError);
-            expect(function () { return zcl.parse(zclBuf, new Date(), function () {}); }).to.throw(TypeError);
-            expect(function () { return zcl.parse(zclBuf, function () {}, function () {}); }).to.throw(TypeError);
+            expect(() => zcl.parse(zclBuf, undefined, rethrow)).to.throw(TypeError);
+            expect(() => zcl.parse(zclBuf, null, rethrow)).to.throw(TypeError);
+            expect(() => zcl.parse(zclBuf, NaN, rethrow)).to.throw(TypeError);
+            expect(() => zcl.parse(zclBuf, [], rethrow)).to.throw(TypeError);
+            expect(() => zcl.parse(zclBuf, true, rethrow)).to.throw(TypeError);
+            expect(() => zcl.parse(zclBuf, new Date(), rethrow)).to.throw(TypeError);
+            expect(() => zcl.parse(zclBuf, function () {}, rethrow)).to.throw(TypeError);
 
-            expect(function () { return zcl.parse(zclBuf, 'genOnOff', function () {}); }).not.to.throw(TypeError);
-            expect(function () { return zcl.parse(zclBuf, 6, function () {}); }).not.to.throw(TypeError);
+            expect(() => zcl.parse(zclBuf, 'genOnOff', function () {})).not.to.throw(TypeError);
+            expect(() => zcl.parse(zclBuf, 6, function () {})).not.to.throw(TypeError);
         });
     });
 
-    describe('#.header', function() {
+    describe('#.header', function () {
         it('should be a function', function () {
             expect(zcl.header).to.be.a('function');
         });
 
         it('should throw TypeError if input buf is not a buffer', function () {
-            expect(function () { return zcl.header(undefined); }).to.throw(TypeError);
-            expect(function () { return zcl.header(null); }).to.throw(TypeError);
-            expect(function () { return zcl.header(NaN); }).to.throw(TypeError);
-            expect(function () { return zcl.header([]); }).to.throw(TypeError);
-            expect(function () { return zcl.header(true); }).to.throw(TypeError);
-            expect(function () { return zcl.header(new Date()); }).to.throw(TypeError);
-            expect(function () { return zcl.header(function () {}); }).to.throw(TypeError);
+            expect(() => zcl.header(undefined)).to.throw(TypeError);
+            expect(() => zcl.header(null)).to.throw(TypeError);
+            expect(() => zcl.header(NaN)).to.throw(TypeError);
+            expect(() => zcl.header([])).to.throw(TypeError);
+            expect(() => zcl.header(true)).to.throw(TypeError);
+            expect(() => zcl.header(new Date())).to.throw(TypeError);
+            expect(() => zcl.header(function () {})).to.throw(TypeError);
         });
     });
 });
 
-describe('Module Methods Check', function() {
+describe('Module Methods Check', function () {
     describe('zcl foundation #.frame and #.parse Check', function () {
-        var zclFrames = [
-                {
-                    frameCntl: {
-                        frameType: 0,
-                        manufSpec: 0,
-                        direction: 0,
-                        disDefaultRsp: 1
-                    },
-                    manufCode: 0,
-                    seqNum: 0,
-                    cmdId: 'writeUndiv',
-                    payload: [
-                        {attrId: 0x1234, dataType: 0x41, attrData: 'hello'},
-                        {attrId: 0xabcd, dataType: 0x24, attrData: [100, 2406]},
-                        {attrId: 0x1234, dataType: 0x08, attrData: 60}
-                    ]
+        const zclFrames = [
+            {
+                frameCntl: {
+                    frameType: 0,
+                    manufSpec: 0,
+                    direction: 0,
+                    disDefaultRsp: 1,
                 },
-                {
-                    frameCntl: {
-                        frameType: 0,
-                        manufSpec: 1,
-                        direction: 0,
-                        disDefaultRsp: 1
-                    },
-                    manufCode: 0xaaaa,
-                    seqNum: 1,
-                    cmdId: 'configReport',
-                    payload: [
-                        {direction: 0, attrId: 0x0001, dataType: 0x20, minRepIntval: 500, maxRepIntval: 1000, repChange: 10},
-                        {direction: 1, attrId: 0x0001, timeout: 999},
-                        {direction: 0, attrId: 0x0001, dataType: 0x43, minRepIntval: 100, maxRepIntval: 200}
-                    ]
+                manufCode: 0,
+                seqNum: 0,
+                cmdId: 'writeUndiv',
+                payload: [
+                    {attrId: 0x1234, dataType: 0x41, attrData: 'hello'},
+                    {attrId: 0xabcd, dataType: 0x24, attrData: [100, 2406]},
+                    {attrId: 0x1234, dataType: 0x08, attrData: 60},
+                ],
+            },
+            {
+                frameCntl: {
+                    frameType: 0,
+                    manufSpec: 1,
+                    direction: 0,
+                    disDefaultRsp: 1,
                 },
-                {
-                    frameCntl: {
-                        frameType: 0,
-                        manufSpec: 0,
-                        direction: 1,
-                        disDefaultRsp: 1
-                    },
-                    manufCode: 0,
-                    seqNum: 2,
-                    cmdId: 'writeStruct',
-                    payload: [
-                        {attrId: 0x0011, selector: {indicator: 3, indexes: [0x0101, 0x0202, 0x0303]}, dataType: 0x21, attrData: 60000},
-                        {attrId: 0x0022, selector: {indicator: 0}, dataType: 0x50, attrData: {elmType: 0x20, numElms: 3, elmVals: [1, 2, 3]}},
-                        {attrId: 0x0033, selector: {indicator: 1, indexes: [0x0101]}, dataType: 0x4c, attrData: {numElms: 0x01, structElms: [{elmType: 0x20, elmVal: 1}]}}
-                    ]
-                }
-            ];
+                manufCode: 0xaaaa,
+                seqNum: 1,
+                cmdId: 'configReport',
+                payload: [
+                    {direction: 0, attrId: 0x0001, dataType: 0x20, minRepIntval: 500, maxRepIntval: 1000, repChange: 10},
+                    {direction: 1, attrId: 0x0001, timeout: 999},
+                    {direction: 0, attrId: 0x0001, dataType: 0x43, minRepIntval: 100, maxRepIntval: 200},
+                ],
+            },
+            {
+                frameCntl: {
+                    frameType: 0,
+                    manufSpec: 0,
+                    direction: 1,
+                    disDefaultRsp: 1,
+                },
+                manufCode: 0,
+                seqNum: 2,
+                cmdId: 'writeStruct',
+                payload: [
+                    {attrId: 0x0011, selector: {indicator: 3, indexes: [0x0101, 0x0202, 0x0303]}, dataType: 0x21, attrData: 60000},
+                    {attrId: 0x0022, selector: {indicator: 0}, dataType: 0x50, attrData: {elmType: 0x20, numElms: 3, elmVals: [1, 2, 3]}},
+                    {attrId: 0x0033, selector: {indicator: 1, indexes: [0x0101]}, dataType: 0x4c, attrData: {numElms: 0x01, structElms: [{elmType: 0x20, elmVal: 1}]}},
+                ],
+            },
+        ];
 
-        zclFrames.forEach(function(zclFrame) {
-            var zBuf;
+        zclFrames.forEach(function (zclFrame) {
+            let zBuf;
 
             it('zcl foundation framer and parser Check', function () {
                 zBuf = zcl.frame(zclFrame.frameCntl, zclFrame.manufCode, zclFrame.seqNum, zclFrame.cmdId, zclFrame.payload);
@@ -193,13 +201,13 @@ describe('Module Methods Check', function() {
     });
 
     describe('zcl functional #.frame and #.parse Check', function () {
-      var zclFrames = [
+        const zclFrames = [
             {
                 frameCntl: {
                     frameType: 1,
                     manufSpec: 0,
                     direction: 0,
-                    disDefaultRsp: 1
+                    disDefaultRsp: 1,
                 },
                 manufCode: 0,
                 seqNum: 0,
@@ -209,16 +217,18 @@ describe('Module Methods Check', function() {
                     sceneid: 0x08,
                     transtime: 0x2468,
                     scenename: 'genscenes',
-                    extensionfieldsets: [ { clstId: 0x0006, len: 0x3, extField: [0x01, 0x02, 0x03]}, 
-                                          { clstId: 0x0009, len: 0x5, extField: [0x05, 0x04, 0x03, 0x02, 0x01]} ]
-                }
+                    extensionfieldsets: [
+                        {clstId: 0x0006, len: 0x3, extField: [0x01, 0x02, 0x03]},
+                        {clstId: 0x0009, len: 0x5, extField: [0x05, 0x04, 0x03, 0x02, 0x01]},
+                    ],
+                },
             },
             {
                 frameCntl: {
                     frameType: 1,
                     manufSpec: 1,
                     direction: 1,
-                    disDefaultRsp: 0
+                    disDefaultRsp: 0,
                 },
                 manufCode: 0xaaaa,
                 seqNum: 1,
@@ -226,15 +236,15 @@ describe('Module Methods Check', function() {
                 payload: {
                     status: 0x26,
                     groupId: 0xffff,
-                    sceneId: 0x06
-                }
+                    sceneId: 0x06,
+                },
             },
             {
                 frameCntl: {
                     frameType: 1,
                     manufSpec: 0,
                     direction: 1,
-                    disDefaultRsp: 1
+                    disDefaultRsp: 1,
                 },
                 manufCode: 0,
                 seqNum: 2,
@@ -244,21 +254,22 @@ describe('Module Methods Check', function() {
                     capacity: 0x02,
                     groupid: 0x2468,
                     scenecount: 3,
-                    scenelist: [0x22, 0x33, 0x56]
-                }
-            }
+                    scenelist: [0x22, 0x33, 0x56],
+                },
+            },
         ];
 
-        zclFrames.forEach(function(zclFrame) {
-            var zBuf;
+        zclFrames.forEach(function (zclFrame) {
+            let zBuf;
 
             it('zcl functional framer and parser Check', function () {
                 zBuf = zcl.frame(zclFrame.frameCntl, zclFrame.manufCode, zclFrame.seqNum, zclFrame.cmdId, zclFrame.payload, 0x0005);
                 zcl.parse(zBuf, 0x0005, function (err, result) {
-                    if (result.cmdId === 'add')
+                    if (result.cmdId === 'add') {
                         result.frameCntl.direction = 0;
-                    else 
+                    } else {
                         result.frameCntl.direction = 1;
+                    }
 
                     expect(result).to.eql(zclFrame);
                 });
@@ -267,29 +278,39 @@ describe('Module Methods Check', function() {
     });
 
     describe('zcl #.header Check', function () {
-        var headers = [
+        const headers = [
             {
-                buf: new Buffer([ 0x00, 0x00, 0x00 ]),
+                buf: new Buffer([0x00, 0x00, 0x00]),
                 obj: {
-                    frameCntl: { frameType: 0, manufSpec: 0, direction: 0, disDefaultRsp: 0 },
+                    frameCntl: {
+                        frameType: 0,
+                        manufSpec: 0,
+                        direction: 0,
+                        disDefaultRsp: 0,
+                    },
                     manufCode: null,
                     seqNum: 0,
-                    cmdId: 0
-                }
+                    cmdId: 0,
+                },
             },
             {
-                buf: new Buffer([ 0x1d, 0x34, 0x12, 0xff, 0x01 ]),
+                buf: new Buffer([0x1d, 0x34, 0x12, 0xff, 0x01]),
                 obj: {
-                    frameCntl: { frameType: 1, manufSpec: 1, direction: 1, disDefaultRsp: 1 },
+                    frameCntl: {
+                        frameType: 1,
+                        manufSpec: 1,
+                        direction: 1,
+                        disDefaultRsp: 1,
+                    },
                     manufCode: 0x1234,
                     seqNum: 0xff,
-                    cmdId: 0x01
-                }
+                    cmdId: 0x01,
+                },
             },
         ];
 
         headers.forEach(function (header) {
-            var result = zcl.header(header.buf);
+            const result = zcl.header(header.buf);
 
             it('zcl header Check', function () {
                 expect(result).to.eql(header.obj);
@@ -314,5 +335,5 @@ describe('Module Methods Check', function() {
             });
         });
     });
-
+    
 });

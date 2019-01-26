@@ -36,4 +36,4 @@ See [Usage](https://github.com/zigbeer/zcl-packet/wiki#Usage) on the Wiki for de
 
 ## License
 
-Licensed under [MIT](https://github.com/zigbeer/zcl-packet/blob/master/LICENSE).
+Licensed under [MIT](./LICENSE).
