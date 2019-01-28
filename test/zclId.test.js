@@ -1,8 +1,6 @@
-const { expect } = require("chai")
-
 const _common = require("../src/definitions/common.json")
 
-const zclId = require("../src/legacy")
+const { zclId } = require("./zclId")
 
 const clusterDefs = require("../src/definitions/cluster_defs.json")
 
@@ -60,9 +58,9 @@ describe("Module Methods Check", function() {
         const hitA = zclId.profile(pkey),
           hitB = zclId.profileId.get(pkey)
 
-        expect(hitA).not.to.be.undefined
-        expect(hitA.key).to.be.eql(hitB.key)
-        expect(hitA.value).to.be.eql(hitB.value)
+        expect(hitA).not.toBeUndefined()
+        expect(hitA.key).toEqual(hitB.key)
+        expect(hitA.value).toEqual(hitB.value)
       })
     })
 
@@ -71,15 +69,15 @@ describe("Module Methods Check", function() {
         const hitA = zclId.profile(pval),
           hitB = zclId.profileId.get(pval)
 
-        expect(hitA).not.to.be.undefined
-        expect(hitA.key).to.be.eql(hitB.key)
-        expect(hitA.value).to.be.eql(hitB.value)
+        expect(hitA).not.toBeUndefined()
+        expect(hitA.key).toEqual(hitB.key)
+        expect(hitA.value).toEqual(hitB.value)
       })
     })
 
     it("should get undefined if profId not found", function() {
-      expect(zclId.profile("xxx")).to.be.undefined
-      expect(zclId.profile(12345)).to.be.undefined
+      expect(zclId.profile("xxx")).toBeUndefined()
+      expect(zclId.profile(12345)).toBeUndefined()
     })
   })
 
@@ -92,9 +90,9 @@ describe("Module Methods Check", function() {
           const hitA = zclId.device(pkey, dkey),
             hitB = zclId.deviceId[pkey].get(dkey)
 
-          expect(hitA).not.to.be.undefined
-          expect(hitA.key).to.be.eql(hitB.key)
-          expect(hitA.value).to.be.eql(hitB.value)
+          expect(hitA).not.toBeUndefined()
+          expect(hitA.key).toEqual(hitB.key)
+          expect(hitA.value).toEqual(hitB.value)
         })
       })
     })
@@ -107,9 +105,9 @@ describe("Module Methods Check", function() {
           const hitA = zclId.device(pkey, dval),
             hitB = zclId.deviceId[pkey].get(dval)
 
-          expect(hitA).not.to.be.undefined
-          expect(hitA.key).to.be.eql(hitB.key)
-          expect(hitA.value).to.be.eql(hitB.value)
+          expect(hitA).not.toBeUndefined()
+          expect(hitA.key).toEqual(hitB.key)
+          expect(hitA.value).toEqual(hitB.value)
         })
       })
     })
@@ -124,9 +122,9 @@ describe("Module Methods Check", function() {
           const hitA = zclId.device(pval, dkey),
             hitB = zclId.deviceId[profId.key].get(dkey)
 
-          expect(hitA).not.to.be.undefined
-          expect(hitA.key).to.be.eql(hitB.key)
-          expect(hitA.value).to.be.eql(hitB.value)
+          expect(hitA).not.toBeUndefined()
+          expect(hitA.key).toEqual(hitB.key)
+          expect(hitA.value).toEqual(hitB.value)
         })
       })
     })
@@ -141,25 +139,25 @@ describe("Module Methods Check", function() {
           const hitA = zclId.device(pval, dval),
             hitB = zclId.deviceId[profId.key].get(dval)
 
-          expect(hitA).not.to.be.undefined
-          expect(hitA.key).to.be.eql(hitB.key)
-          expect(hitA.value).to.be.eql(hitB.value)
+          expect(hitA).not.toBeUndefined()
+          expect(hitA.key).toEqual(hitB.key)
+          expect(hitA.value).toEqual(hitB.value)
         })
       })
     })
 
     it("should get undefined if target not found", function() {
-      expect(zclId.device("HA", "dddd")).to.be.undefined
-      expect(zclId.device("HA", 12345)).to.be.undefined
-      expect(zclId.device(3, "dddd")).to.be.undefined
-      expect(zclId.device(3, 12345)).to.be.undefined
+      expect(zclId.device("HA", "dddd")).toBeUndefined()
+      expect(zclId.device("HA", 12345)).toBeUndefined()
+      expect(zclId.device(3, "dddd")).toBeUndefined()
+      expect(zclId.device(3, 12345)).toBeUndefined()
     })
 
     it("should get an item if target is found", function() {
-      expect(zclId.device("HA", "doorLock")).not.to.be.undefined
-      expect(zclId.device("HA", 4)).not.to.be.undefined
-      expect(zclId.device(260, "doorLock")).not.to.be.undefined
-      expect(zclId.device(260, 4)).not.to.be.undefined
+      expect(zclId.device("HA", "doorLock")).not.toBeUndefined()
+      expect(zclId.device("HA", 4)).not.toBeUndefined()
+      expect(zclId.device(260, "doorLock")).not.toBeUndefined()
+      expect(zclId.device(260, 4)).not.toBeUndefined()
     })
   })
 
@@ -169,9 +167,9 @@ describe("Module Methods Check", function() {
         const hitA = zclId.cluster(ckey),
           hitB = zclId.clusterId.get(ckey)
 
-        expect(hitA).not.to.be.undefined
-        expect(hitA.key).to.be.eql(hitB.key)
-        expect(hitA.value).to.be.eql(hitB.value)
+        expect(hitA).not.toBeUndefined()
+        expect(hitA.key).toEqual(hitB.key)
+        expect(hitA.value).toEqual(hitB.value)
       })
     })
 
@@ -180,15 +178,15 @@ describe("Module Methods Check", function() {
         const hitA = zclId.cluster(cval),
           hitB = zclId.clusterId.get(cval)
 
-        expect(hitA).not.to.be.undefined
-        expect(hitA.key).to.be.eql(hitB.key)
-        expect(hitA.value).to.be.eql(hitB.value)
+        expect(hitA).not.toBeUndefined()
+        expect(hitA.key).toEqual(hitB.key)
+        expect(hitA.value).toEqual(hitB.value)
       })
     })
 
     it("should get undefined if cId not found", function() {
-      expect(zclId.cluster("xxx")).to.be.undefined
-      expect(zclId.cluster(12345)).to.be.undefined
+      expect(zclId.cluster("xxx")).toBeUndefined()
+      expect(zclId.cluster(12345)).toBeUndefined()
     })
   })
 
@@ -198,9 +196,9 @@ describe("Module Methods Check", function() {
         const hitA = zclId.foundation(fkey),
           hitB = zclId.foundationId.get(fkey)
 
-        expect(hitA).not.to.be.undefined
-        expect(hitA.key).to.be.eql(hitB.key)
-        expect(hitA.value).to.be.eql(hitB.value)
+        expect(hitA).not.toBeUndefined()
+        expect(hitA.key).toEqual(hitB.key)
+        expect(hitA.value).toEqual(hitB.value)
       })
     })
 
@@ -209,15 +207,15 @@ describe("Module Methods Check", function() {
         const hitA = zclId.foundation(fval),
           hitB = zclId.foundationId.get(fval)
 
-        expect(hitA).not.to.be.undefined
-        expect(hitA.key).to.be.eql(hitB.key)
-        expect(hitA.value).to.be.eql(hitB.value)
+        expect(hitA).not.toBeUndefined()
+        expect(hitA.key).toEqual(hitB.key)
+        expect(hitA.value).toEqual(hitB.value)
       })
     })
 
     it("should get undefined if cmdId not found", function() {
-      expect(zclId.foundation("xxx")).to.be.undefined
-      expect(zclId.foundation(12345)).to.be.undefined
+      expect(zclId.foundation("xxx")).toBeUndefined()
+      expect(zclId.foundation(12345)).toBeUndefined()
     })
   })
 
@@ -236,9 +234,9 @@ describe("Module Methods Check", function() {
           const hitA = zclId.functional(ckey, cmdkey),
             hitB = zclId._getCluster(ckey).cmd.get(cmdkey)
 
-          expect(hitA).not.to.be.undefined
-          expect(hitA.key).to.be.eql(hitB.key)
-          expect(hitA.value).to.be.eql(hitB.value)
+          expect(hitA).not.toBeUndefined()
+          expect(hitA.key).toEqual(hitB.key)
+          expect(hitA.value).toEqual(hitB.value)
         })
       })
     })
@@ -257,9 +255,9 @@ describe("Module Methods Check", function() {
           const hitA = zclId.functional(ckey, cmdval),
             hitB = zclId._getCluster(ckey).cmd.get(cmdval)
 
-          expect(hitA).not.to.be.undefined
-          expect(hitA.key).to.be.eql(hitB.key)
-          expect(hitA.value).to.be.eql(hitB.value)
+          expect(hitA).not.toBeUndefined()
+          expect(hitA.key).toEqual(hitB.key)
+          expect(hitA.value).toEqual(hitB.value)
         })
       })
     })
@@ -280,9 +278,9 @@ describe("Module Methods Check", function() {
           const hitA = zclId.functional(cval, cmdkey),
             hitB = zclId._getCluster(cId.key).cmd.get(cmdkey)
 
-          expect(hitA).not.to.be.undefined
-          expect(hitA.key).to.be.eql(hitB.key)
-          expect(hitA.value).to.be.eql(hitB.value)
+          expect(hitA).not.toBeUndefined()
+          expect(hitA.key).toEqual(hitB.key)
+          expect(hitA.value).toEqual(hitB.value)
         })
       })
     })
@@ -303,25 +301,25 @@ describe("Module Methods Check", function() {
           const hitA = zclId.functional(cval, cmdval),
             hitB = zclId._getCluster(cId.key).cmd.get(cmdval)
 
-          expect(hitA).not.to.be.undefined
-          expect(hitA.key).to.be.eql(hitB.key)
-          expect(hitA.value).to.be.eql(hitB.value)
+          expect(hitA).not.toBeUndefined()
+          expect(hitA.key).toEqual(hitB.key)
+          expect(hitA.value).toEqual(hitB.value)
         })
       })
     })
 
     it("should get undefined if target not found", function() {
-      expect(zclId.functional("genOnOff", "dddd")).to.be.undefined
-      expect(zclId.functional("genOnOff", 12345)).to.be.undefined
-      expect(zclId.functional(3, "dddd")).to.be.undefined
-      expect(zclId.functional(3, 12345)).to.be.undefined
+      expect(zclId.functional("genOnOff", "dddd")).toBeUndefined()
+      expect(zclId.functional("genOnOff", 12345)).toBeUndefined()
+      expect(zclId.functional(3, "dddd")).toBeUndefined()
+      expect(zclId.functional(3, 12345)).toBeUndefined()
     })
 
     it("should get an item if target is found", function() {
-      expect(zclId.functional("genOnOff", "toggle")).not.to.be.undefined
-      expect(zclId.functional("genOnOff", 2)).not.to.be.undefined
-      expect(zclId.functional(6, "toggle")).not.to.be.undefined
-      expect(zclId.functional(6, 2)).not.to.be.undefined
+      expect(zclId.functional("genOnOff", "toggle")).not.toBeUndefined()
+      expect(zclId.functional("genOnOff", 2)).not.toBeUndefined()
+      expect(zclId.functional(6, "toggle")).not.toBeUndefined()
+      expect(zclId.functional(6, 2)).not.toBeUndefined()
     })
   })
 
@@ -340,9 +338,9 @@ describe("Module Methods Check", function() {
           const hitA = zclId.getCmdRsp(ckey, cmdkey),
             hitB = zclId._getCluster(ckey).cmdRsp.get(cmdkey)
 
-          expect(hitA).not.to.be.undefined
-          expect(hitA.key).to.be.eql(hitB.key)
-          expect(hitA.value).to.be.eql(hitB.value)
+          expect(hitA).not.toBeUndefined()
+          expect(hitA.key).toEqual(hitB.key)
+          expect(hitA.value).toEqual(hitB.value)
         })
       })
     })
@@ -361,9 +359,9 @@ describe("Module Methods Check", function() {
           const hitA = zclId.getCmdRsp(ckey, cmdval),
             hitB = zclId._getCluster(ckey).cmdRsp.get(cmdval)
 
-          expect(hitA).not.to.be.undefined
-          expect(hitA.key).to.be.eql(hitB.key)
-          expect(hitA.value).to.be.eql(hitB.value)
+          expect(hitA).not.toBeUndefined()
+          expect(hitA.key).toEqual(hitB.key)
+          expect(hitA.value).toEqual(hitB.value)
         })
       })
     })
@@ -384,9 +382,9 @@ describe("Module Methods Check", function() {
           const hitA = zclId.getCmdRsp(cval, cmdkey),
             hitB = zclId._getCluster(cId.key).cmdRsp.get(cmdkey)
 
-          expect(hitA).not.to.be.undefined
-          expect(hitA.key).to.be.eql(hitB.key)
-          expect(hitA.value).to.be.eql(hitB.value)
+          expect(hitA).not.toBeUndefined()
+          expect(hitA.key).toEqual(hitB.key)
+          expect(hitA.value).toEqual(hitB.value)
         })
       })
     })
@@ -407,25 +405,25 @@ describe("Module Methods Check", function() {
           const hitA = zclId.getCmdRsp(cval, cmdval),
             hitB = zclId._getCluster(cId.key).cmdRsp.get(cmdval)
 
-          expect(hitA).not.to.be.undefined
-          expect(hitA.key).to.be.eql(hitB.key)
-          expect(hitA.value).to.be.eql(hitB.value)
+          expect(hitA).not.toBeUndefined()
+          expect(hitA.key).toEqual(hitB.key)
+          expect(hitA.value).toEqual(hitB.value)
         })
       })
     })
 
     it("should get undefined if target not found", function() {
-      expect(zclId.getCmdRsp("ssIasZone", "dddd")).to.be.undefined
-      expect(zclId.getCmdRsp("ssIasZone", 12345)).to.be.undefined
-      expect(zclId.getCmdRsp(1280, "dddd")).to.be.undefined
-      expect(zclId.getCmdRsp(1280, 12345)).to.be.undefined
+      expect(zclId.getCmdRsp("ssIasZone", "dddd")).toBeUndefined()
+      expect(zclId.getCmdRsp("ssIasZone", 12345)).toBeUndefined()
+      expect(zclId.getCmdRsp(1280, "dddd")).toBeUndefined()
+      expect(zclId.getCmdRsp(1280, 12345)).toBeUndefined()
     })
 
     it("should get an item if target is found", function() {
-      expect(zclId.getCmdRsp("ssIasZone", "enrollReq")).not.to.be.undefined
-      expect(zclId.getCmdRsp("ssIasZone", 1)).not.to.be.undefined
-      expect(zclId.getCmdRsp(1280, "enrollReq")).not.to.be.undefined
-      expect(zclId.getCmdRsp(1280, 1)).not.to.be.undefined
+      expect(zclId.getCmdRsp("ssIasZone", "enrollReq")).not.toBeUndefined()
+      expect(zclId.getCmdRsp("ssIasZone", 1)).not.toBeUndefined()
+      expect(zclId.getCmdRsp(1280, "enrollReq")).not.toBeUndefined()
+      expect(zclId.getCmdRsp(1280, 1)).not.toBeUndefined()
     })
   })
 
@@ -444,9 +442,9 @@ describe("Module Methods Check", function() {
           const hitA = zclId.attr(ckey, akey),
             hitB = zclId._getCluster(ckey).attr.get(akey)
 
-          expect(hitA).not.to.be.undefined
-          expect(hitA.key).to.be.eql(hitB.key)
-          expect(hitA.value).to.be.eql(hitB.value)
+          expect(hitA).not.toBeUndefined()
+          expect(hitA.key).toEqual(hitB.key)
+          expect(hitA.value).toEqual(hitB.value)
         })
       })
     })
@@ -465,9 +463,9 @@ describe("Module Methods Check", function() {
           const hitA = zclId.attr(ckey, aval),
             hitB = zclId._getCluster(ckey).attr.get(aval)
 
-          expect(hitA).not.to.be.undefined
-          expect(hitA.key).to.be.eql(hitB.key)
-          expect(hitA.value).to.be.eql(hitB.value)
+          expect(hitA).not.toBeUndefined()
+          expect(hitA.key).toEqual(hitB.key)
+          expect(hitA.value).toEqual(hitB.value)
         })
       })
     })
@@ -488,9 +486,9 @@ describe("Module Methods Check", function() {
           const hitA = zclId.attr(cval, akey),
             hitB = zclId._getCluster(cId.key).attr.get(akey)
 
-          expect(hitA).not.to.be.undefined
-          expect(hitA.key).to.be.eql(hitB.key)
-          expect(hitA.value).to.be.eql(hitB.value)
+          expect(hitA).not.toBeUndefined()
+          expect(hitA.key).toEqual(hitB.key)
+          expect(hitA.value).toEqual(hitB.value)
         })
       })
     })
@@ -511,25 +509,25 @@ describe("Module Methods Check", function() {
           const hitA = zclId.attr(cval, aval),
             hitB = zclId._getCluster(cId.key).attr.get(aval)
 
-          expect(hitA).not.to.be.undefined
-          expect(hitA.key).to.be.eql(hitB.key)
-          expect(hitA.value).to.be.eql(hitB.value)
+          expect(hitA).not.toBeUndefined()
+          expect(hitA.key).toEqual(hitB.key)
+          expect(hitA.value).toEqual(hitB.value)
         })
       })
     })
 
     it("should get undefined if target not found", function() {
-      expect(zclId.attr("genBasic", "dddd")).to.be.undefined
-      expect(zclId.attr("genBasic", 12345)).to.be.undefined
-      expect(zclId.attr(3, "dddd")).to.be.undefined
-      expect(zclId.attr(3, 12345)).to.be.undefined
+      expect(zclId.attr("genBasic", "dddd")).toBeUndefined()
+      expect(zclId.attr("genBasic", 12345)).toBeUndefined()
+      expect(zclId.attr(3, "dddd")).toBeUndefined()
+      expect(zclId.attr(3, 12345)).toBeUndefined()
     })
 
     it("should get an item if target is found", function() {
-      expect(zclId.attr("genBasic", "zclVersion")).not.to.be.undefined
-      expect(zclId.attr("genBasic", 0)).not.to.be.undefined
-      expect(zclId.attr(0, "zclVersion")).not.to.be.undefined
-      expect(zclId.attr(0, 0)).not.to.be.undefined
+      expect(zclId.attr("genBasic", "zclVersion")).not.toBeUndefined()
+      expect(zclId.attr("genBasic", 0)).not.toBeUndefined()
+      expect(zclId.attr(0, "zclVersion")).not.toBeUndefined()
+      expect(zclId.attr(0, 0)).not.toBeUndefined()
     })
   })
 
@@ -549,9 +547,9 @@ describe("Module Methods Check", function() {
             hitA = zclId.attrType(ckey, akey),
             hitB = zclId.dataType(dataType.value)
 
-          expect(hitA).not.to.be.undefined
-          expect(hitA.key).to.be.eql(hitB.key)
-          expect(hitA.value).to.be.eql(hitB.value)
+          expect(hitA).not.toBeUndefined()
+          expect(hitA.key).toEqual(hitB.key)
+          expect(hitA.value).toEqual(hitB.value)
         })
       })
     })
@@ -572,9 +570,9 @@ describe("Module Methods Check", function() {
             hitA = zclId.attrType(ckey, aval),
             hitB = zclId.dataType(dataType.value)
 
-          expect(hitA).not.to.be.undefined
-          expect(hitA.key).to.be.eql(hitB.key)
-          expect(hitA.value).to.be.eql(hitB.value)
+          expect(hitA).not.toBeUndefined()
+          expect(hitA.key).toEqual(hitB.key)
+          expect(hitA.value).toEqual(hitB.value)
         })
       })
     })
@@ -596,9 +594,9 @@ describe("Module Methods Check", function() {
             hitA = zclId.attrType(cval, akey),
             hitB = zclId.dataType(dataType.value)
 
-          expect(hitA).not.to.be.undefined
-          expect(hitA.key).to.be.eql(hitB.key)
-          expect(hitA.value).to.be.eql(hitB.value)
+          expect(hitA).not.toBeUndefined()
+          expect(hitA.key).toEqual(hitB.key)
+          expect(hitA.value).toEqual(hitB.value)
         })
       })
     })
@@ -621,25 +619,25 @@ describe("Module Methods Check", function() {
             hitA = zclId.attrType(cval, aval),
             hitB = zclId.dataType(dataType.value)
 
-          expect(hitA).not.to.be.undefined
-          expect(hitA.key).to.be.eql(hitB.key)
-          expect(hitA.value).to.be.eql(hitB.value)
+          expect(hitA).not.toBeUndefined()
+          expect(hitA.key).toEqual(hitB.key)
+          expect(hitA.value).toEqual(hitB.value)
         })
       })
     })
 
     it("should get undefined if target not found", function() {
-      expect(zclId.attrType("genBasic", "dddd")).to.be.undefined
-      expect(zclId.attrType("genBasic", 12345)).to.be.undefined
-      expect(zclId.attrType(3, "dddd")).to.be.undefined
-      expect(zclId.attrType(3, 12345)).to.be.undefined
+      expect(zclId.attrType("genBasic", "dddd")).toBeUndefined()
+      expect(zclId.attrType("genBasic", 12345)).toBeUndefined()
+      expect(zclId.attrType(3, "dddd")).toBeUndefined()
+      expect(zclId.attrType(3, 12345)).toBeUndefined()
     })
 
     it("should get an item if target is found", function() {
-      expect(zclId.attr("genBasic", "zclVersion")).not.to.be.undefined
-      expect(zclId.attr("genBasic", 0)).not.to.be.undefined
-      expect(zclId.attr(0, "zclVersion")).not.to.be.undefined
-      expect(zclId.attr(0, 0)).not.to.be.undefined
+      expect(zclId.attr("genBasic", "zclVersion")).not.toBeUndefined()
+      expect(zclId.attr("genBasic", 0)).not.toBeUndefined()
+      expect(zclId.attr(0, "zclVersion")).not.toBeUndefined()
+      expect(zclId.attr(0, 0)).not.toBeUndefined()
     })
   })
 
@@ -649,9 +647,9 @@ describe("Module Methods Check", function() {
         const hitA = zclId.dataType(dkey),
           hitB = zclId.dataTypeId.get(dkey)
 
-        expect(hitA).not.to.be.undefined
-        expect(hitA.key).to.be.eql(hitB.key)
-        expect(hitA.value).to.be.eql(hitB.value)
+        expect(hitA).not.toBeUndefined()
+        expect(hitA.key).toEqual(hitB.key)
+        expect(hitA.value).toEqual(hitB.value)
       })
     })
 
@@ -660,15 +658,15 @@ describe("Module Methods Check", function() {
         const hitA = zclId.dataType(dval),
           hitB = zclId.dataTypeId.get(dval)
 
-        expect(hitA).not.to.be.undefined
-        expect(hitA.key).to.be.eql(hitB.key)
-        expect(hitA.value).to.be.eql(hitB.value)
+        expect(hitA).not.toBeUndefined()
+        expect(hitA.key).toEqual(hitB.key)
+        expect(hitA.value).toEqual(hitB.value)
       })
     })
 
     it("should get undefined if type not found", function() {
-      expect(zclId.dataType("xxx")).to.be.undefined
-      expect(zclId.dataType(12345)).to.be.undefined
+      expect(zclId.dataType("xxx")).toBeUndefined()
+      expect(zclId.dataType(12345)).toBeUndefined()
     })
   })
 
@@ -678,9 +676,9 @@ describe("Module Methods Check", function() {
         const hitA = zclId.status(dkey),
           hitB = zclId.statusId.get(dkey)
 
-        expect(hitA).not.to.be.undefined
-        expect(hitA.key).to.be.eql(hitB.key)
-        expect(hitA.value).to.be.eql(hitB.value)
+        expect(hitA).not.toBeUndefined()
+        expect(hitA.key).toEqual(hitB.key)
+        expect(hitA.value).toEqual(hitB.value)
       })
     })
 
@@ -689,21 +687,21 @@ describe("Module Methods Check", function() {
         const hitA = zclId.status(dval),
           hitB = zclId.statusId.get(dval)
 
-        expect(hitA).not.to.be.undefined
-        expect(hitA.key).to.be.eql(hitB.key)
-        expect(hitA.value).to.be.eql(hitB.value)
+        expect(hitA).not.toBeUndefined()
+        expect(hitA.key).toEqual(hitB.key)
+        expect(hitA.value).toEqual(hitB.value)
       })
     })
 
     it("should get undefined if type not found", function() {
-      expect(zclId.status("xxx")).to.be.undefined
-      expect(zclId.status(12345)).to.be.undefined
+      expect(zclId.status("xxx")).toBeUndefined()
+      expect(zclId.status(12345)).toBeUndefined()
     })
   })
 
   describe("#.attrList", function() {
     it("should get right list by zclId.cluster string id", function() {
-      expect(zclId.attrList("genDeviceTempCfg")).to.be.deep.equal([
+      expect(zclId.attrList("genDeviceTempCfg")).toEqual([
         { attrId: 0, dataType: 41 },
         { attrId: 1, dataType: 41 },
         { attrId: 2, dataType: 41 },
@@ -717,7 +715,7 @@ describe("Module Methods Check", function() {
     })
 
     it("should get right list by cluster numeric id", function() {
-      expect(zclId.attrList(2)).to.be.deep.equal([
+      expect(zclId.attrList(2)).toEqual([
         { attrId: 0, dataType: 41 },
         { attrId: 1, dataType: 41 },
         { attrId: 2, dataType: 41 },
@@ -731,7 +729,7 @@ describe("Module Methods Check", function() {
     })
 
     it("should be undefined if cluster not found", function() {
-      expect(zclId.attrList("genDeviceTempCfgxx")).to.be.undefined
+      expect(zclId.attrList("genDeviceTempCfgxx")).toBeUndefined()
     })
   })
 })

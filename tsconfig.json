@@ -4,7 +4,7 @@
     "target": "es6",
     "module": "commonjs",
     "lib": ["es2017"],
-    "types": ["node", "mocha"],
+    "types": ["node", "jest"],
     "resolveJsonModule": true,
     "outDir": "dist",
     "declaration": true
