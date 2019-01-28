@@ -1,11 +1,10 @@
-const expect = require('chai').expect;
 const Chance = require('chance');
 const chance = new Chance();
 const zclId = require('zcl-id/dist/legacy');
 
-const zclmeta = require('../lib/zclmeta')(zclId);
+const zclmeta = require('../src/zclmeta')(zclId);
 
-const FuncClass = require('../lib/functional')(zclId);
+const FuncClass = require('../src/functional')(zclId);
 
 const clusterIds = Object.keys(require('zcl-id/src/definitions/common.json').clusterId);
 
@@ -39,7 +38,7 @@ describe('Functional Cmd framer and parser Check', function () {
 
             funcObj.parse(payload, function (err, result) {
                 it(funcObj.cmd + ' frame() and parse() check', function () {
-                    expect(result).to.eql(args);
+                    expect(result).toEqual(args);
                 });
             });
         });
@@ -75,7 +74,7 @@ describe('Functional CmdRsp framer and parser Check', function () {
 
             funcObj.parse(payload, function (err, result) {
                 it(funcObj.cmd + ' frame() and parse() check', function () {
-                    expect(result).to.eql(args);
+                    expect(result).toEqual(args);
                 });
             });
         });

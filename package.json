@@ -2,16 +2,20 @@
   "name": "zcl-packet",
   "version": "0.2.5-1",
   "description": "zcl-packet is a framer and parser for ZigBee Cluster Library (ZCL) packet on node.js.",
-  "main": "index.js",
+  "main": "dist/index.js",
   "files": [
-    "/index.js",
-    "/lib"
+    "/dist"
   ],
+  "types": "dist/index.d.ts",
   "publishConfig": {
     "access": "public"
   },
   "scripts": {
-    "test": "mocha -u bdd --reporter spec"
+    "test": "mocha -r ts-node/register",
+    "prepare": "tsc",
+    "convert": "ts-node --transpile-only src/definitions/convert.ts && prettier --write src/definitions/*.json",
+    "prettier": "prettier 'src/**' --check",
+    "prettier:fix": "prettier 'src/**' --write"
   },
   "repository": {
     "type": "git",
@@ -43,10 +47,16 @@
     "enum": "^2.5.0"
   },
   "devDependencies": {
+    "@types/mocha": "^5.2.5",
+    "@types/node": "^10.12.18",
     "busyman": "^0.3.0",
     "chai": "^3.5.0",
     "chance": "^1.0.4",
+    "jest": "^24.0.0",
     "mocha": "^2.5.3",
+    "prettier": "^1.16.1",
+    "ts-node": "^8.0.2",
+    "typescript": "^3.2.4",
     "zcl-id": "^0.5.0-6"
   }
 }
