@@ -1,6 +1,5 @@
-const expect = require('chai').expect;
 const zclId = require('zcl-id/dist/legacy');
-const zcl = require('../index')(zclId);
+const zcl = require('../src')(zclId);
 describe('APIs Arguments Check for Throwing Error', function () {
     describe('#.frame', function () {
         const frameCntl = {
@@ -11,75 +10,75 @@ describe('APIs Arguments Check for Throwing Error', function () {
         };
 
         it('should be a function', function () {
-            expect(zcl.frame).to.be.a('function');
+            expect(typeof zcl.frame).toBe('function');
         });
 
         it('should throw TypeError if input frameCntl is not an object', function () {
-            expect(() => zcl.frame(undefined, 0, 0, 'toggle', {}, 'genOnOff')).to.throw(TypeError);
-            expect(() => zcl.frame(null, 0, 0, 'toggle', {}, 'genOnOff')).to.throw(TypeError);
-            expect(() => zcl.frame(NaN, 0, 0, 'toggle', {}, 'genOnOff')).to.throw(TypeError);
-            expect(() => zcl.frame([], 0, 0, 'toggle', {}, 'genOnOff')).to.throw(TypeError);
-            expect(() => zcl.frame(true, 0, 0, 'toggle', {}, 'genOnOff')).to.throw(TypeError);
-            expect(() => zcl.frame(new Date(), 0, 0, 'toggle', {}, 'genOnOff')).to.throw(TypeError);
-            expect(() => zcl.frame(function () {}, 0, 0, 'toggle', {}, 'genOnOff')).to.throw(TypeError);
+            expect(() => zcl.frame(undefined, 0, 0, 'toggle', {}, 'genOnOff')).toThrowError(TypeError);
+            expect(() => zcl.frame(null, 0, 0, 'toggle', {}, 'genOnOff')).toThrowError(TypeError);
+            expect(() => zcl.frame(NaN, 0, 0, 'toggle', {}, 'genOnOff')).toThrowError(TypeError);
+            expect(() => zcl.frame([], 0, 0, 'toggle', {}, 'genOnOff')).toThrowError(TypeError);
+            expect(() => zcl.frame(true, 0, 0, 'toggle', {}, 'genOnOff')).toThrowError(TypeError);
+            expect(() => zcl.frame(new Date(), 0, 0, 'toggle', {}, 'genOnOff')).toThrowError(TypeError);
+            expect(() => zcl.frame(function () {}, 0, 0, 'toggle', {}, 'genOnOff')).toThrowError(TypeError);
 
-            expect(() => zcl.frame(frameCntl, 0, 0, 'toggle', {}, 'genOnOff')).not.to.throw(TypeError);
+            expect(() => zcl.frame(frameCntl, 0, 0, 'toggle', {}, 'genOnOff')).not.toThrowError(TypeError);
         });
 
         it('should throw TypeError if input manufCode is not a number', function () {
-            expect(() => zcl.frame(frameCntl, undefined, 0, 'toggle', {}, 'genOnOff')).to.throw(TypeError);
-            expect(() => zcl.frame(frameCntl, null, 0, 'toggle', {}, 'genOnOff')).to.throw(TypeError);
-            expect(() => zcl.frame(frameCntl, NaN, 0, 'toggle', {}, 'genOnOff')).to.throw(TypeError);
-            expect(() => zcl.frame(frameCntl, [], 0, 'toggle', {}, 'genOnOff')).to.throw(TypeError);
-            expect(() => zcl.frame(frameCntl, true, 0, 'toggle', {}, 'genOnOff')).to.throw(TypeError);
-            expect(() => zcl.frame(frameCntl, new Date(), 0, 'toggle', {}, 'genOnOff')).to.throw(TypeError);
-            expect(() => zcl.frame(frameCntl, function () {}, 0, 'toggle', {}, 'genOnOff')).to.throw(TypeError);
+            expect(() => zcl.frame(frameCntl, undefined, 0, 'toggle', {}, 'genOnOff')).toThrowError(TypeError);
+            expect(() => zcl.frame(frameCntl, null, 0, 'toggle', {}, 'genOnOff')).toThrowError(TypeError);
+            expect(() => zcl.frame(frameCntl, NaN, 0, 'toggle', {}, 'genOnOff')).toThrowError(TypeError);
+            expect(() => zcl.frame(frameCntl, [], 0, 'toggle', {}, 'genOnOff')).toThrowError(TypeError);
+            expect(() => zcl.frame(frameCntl, true, 0, 'toggle', {}, 'genOnOff')).toThrowError(TypeError);
+            expect(() => zcl.frame(frameCntl, new Date(), 0, 'toggle', {}, 'genOnOff')).toThrowError(TypeError);
+            expect(() => zcl.frame(frameCntl, function () {}, 0, 'toggle', {}, 'genOnOff')).toThrowError(TypeError);
         });
 
         it('should throw TypeError if input seqNum is not a number', function () {
-            expect(() => zcl.frame(frameCntl, 0, undefined, 'toggle', {}, 'genOnOff')).to.throw(TypeError);
-            expect(() => zcl.frame(frameCntl, 0, null, 'toggle', {}, 'genOnOff')).to.throw(TypeError);
-            expect(() => zcl.frame(frameCntl, 0, NaN, 'toggle', {}, 'genOnOff')).to.throw(TypeError);
-            expect(() => zcl.frame(frameCntl, 0, [], 'toggle', {}, 'genOnOff')).to.throw(TypeError);
-            expect(() => zcl.frame(frameCntl, 0, true, 'toggle', {}, 'genOnOff')).to.throw(TypeError);
-            expect(() => zcl.frame(frameCntl, 0, new Date(), 'toggle', {}, 'genOnOff')).to.throw(TypeError);
-            expect(() => zcl.frame(frameCntl, 0, function () {}, 'toggle', {}, 'genOnOff')).to.throw(TypeError);
+            expect(() => zcl.frame(frameCntl, 0, undefined, 'toggle', {}, 'genOnOff')).toThrowError(TypeError);
+            expect(() => zcl.frame(frameCntl, 0, null, 'toggle', {}, 'genOnOff')).toThrowError(TypeError);
+            expect(() => zcl.frame(frameCntl, 0, NaN, 'toggle', {}, 'genOnOff')).toThrowError(TypeError);
+            expect(() => zcl.frame(frameCntl, 0, [], 'toggle', {}, 'genOnOff')).toThrowError(TypeError);
+            expect(() => zcl.frame(frameCntl, 0, true, 'toggle', {}, 'genOnOff')).toThrowError(TypeError);
+            expect(() => zcl.frame(frameCntl, 0, new Date(), 'toggle', {}, 'genOnOff')).toThrowError(TypeError);
+            expect(() => zcl.frame(frameCntl, 0, function () {}, 'toggle', {}, 'genOnOff')).toThrowError(TypeError);
         });
 
         it('should throw TypeError if input cmd is not a number and not a string', function () {
-            expect(() => zcl.frame(frameCntl, 0, 0, undefined, {}, 'genOnOff')).to.throw(TypeError);
-            expect(() => zcl.frame(frameCntl, 0, 0, null, {}, 'genOnOff')).to.throw(TypeError);
-            expect(() => zcl.frame(frameCntl, 0, 0, NaN, {}, 'genOnOff')).to.throw(TypeError);
-            expect(() => zcl.frame(frameCntl, 0, 0, [], {}, 'genOnOff')).to.throw(TypeError);
-            expect(() => zcl.frame(frameCntl, 0, 0, true, {}, 'genOnOff')).to.throw(TypeError);
-            expect(() => zcl.frame(frameCntl, 0, 0, new Date(), {}, 'genOnOff')).to.throw(TypeError);
-            expect(() => zcl.frame(frameCntl, 0, 0, function () {}, {}, 'genOnOff')).to.throw(TypeError);
+            expect(() => zcl.frame(frameCntl, 0, 0, undefined, {}, 'genOnOff')).toThrowError(TypeError);
+            expect(() => zcl.frame(frameCntl, 0, 0, null, {}, 'genOnOff')).toThrowError(TypeError);
+            expect(() => zcl.frame(frameCntl, 0, 0, NaN, {}, 'genOnOff')).toThrowError(TypeError);
+            expect(() => zcl.frame(frameCntl, 0, 0, [], {}, 'genOnOff')).toThrowError(TypeError);
+            expect(() => zcl.frame(frameCntl, 0, 0, true, {}, 'genOnOff')).toThrowError(TypeError);
+            expect(() => zcl.frame(frameCntl, 0, 0, new Date(), {}, 'genOnOff')).toThrowError(TypeError);
+            expect(() => zcl.frame(frameCntl, 0, 0, function () {}, {}, 'genOnOff')).toThrowError(TypeError);
 
-            expect(() => zcl.frame(frameCntl, 0, 0, 'toggle', {}, 'genOnOff')).not.to.throw(TypeError);
-            expect(() => zcl.frame(frameCntl, 0, 0, 2, {}, 'genOnOff')).not.to.throw(TypeError);
+            expect(() => zcl.frame(frameCntl, 0, 0, 'toggle', {}, 'genOnOff')).not.toThrowError(TypeError);
+            expect(() => zcl.frame(frameCntl, 0, 0, 2, {}, 'genOnOff')).not.toThrowError(TypeError);
         });
 
         it('should throw TypeError if input zclPayload is not an object and not an array', function () {
-            expect(() => zcl.frame(frameCntl, 0, 0, 'toggle', undefined, 'genOnOff')).to.throw(TypeError);
-            expect(() => zcl.frame(frameCntl, 0, 0, 'toggle', null, 'genOnOff')).to.throw(TypeError);
-            expect(() => zcl.frame(frameCntl, 0, 0, 'toggle', NaN, 'genOnOff')).to.throw(TypeError);
-            expect(() => zcl.frame(frameCntl, 0, 0, 'toggle', true, 'genOnOff')).to.throw(TypeError);
+            expect(() => zcl.frame(frameCntl, 0, 0, 'toggle', undefined, 'genOnOff')).toThrowError(TypeError);
+            expect(() => zcl.frame(frameCntl, 0, 0, 'toggle', null, 'genOnOff')).toThrowError(TypeError);
+            expect(() => zcl.frame(frameCntl, 0, 0, 'toggle', NaN, 'genOnOff')).toThrowError(TypeError);
+            expect(() => zcl.frame(frameCntl, 0, 0, 'toggle', true, 'genOnOff')).toThrowError(TypeError);
 
-            expect(() => zcl.frame(frameCntl, 0, 0, 'toggle', {}, 'genOnOff')).not.to.throw(TypeError);
-            expect(() => zcl.frame(frameCntl, 0, 0, 'toggle', [], 'genOnOff')).not.to.throw(TypeError);
+            expect(() => zcl.frame(frameCntl, 0, 0, 'toggle', {}, 'genOnOff')).not.toThrowError(TypeError);
+            expect(() => zcl.frame(frameCntl, 0, 0, 'toggle', [], 'genOnOff')).not.toThrowError(TypeError);
         });
 
         it('should throw TypeError if input clusterId is not a number and not a string', function () {
-            expect(() => zcl.frame(frameCntl, 0, 0, 'toggle', {}, undefined)).to.throw(TypeError);
-            expect(() => zcl.frame(frameCntl, 0, 0, 'toggle', {}, null)).to.throw(TypeError);
-            expect(() => zcl.frame(frameCntl, 0, 0, 'toggle', {}, NaN)).to.throw(TypeError);
-            expect(() => zcl.frame(frameCntl, 0, 0, 'toggle', {}, [])).to.throw(TypeError);
-            expect(() => zcl.frame(frameCntl, 0, 0, 'toggle', {}, true)).to.throw(TypeError);
-            expect(() => zcl.frame(frameCntl, 0, 0, 'toggle', {}, new Date())).to.throw(TypeError);
-            expect(() => zcl.frame(frameCntl, 0, 0, 'toggle', {}, function () {})).to.throw(TypeError);
+            expect(() => zcl.frame(frameCntl, 0, 0, 'toggle', {}, undefined)).toThrowError(TypeError);
+            expect(() => zcl.frame(frameCntl, 0, 0, 'toggle', {}, null)).toThrowError(TypeError);
+            expect(() => zcl.frame(frameCntl, 0, 0, 'toggle', {}, NaN)).toThrowError(TypeError);
+            expect(() => zcl.frame(frameCntl, 0, 0, 'toggle', {}, [])).toThrowError(TypeError);
+            expect(() => zcl.frame(frameCntl, 0, 0, 'toggle', {}, true)).toThrowError(TypeError);
+            expect(() => zcl.frame(frameCntl, 0, 0, 'toggle', {}, new Date())).toThrowError(TypeError);
+            expect(() => zcl.frame(frameCntl, 0, 0, 'toggle', {}, function () {})).toThrowError(TypeError);
 
-            expect(() => zcl.frame(frameCntl, 0, 0, 'toggle', {}, 'genOnOff')).not.to.throw(TypeError);
-            expect(() => zcl.frame(frameCntl, 0, 0, 'toggle', {}, 6)).not.to.throw(TypeError);
+            expect(() => zcl.frame(frameCntl, 0, 0, 'toggle', {}, 'genOnOff')).not.toThrowError(TypeError);
+            expect(() => zcl.frame(frameCntl, 0, 0, 'toggle', {}, 6)).not.toThrowError(TypeError);
         });
     });
 
@@ -91,46 +90,46 @@ describe('APIs Arguments Check for Throwing Error', function () {
         };
 
         it('should be a function', function () {
-            expect(zcl.parse).to.be.a('function');
+            expect(typeof zcl.parse).toBe('function');
         });
 
         it('should throw TypeError if input zclBuf is not a buffer', function () {
-            expect(() => zcl.parse(undefined, 0, rethrow)).to.throw(TypeError);
-            expect(() => zcl.parse(null, 0, rethrow)).to.throw(TypeError);
-            expect(() => zcl.parse(NaN, 0, rethrow)).to.throw(TypeError);
-            expect(() => zcl.parse([], 0, rethrow)).to.throw(TypeError);
-            expect(() => zcl.parse(true, 0, rethrow)).to.throw(TypeError);
-            expect(() => zcl.parse(new Date(), 0, rethrow)).to.throw(TypeError);
-            expect(() => zcl.parse(function () {}, 0, rethrow)).to.throw(TypeError);
+            expect(() => zcl.parse(undefined, 0, rethrow)).toThrowError(TypeError);
+            expect(() => zcl.parse(null, 0, rethrow)).toThrowError(TypeError);
+            expect(() => zcl.parse(NaN, 0, rethrow)).toThrowError(TypeError);
+            expect(() => zcl.parse([], 0, rethrow)).toThrowError(TypeError);
+            expect(() => zcl.parse(true, 0, rethrow)).toThrowError(TypeError);
+            expect(() => zcl.parse(new Date(), 0, rethrow)).toThrowError(TypeError);
+            expect(() => zcl.parse(function () {}, 0, rethrow)).toThrowError(TypeError);
         });
 
         it('should throw TypeError if input clusterId is not a number and not a string', function () {
-            expect(() => zcl.parse(zclBuf, undefined, rethrow)).to.throw(TypeError);
-            expect(() => zcl.parse(zclBuf, null, rethrow)).to.throw(TypeError);
-            expect(() => zcl.parse(zclBuf, NaN, rethrow)).to.throw(TypeError);
-            expect(() => zcl.parse(zclBuf, [], rethrow)).to.throw(TypeError);
-            expect(() => zcl.parse(zclBuf, true, rethrow)).to.throw(TypeError);
-            expect(() => zcl.parse(zclBuf, new Date(), rethrow)).to.throw(TypeError);
-            expect(() => zcl.parse(zclBuf, function () {}, rethrow)).to.throw(TypeError);
+            expect(() => zcl.parse(zclBuf, undefined, rethrow)).toThrowError(TypeError);
+            expect(() => zcl.parse(zclBuf, null, rethrow)).toThrowError(TypeError);
+            expect(() => zcl.parse(zclBuf, NaN, rethrow)).toThrowError(TypeError);
+            expect(() => zcl.parse(zclBuf, [], rethrow)).toThrowError(TypeError);
+            expect(() => zcl.parse(zclBuf, true, rethrow)).toThrowError(TypeError);
+            expect(() => zcl.parse(zclBuf, new Date(), rethrow)).toThrowError(TypeError);
+            expect(() => zcl.parse(zclBuf, function () {}, rethrow)).toThrowError(TypeError);
 
-            expect(() => zcl.parse(zclBuf, 'genOnOff', function () {})).not.to.throw(TypeError);
-            expect(() => zcl.parse(zclBuf, 6, function () {})).not.to.throw(TypeError);
+            expect(() => zcl.parse(zclBuf, 'genOnOff', function () {})).not.toThrowError(TypeError);
+            expect(() => zcl.parse(zclBuf, 6, function () {})).not.toThrowError(TypeError);
         });
     });
 
     describe('#.header', function () {
         it('should be a function', function () {
-            expect(zcl.header).to.be.a('function');
+            expect(typeof zcl.header).toBe('function');
         });
 
         it('should throw TypeError if input buf is not a buffer', function () {
-            expect(() => zcl.header(undefined)).to.throw(TypeError);
-            expect(() => zcl.header(null)).to.throw(TypeError);
-            expect(() => zcl.header(NaN)).to.throw(TypeError);
-            expect(() => zcl.header([])).to.throw(TypeError);
-            expect(() => zcl.header(true)).to.throw(TypeError);
-            expect(() => zcl.header(new Date())).to.throw(TypeError);
-            expect(() => zcl.header(function () {})).to.throw(TypeError);
+            expect(() => zcl.header(undefined)).toThrowError(TypeError);
+            expect(() => zcl.header(null)).toThrowError(TypeError);
+            expect(() => zcl.header(NaN)).toThrowError(TypeError);
+            expect(() => zcl.header([])).toThrowError(TypeError);
+            expect(() => zcl.header(true)).toThrowError(TypeError);
+            expect(() => zcl.header(new Date())).toThrowError(TypeError);
+            expect(() => zcl.header(function () {})).toThrowError(TypeError);
         });
     });
 });
@@ -194,7 +193,7 @@ describe('Module Methods Check', function () {
             it('zcl foundation framer and parser Check', function () {
                 zBuf = zcl.frame(zclFrame.frameCntl, zclFrame.manufCode, zclFrame.seqNum, zclFrame.cmdId, zclFrame.payload);
                 zcl.parse(zBuf, function (err, result) {
-                    expect(result).to.eql(zclFrame);
+                    expect(result).toEqual(zclFrame);
                 });
             });
         });
@@ -271,7 +270,7 @@ describe('Module Methods Check', function () {
                         result.frameCntl.direction = 1;
                     }
 
-                    expect(result).to.eql(zclFrame);
+                    expect(result).toEqual(zclFrame);
                 });
             });
         });
@@ -313,7 +312,7 @@ describe('Module Methods Check', function () {
             const result = zcl.header(header.buf);
 
             it('zcl header Check', function () {
-                expect(result).to.eql(header.obj);
+                expect(result).toEqual(header.obj);
             });
         });
     });
@@ -331,7 +330,7 @@ describe('Module Methods Check', function () {
         headers.forEach(function (header) {
             var result = zcl.header(header.buf);
             it('zcl header Check', function () {
-                expect(result).to.be.undefined;
+                expect(result).toBeUndefined();
             });
         });
     });

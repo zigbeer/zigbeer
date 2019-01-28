@@ -1,7 +1,6 @@
-const expect = require('chai').expect;
 const zclId = require('zcl-id/dist/legacy');
 
-var FoundClass = require('../lib/foundation')(zclId);
+var FoundClass = require('../src/foundation')(zclId);
 
 const foundCmd = Object.keys(require('zcl-id/src/definitions/common.json').foundation);
 
@@ -105,7 +104,7 @@ describe('Foundation Cmd framer and parser Check', function () {
             let zBuf = cmdPayload.frame(valObj[cmd]);
 
             cmdPayload.parse(zBuf, function (err, result) {
-                expect(result).to.deep.equal(valObj[cmd]);
+                expect(result).toEqual(valObj[cmd]);
             });
         });
     });
@@ -128,7 +127,7 @@ describe('Binary attributes parsing', () => {
         parser.parse(frame, (err, result) => {
             result[1].attrData = Buffer.from(result[1].attrData, 'ascii');
 
-            expect(result).to.deep.equal([
+            expect(result).toEqual([
                 {attrId: 5, dataType: 66, attrData: 'sensor'},
                 {attrId: 1000, dataType: 66, attrData: binary},
             ]);
