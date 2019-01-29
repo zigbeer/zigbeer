@@ -1,4 +1,5 @@
 import { Enum } from "./enum"
+import { zclmetaFactory } from "./zclmeta"
 
 const isValidArgType = (param: any): param is string | number => {
   if (typeof param === "string") {
@@ -53,7 +54,7 @@ interface NewFormatCluster {
 
 type DataTypeNames = string
 
-interface CommonJSON {
+export interface CommonJSON {
   aclMask: Record<string, number>
   profileId: Record<string, number>
   direction: Record<string, number>
@@ -63,7 +64,7 @@ interface CommonJSON {
   status: Record<string, number>
   otaStatus: Record<string, number>
 }
-type FoundationJSON = Record<
+export type FoundationJSON = Record<
   string,
   | {
       id: number
@@ -74,7 +75,7 @@ type FoundationJSON = Record<
       TODO: 1
     }
 >
-interface CompleteClusterDefJSON {
+export interface CompleteClusterDefJSON {
   id: number
   attrs?: Record<string, { id: number; type: string }>
   cmd?: Record<
@@ -86,7 +87,7 @@ interface CompleteClusterDefJSON {
     { id: number; params: [string, string][] } | { id: number; TODO: 1 }
   >
 }
-interface IncompleteClusterDefJSON {
+export interface IncompleteClusterDefJSON {
   id: number
   TODO: 2
 }
@@ -109,7 +110,7 @@ function clusterWithNewFormat(def: ClusterDefJSON): NewFormatCluster {
 }
 
 type ClusterDefJSON = CompleteClusterDefJSON | IncompleteClusterDefJSON
-type ClustedDefsJSON = Record<string, ClusterDefJSON>
+export type ClustedDefsJSON = Record<string, ClusterDefJSON>
 
 export class ZclID {
   constructor(
@@ -117,6 +118,7 @@ export class ZclID {
     private _foundation: FoundationJSON,
     private clusterDefs: ClustedDefsJSON
   ) {}
+  zclmeta = zclmetaFactory(this)
   /**
    * The Zigbee profile ID lookup
    *
