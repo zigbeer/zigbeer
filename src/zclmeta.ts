@@ -5,7 +5,7 @@ const Direction = new Enum({
   serverToClient: 1
 })
 
-import { ZclID, clusterDefs } from "."
+import { ZclID } from "."
 
 export interface OldStyleParam {
   [name: string]: string
