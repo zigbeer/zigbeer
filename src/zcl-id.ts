@@ -198,7 +198,6 @@ export class ZclID {
 
     const newCluster = clusterWithNewFormat(newClusterDef)
     this.newFormatClusters.set(cluster, newCluster)
-    delete this.clusterDefs[cluster] // Drop references to original Def to free memory. Do we need this?
     return newCluster
   }
 
