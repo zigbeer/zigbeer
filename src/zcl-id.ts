@@ -69,6 +69,7 @@ export type FoundationJSON = Record<
   | {
       id: number
       params: [string, string][]
+      TODO: undefined
     }
   | {
       id: number
@@ -80,12 +81,15 @@ export interface CompleteClusterDefJSON {
   attrs?: Record<string, { id: number; type: string }>
   cmd?: Record<
     string,
-    { id: number; params: [string, string][] } | { id: number; TODO: 1 }
+    | { id: number; params: [string, string][]; TODO: undefined }
+    | { id: number; TODO: 1 }
   >
   cmdRsp?: Record<
     string,
-    { id: number; params: [string, string][] } | { id: number; TODO: 1 }
+    | { id: number; params: [string, string][]; TODO: undefined }
+    | { id: number; TODO: 1 }
   >
+  TODO: undefined
 }
 export interface IncompleteClusterDefJSON {
   id: number
@@ -118,7 +122,7 @@ export class ZclID {
     private _foundation: FoundationJSON,
     private clusterDefs: ClustedDefsJSON
   ) {}
-  zclmeta = zclmetaFactory(this)
+  zclmeta = zclmetaFactory(this, this._foundation, this.clusterDefs)
   /**
    * The Zigbee profile ID lookup
    *
