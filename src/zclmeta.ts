@@ -7,60 +7,38 @@ const Direction = new Enum({
   serverToClient: 1
 })
 
-import { ZclID } from "."
+import { ZclID, clusterDefs } from "."
 
 export interface OldStyleParam {
   [name: string]: string
 }
 
-function zclmetaFactory(zclId: ZclID) {
-  const {
-    foundation: meta_foundation,
-    functional: meta_functional
-  }: {
-    // "writeStructRsp": {
-    //   "params": [
-    //     { "status": "uint8" },
-    //     { "attrId": "uint16" },
-    //     { "selector": "selector" }
-    //   ],
-    //   "knownBufLen": 3
-    // }
-    foundation: Record<string, { params: OldStyleParam[]; knownBufLen: number }>
-    // "genGroups": {
-    //   "getMembershipRsp": {
-    //     "params": [
-    //       { "capacity": "uint8" },
-    //       { "groupcount": "preLenUint8" },
-    //       { "grouplist": "dynUint16" }
-    //     ],
-    //     "dir": 1
-    //   }
-    // }
-    functional: Record<
-      string,
-      Record<string, { params: OldStyleParam[]; dir: 0 | 1 }>
-    >
-  } = require("./definitions/zcl_meta.json") // TODO: replace this dependency
+function zclmetaFactory(
+  zclId: ZclID,
+  _foundation: typeof zclId["_foundation"],
+  clusterDefs: typeof zclId["clusterDefs"]
+) {
+  const getFoundation = (cmd: string) => {
+    const c = _foundation[cmd]
+    if (!c || c.TODO === 1) return
+    return {
+      ...c,
+      knownBufLen: c.params.reduce((acc, [, type]) => {
+        switch (type) {
+          case "uint8":
+            return acc + 1
 
-  function cloneParamsWithNewFormat(params: OldStyleParam[]) {
-    const output = params.map(item => {
-      const name = Object.keys(item)[0]
-      return {
-        name,
-        // type is a number
-        type: item[name]
-      }
-    })
-
-    return output
+          case "uint16":
+            return acc + 2
+        }
+        return acc
+      }, 0)
+    }
   }
-
-  const getFoundation = (cmd: string) => meta_foundation[cmd]
   const getFoundationParams = (cmd: string) => {
-    const meta = getFoundation(cmd)
-    if (!meta || !meta.params) return
-    return cloneParamsWithNewFormat(meta.params)
+    const meta = _foundation[cmd]
+    if (!meta || meta.TODO === 1 || !meta.params) return
+    return meta.params.map(([name, type]) => ({ name, type }))
   }
 
   const foundation = {
@@ -68,10 +46,15 @@ function zclmetaFactory(zclId: ZclID) {
     getParams: getFoundationParams
   }
 
-  const getFunctional = (cluster: string, cmd: string) => {
-    const cl = meta_functional[cluster]
-    if (!cl) return
-    return cl[cmd]
+  const getFunctional = (cluster: string, cmdName: string) => {
+    const cl = clusterDefs[cluster]
+    if (!cl || cl.TODO === 2) return
+    const { cmd, cmdRsp } = cl
+    const c =
+      (cmd && cmd[cmdName] && { ...cmd[cmdName], dir: 0 as 0 | 1 }) ||
+      (cmdRsp && cmdRsp[cmdName] && { ...cmdRsp[cmdName], dir: 1 as 0 | 1 })
+    if (!c || c.TODO === 1) return
+    return c
   }
 
   const getCommand = (cluster: string, dir: 0 | 1, cmd: string) => {
@@ -96,11 +79,13 @@ function zclmetaFactory(zclId: ZclID) {
     return dirEntry.key
   }
 
-  const getFunctionalParams = (cluster: string, cmd: string) => {
-    const meta = getFunctional(cluster, cmd)
-    if (!meta || !meta.params) return
-    // [ { name: type }, .... ]
-    return cloneParamsWithNewFormat(meta.params)
+  const getFunctionalParams = (cluster: string, cmdName: string) => {
+    const cl = clusterDefs[cluster]
+    if (!cl || cl.TODO === 2) return
+    const { cmd, cmdRsp } = cl
+    const c = (cmd && cmd[cmdName]) || (cmdRsp && cmdRsp[cmdName])
+    if (!c || c.TODO === 1 || !c.params) return
+    return c.params.map(([name, type]) => ({ name, type }))
   }
 
   const functional = {
@@ -112,8 +97,7 @@ function zclmetaFactory(zclId: ZclID) {
 
   return {
     foundation,
-    functional,
-    Direction
+    functional
   }
 }
 
