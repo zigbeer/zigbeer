@@ -6,8 +6,6 @@ const DChunks = require("dissolve-chunks")
 function funcPayloadFactory(zclId) {
   const ru = DChunks().Rule()
 
-  const zclmeta = require("./zclmeta")(zclId)
-
   let parsedBufLen = 0
 
   /*
@@ -32,7 +30,11 @@ function funcPayloadFactory(zclId) {
       }
 
       this.cluster = cluster.key
-      command = zclmeta.functional.getCommand(this.cluster, direction, cmd)
+      command = zclId.zclmeta.functional.getCommand(
+        this.cluster,
+        direction,
+        cmd
+      )
 
       if (!command) {
         throw new Error("Unrecognized command")
@@ -41,7 +43,10 @@ function funcPayloadFactory(zclId) {
       this.cmd = command.key
       this.cmdId = command.value
 
-      this.direction = zclmeta.functional.getDirection(this.cluster, this.cmd)
+      this.direction = zclId.zclmeta.functional.getDirection(
+        this.cluster,
+        this.cmd
+      )
 
       if (!this.direction) {
         throw new Error("Unrecognized direction")
@@ -57,16 +62,24 @@ function funcPayloadFactory(zclId) {
 
       if (
         this.cluster === "genScenes" &&
-        (this.cmd === "add" ||
-          this.cmd === "enhancedAdd" ||
-          this.cmd === "viewRsp" ||
-          this.cmd === "enhancedViewRsp")
+        ["add", "enhancedAdd", "viewRsp", "enhancedViewRsp"].includes(this.cmd)
       ) {
-        parsedBufLen = zclmeta.functional.get(this.cluster, this.cmd)
-          .knownBufLen
+        parsedBufLen = zclId.zclmeta.functional
+          .get(this.cluster, this.cmd)
+          .params.reduce((acc, [, type]) => {
+            switch (type) {
+              case "uint8":
+              case "stringPreLen":
+                return acc + 1
+
+              case "uint16":
+                return acc + 2
+            }
+            return acc
+          }, 0)
       }
 
-      params = zclmeta.functional.getParams(this.cluster, this.cmd)
+      params = zclId.zclmeta.functional.getParams(this.cluster, this.cmd)
 
       // [ { name, type }, ... ]
       if (params) {
@@ -130,7 +143,7 @@ function funcPayloadFactory(zclId) {
       let params
 
       // [ { name, type }, ... ]
-      params = zclmeta.functional.getParams(this.cluster, this.cmd)
+      params = zclId.zclmeta.functional.getParams(this.cluster, this.cmd)
 
       if (params) {
         if (Array.isArray(args)) {

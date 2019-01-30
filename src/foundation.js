@@ -6,8 +6,6 @@ const DChunks = require("dissolve-chunks")
 function foundPayloadFactory(zclId) {
   const ru = DChunks().Rule()
 
-  const zclmeta = require("./zclmeta")(zclId)
-
   let parsedBufLen = 0
 
   /*
@@ -27,7 +25,7 @@ function foundPayloadFactory(zclId) {
       this.cmd = command.key
       this.cmdId = command.value
 
-      this.params = zclmeta.foundation.getParams(this.cmd)
+      this.params = zclId.zclmeta.foundation.getParams(this.cmd)
 
       if (!this.params)
         throw new Error("Zcl Foundation not support " + cmd + " command.")
@@ -206,17 +204,24 @@ function foundPayloadFactory(zclId) {
     }
 
     _getObj(buf, callback) {
-      const chunkRules = []
-      let parser
-      let parseTimeout
-      let knownBufLen = zclmeta.foundation.get(this.cmd).knownBufLen
-      const result = {
-        data: null,
-        leftBuf: null
-      }
+      const knownBufLen = zclId.zclmeta.foundation
+        .get(this.cmd)
+        .params.reduce((acc, [, type]) => {
+          switch (type) {
+            case "uint8":
+              return acc + 1
+
+            case "uint16":
+              return acc + 2
+          }
+          return acc
+        }, 0)
 
       if (buf.length === 0) {
-        result.leftBuf = new Buffer(0)
+        const result = {
+          data: null,
+          leftBuf: new Buffer(0)
+        }
         callback(null, result)
         return
       }
@@ -224,16 +229,14 @@ function foundPayloadFactory(zclId) {
       parsedBufLen = 0
 
       parsedBufLen += knownBufLen
-      this.params.forEach(function(param) {
-        // [ { name, type }, ... ]
-        chunkRules.push(ru[param.type]([param.name]))
-      })
 
-      parser = DChunks()
+      const chunkRules = this.params.map(({ type, name }) => ru[type]([name]))
+
+      let parser = DChunks()
         .join(chunkRules)
         .compile()
 
-      parseTimeout = setTimeout(function() {
+      let parseTimeout = setTimeout(function() {
         if (parser.listenerCount("parsed")) parser.emit("parsed", "__timeout__")
 
         parseTimeout = null
@@ -250,8 +253,10 @@ function foundPayloadFactory(zclId) {
         if (parsed === "__timeout__") {
           callback(new Error("parse timeout"))
         } else {
-          result.data = parsed
-          result.leftBuf = buf.slice(parsedBufLen)
+          const result = {
+            data: parsed,
+            leftBuf: buf.slice(parsedBufLen)
+          }
           // TODO: Do we need this:
           // // reset parsedBufLen when buffer is empty
           // if (result.leftBuf.length == 0) {
