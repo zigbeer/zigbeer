@@ -1,5 +1,3 @@
-"use strict"
-
 import { Enum } from "./enum"
 
 const Direction = new Enum({
