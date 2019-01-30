@@ -14,8 +14,8 @@
     "test": "jest",
     "prepare": "tsc",
     "convert": "ts-node --transpile-only src/definitions/convert.ts && prettier --write src/definitions/*.json",
-    "prettier": "prettier '{src, test}/**' --check",
-    "prettier:fix": "prettier '{src, test}/**' --write"
+    "prettier": "prettier '{src,test}/**' --check",
+    "prettier:fix": "prettier '{src,test}/**' --write"
   },
   "repository": {
     "type": "git",
