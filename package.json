@@ -11,11 +11,10 @@
     "access": "public"
   },
   "scripts": {
-    "test": "mocha -r ts-node/register",
+    "test": "jest",
     "prepare": "tsc",
-    "convert": "ts-node --transpile-only src/definitions/convert.ts && prettier --write src/definitions/*.json",
-    "prettier": "prettier 'src/**' --check",
-    "prettier:fix": "prettier 'src/**' --write"
+    "prettier": "prettier '{src,test}/**' --check",
+    "prettier:fix": "prettier '{src,test}/**' --write"
   },
   "repository": {
     "type": "git",
@@ -51,8 +50,9 @@
     "@types/node": "^10.12.18",
     "busyman": "^0.3.0",
     "chance": "^1.0.4",
-    "jest": "^24.0.0",
+    "jest": "^23.6.0",
     "prettier": "^1.16.1",
+    "ts-jest": "^23.10.5",
     "ts-node": "^8.0.2",
     "typescript": "^3.2.4",
     "zcl-id": "^0.5.0-6"
