@@ -19,19 +19,7 @@ function zclmetaFactory(
   const getFoundation = (cmd: string) => {
     const c = _foundation[cmd]
     if (!c || c.TODO === 1) return
-    return {
-      ...c,
-      knownBufLen: c.params.reduce((acc, [, type]) => {
-        switch (type) {
-          case "uint8":
-            return acc + 1
-
-          case "uint16":
-            return acc + 2
-        }
-        return acc
-      }, 0)
-    }
+    return c
   }
   const getFoundationParams = (cmd: string) => {
     const meta = _foundation[cmd]
@@ -48,9 +36,22 @@ function zclmetaFactory(
     const cl = clusterDefs[cluster]
     if (!cl || cl.TODO === 2) return
     const { cmd, cmdRsp } = cl
-    const c =
-      (cmd && cmd[cmdName] && { ...cmd[cmdName], dir: 0 as 0 | 1 }) ||
-      (cmdRsp && cmdRsp[cmdName] && { ...cmdRsp[cmdName], dir: 1 as 0 | 1 })
+    const c:
+      | {
+          dir: 0 | 1
+          id: number
+          params: [string, string][]
+          TODO: undefined
+        }
+      | {
+          dir: 0 | 1
+          id: number
+          TODO: 1
+        }
+      | undefined =
+      (cmd && cmd[cmdName] && { ...cmd[cmdName], dir: 0 }) ||
+      (cmdRsp && cmdRsp[cmdName] && { ...cmdRsp[cmdName], dir: 1 })
+
     if (!c || c.TODO === 1) return
     return c
   }
