@@ -1,6 +1,6 @@
 const zclId = require("zcl-id/dist/legacy")
 
-var FoundClass = require("../src/foundation")(zclId)
+var FoundClass = require("../src/foundation").foundPayloadFactory(zclId)
 
 const foundCmd = Object.keys(
   require("zcl-id/src/definitions/common.json").foundation

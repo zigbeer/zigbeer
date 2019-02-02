@@ -2,7 +2,7 @@ const Chance = require("chance")
 const chance = new Chance()
 const zclId = require("zcl-id/dist/legacy")
 
-const FuncClass = require("../src/functional")(zclId)
+const FuncClass = require("../src/functional").funcPayloadFactory(zclId)
 
 const clusterIds = Object.keys(
   require("zcl-id/src/definitions/common.json").clusterId
@@ -20,24 +20,21 @@ describe("Functional Cmd framer and parser Check", function() {
     })
 
     cmdIds.forEach(function(cmd) {
-      let funcObj
-      let reqParams
-      let payload
-      let args = {}
-
-      reqParams = zclId.zclmeta.functional.getParams(cluster, cmd)
+      const reqParams = zclId.zclmeta.functional.getParams(cluster, cmd)
 
       if (!reqParams) return
 
-      reqParams.forEach(function(arg) {
-        args[arg.name] = randomArg(arg.type)
-      })
+      const args = {}
+      for (const param of reqParams) {
+        args[param.name] = randomArg(param.type)
+      }
 
-      funcObj = new FuncClass(cluster, 0, cmd)
-      payload = funcObj.frame(args)
+      const funcObj = new FuncClass(cluster, 0, cmd)
+      const payload = funcObj.frame(args)
 
-      funcObj.parse(payload, function(err, result) {
-        it(funcObj.cmd + " frame() and parse() check", function() {
+      it(`${funcObj.cmd} frame() and parse()`, () => {
+        funcObj.parse(payload, (err, result) => {
+          expect(err).toBe(null)
           expect(result).toEqual(args)
         })
       })
@@ -63,16 +60,17 @@ describe("Functional CmdRsp framer and parser Check", function() {
 
       if (!reqParams) return
 
-      let args = {}
-      reqParams.forEach(function(arg) {
-        args[arg.name] = randomArg(arg.type)
-      })
+      const args = {}
+      for (const param of reqParams) {
+        args[param.name] = randomArg(param.type)
+      }
 
       const funcObj = new FuncClass(cluster, 1, cmdRsp)
       const payload = funcObj.frame(args)
 
-      funcObj.parse(payload, function(err, result) {
-        it(funcObj.cmd + " frame() and parse() check", function() {
+      it(`${funcObj.cmd} frame() and parse()`, () => {
+        funcObj.parse(payload, (err, result) => {
+          expect(err).toBe(null)
           expect(result).toEqual(args)
         })
       })
