@@ -1,14 +1,14 @@
 {
-  "compilerOptions": {
-    "allowJs": true,
-    "strict": true,
+  "compilerOptions": { 
+    "strict": false,
     "target": "es6",
     "module": "commonjs",
     "lib": ["es2017"],
-    "types": ["node", "jest"],
+    "types": ["node", "jest", "./declarations"],
     "resolveJsonModule": true,
     "outDir": "dist",
-    "declaration": false
+    "declaration": false,
+    "noFallthroughCasesInSwitch": true
   },
-  "include": ["src"]
+  "include": ["src", "index.d.ts", "index.d.ts"]
 }

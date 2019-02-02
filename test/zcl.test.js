@@ -1,5 +1,5 @@
 const zclId = require("zcl-id/dist/legacy")
-const zcl = require("../src")(zclId)
+const zcl = require("../src").zclFactory(zclId)
 describe("APIs Arguments Check for Throwing Error", function() {
   describe("#.frame", function() {
     const frameCntl = {
@@ -414,6 +414,7 @@ describe("Module Methods Check", function() {
           0x0005
         )
         zcl.parse(zBuf, 0x0005, function(err, result) {
+          if (err) throw err
           if (result.cmdId === "add") {
             result.frameCntl.direction = 0
           } else {
