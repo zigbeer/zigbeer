@@ -30,7 +30,8 @@ function foundPayloadFactory(zclId: ZclID) {
       c.uint16le(arg.attrId).uint8(arg.status)
 
       if (arg.status === 0) {
-        c.uint8(arg.dataType).buffer(getChunkBuf("multi", arg))
+        c.uint8(arg.dataType)
+        getChunkBufTable.multi(c, arg)
       }
     },
     writeRsp: (c: Concentrate, arg: { status: number; attrId: number }) => {
@@ -234,9 +235,9 @@ function foundPayloadFactory(zclId: ZclID) {
         if (type === "variable") {
           c.buffer(getDataTypeBuf(getDataType(arg.dataType), arg.attrData))
         } else if (type === "selector") {
-          c.buffer(getChunkBuf("selector", arg.selector))
+          getChunkBufTable.selector(c, arg.selector)
         } else if (type === "multi") {
-          c.buffer(getChunkBuf("multi", arg))
+          getChunkBufTable.multi(c, arg)
         } else {
           c[type](arg[name])
         }
@@ -312,58 +313,65 @@ function foundPayloadFactory(zclId: ZclID) {
         Private Functions
     */
   const getChunkBufTable = {
-    multi: (c: Concentrate, arg: { dataType: any; attrData: any }): void => {
-      const typeEntry = zclId.dataType(arg.dataType)
-      if (!typeEntry) throw new Error(`Unknown data type ${arg.dataType}`)
+    multi: (
+      c: Concentrate,
+      { dataType, attrData }: { dataType: any; attrData: any }
+    ): void => {
+      const typeEntry = zclId.dataType(dataType)
+      if (!typeEntry) throw new Error(`Unknown data type ${dataType}`)
       const type = typeEntry.key
       if (type === "array" || type === "set" || type === "bag") {
-        c.buffer(getChunkBuf("attrVal", arg.attrData))
+        getChunkBufTable.attrVal(c, attrData)
       } else if (type === "struct") {
-        c.buffer(getChunkBuf("attrValStruct", arg.attrData))
+        getChunkBufTable.attrValStruct(c, attrData)
       } else {
-        c.buffer(getDataTypeBuf(getDataType(arg.dataType), arg.attrData))
+        c.buffer(getDataTypeBuf(getDataType(dataType), attrData))
       }
     },
     attrVal: (
       c: Concentrate,
-      arg: { elmType: number; numElms: number; elmVals: any[] }
+      {
+        elmType,
+        numElms,
+        elmVals
+      }: { elmType: number; numElms: number; elmVals: any[] }
     ): void => {
-      c.uint8(arg.elmType).uint16le(arg.numElms)
-      for (let i = 0; i < arg.numElms; i += 1) {
-        c.buffer(getDataTypeBuf(getDataType(arg.elmType), arg.elmVals[i]))
+      c.uint8(elmType).uint16le(numElms)
+      for (let i = 0; i < numElms; i += 1) {
+        c.buffer(getDataTypeBuf(getDataType(elmType), elmVals[i]))
       }
     },
-    attrValStruct: (c: Concentrate, arg: any | {}): void => {
-      c.uint16le(arg.numElms)
-      for (let i = 0; i < arg.numElms; i += 1) {
-        c.buffer(getChunkBuf("attrValStructNip", arg.structElms[i]))
+    attrValStruct: (
+      c: Concentrate,
+      {
+        numElms,
+        structElms
+      }: {
+        numElms: number
+        structElms: { elmType: number; elmVal: unknown }[]
+      }
+    ): void => {
+      c.uint16le(numElms)
+      for (let i = 0; i < numElms; i++) {
+        getChunkBufTable.attrValStructNip(c, structElms[i])
       }
     },
-    attrValStructNip: (c: Concentrate, arg: any | {}): void => {
-      c.uint8(arg.elmType).buffer(
-        getDataTypeBuf(getDataType(arg.elmType), arg.elmVal)
-      )
+    attrValStructNip: (
+      c: Concentrate,
+      { elmType, elmVal }: { elmType: number; elmVal: unknown }
+    ): void => {
+      c.uint8(elmType).buffer(getDataTypeBuf(getDataType(elmType), elmVal))
     },
-    selector: (c: Concentrate, arg: any | {}): void => {
-      c.uint8(arg.indicator)
+    selector: (
+      c: Concentrate,
+      { indicator, indexes }: { indicator: number; indexes: number[] }
+    ): void => {
+      c.uint8(indicator)
 
-      for (let i = 0; i < arg.indicator; i += 1) {
-        c.uint16le(arg.indexes[i])
+      for (let i = 0; i < indicator; i += 1) {
+        c.uint16le(indexes[i])
       }
     }
-  }
-
-  const getChunkBuf = <T extends keyof typeof getChunkBufTable>(
-    rule: T,
-    arg: SecondArgument<typeof getChunkBufTable[T]>
-  ) => {
-    const c = new Concentrate()
-    const fn: (c: Concentrate, argObj: typeof arg) => void =
-      getChunkBufTable[rule]
-    if (!fn) throw `No getChunkBuf defined for ${rule}`
-    fn(c, arg)
-
-    return c.result()
   }
 
   function ensureDataTypeString(dataType) {
