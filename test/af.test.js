@@ -5,11 +5,14 @@ var sinon = require('sinon'),
     expect = require('chai').expect,
     Q = require('q');
 
-var af = require('../lib/components/af'),
+const zclId = require('zcl-id/dist/legacy');
+
+var afConstructor = require('../lib/components/af')(zclId),
     Device  = require('../lib/model/device'),
     Endpoint  = require('../lib/model/endpoint'),
     Coord  = require('../lib/model/coord'),
-    Coordpoint  = require('../lib/model/coordpoint');
+    Coordpoint  = require('../lib/model/coordpoint'),
+    af;
 
 var remoteDev = new Device({
     type: 1,
@@ -139,7 +142,7 @@ function fireFakeZclRawRsp(dstNwkAddr, dstEpId, srcEpId, zclBuffer, cid) {
 // af is an inner module, don't have to check all the arguments things
 describe('APIs Arguments Check for Throwing Error', function() {
     before(function () {
-        af = require('../lib/components/af')(controller);
+        af = afConstructor(controller);
     });
 
     describe('#.send', function() {
@@ -632,7 +635,7 @@ describe('APIs Arguments Check for Throwing Error', function() {
 
 describe('Module Methods Check', function() {
     before(function () {
-        af = require('../lib/components/af')(controller);
+        af = afConstructor(controller);
     });
 
     describe('#.send - by delegator', function() {
