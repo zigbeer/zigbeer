@@ -10,6 +10,8 @@ var Device  = require('../lib/model/device'),
     Coord  = require('../lib/model/coord'),
     Coordpoint  = require('../lib/model/coordpoint');
 
+const zclId = require('zcl-id/dist/legacy');
+
 var remoteDev = new Device({
     type: 1,
     ieeeAddr: '0x123456789abcdef',
@@ -66,7 +68,7 @@ var loEp8 = new Coordpoint(coordDev, {
 
 describe('Constructor Check', function () {
     it('should has all correct members after new', function () {
-        var controller = new Controller({}, { path: '/dev/ttyUSB0' });
+        var controller = new Controller({zclId}, { path: '/dev/ttyUSB0' });
 
         expect(controller._shepherd).to.be.an('object');
         expect(controller._coord).to.be.null;
@@ -106,7 +108,7 @@ describe('Constructor Check', function () {
 });
 
 describe('Signature Check', function () {
-    var controller = new Controller({}, { path: '/dev/ttyUSB0' });
+    var controller = new Controller({zclId}, { path: '/dev/ttyUSB0' });
 
     controller._coord = coordDev;
 
@@ -469,6 +471,8 @@ describe('Functional Check', function () {
         shepherd._findDevByAddr = function () {
             return;
         };
+
+        shepherd.zclId = zclId;
 
         controller = new Controller(shepherd, { path: '/dev/ttyACM0' });
         controller._coord = coordDev;
