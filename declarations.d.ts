@@ -7,6 +7,7 @@ declare module "concentrate" {
     readonly int32le: (value: number) => this
     readonly uint32le: (value: number) => this
     readonly floatle: (value: number) => this
+    readonly doublele: (value: number) => this
     readonly string: (value: string, encoding: "utf8" | "ucs2") => this
     readonly buffer: (data: Buffer) => this
     readonly result: () => Buffer

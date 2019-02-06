@@ -3,8 +3,9 @@ import dissolveChunks = require("dissolve-chunks")
 
 import { ZclID } from "zcl-id"
 
-import { buf2Str } from "./utils"
+import { buf2Str, writeUInt64, timeout } from "./utils"
 import { Callback, SecondArgument } from "./typeUtils"
+import { BufferWithPointer } from "./buffer"
 
 const bufToArray = (buf: Buffer) => {
   const arr: number[] = buf.toJSON().data
@@ -56,7 +57,7 @@ function foundPayloadFactory(zclId: ZclID) {
           .uint16le(arg.minRepIntval)
           .uint16le(arg.maxRepIntval)
         if (isDataAnalogDigital(arg.dataType) === "ANALOG") {
-          c.buffer(getDataTypeBuf(getDataType(arg.dataType), arg.repChange))
+          getDataTypeAndWrite(arg.dataType, c, arg.repChange)
         }
       } else if (arg.direction === 1) {
         c.uint16le(arg.timeout)
@@ -118,59 +119,33 @@ function foundPayloadFactory(zclId: ZclID) {
     }
 
     parse(zBuf: Buffer, callback: Callback<any>) {
-      const self = this
-      let parsedData: any
+      if (this.cmd === "defaultRsp" || this.cmd === "discover") {
+        return this.readObj(zBuf).then(
+          (result?: { data: any; leftBuf: Buffer }) => {
+            if (!result) return callback(new Error("Couldn't getObj"))
 
-      const getObjCB: Callback<{ data: any; leftBuf: Buffer }> = (
-        err: Error | null | undefined,
-        result?: typeof err extends null | undefined
-          ? { data: any; leftBuf: Buffer }
-          : any
-      ) => {
-        if (err) {
-          callback(err)
-        } else {
-          if (result.data && self.cmd === "discoverRsp")
-            parsedData.attrInfos.push(result.data)
-          else if (result.data) parsedData.push(result.data)
-
-          if (result.leftBuf.length !== 0)
-            self._getObj(result.leftBuf, getObjCB)
-          else callback(null, parsedData)
-        }
+            const { data } = result
+            callback(null, data)
+          },
+          callback
+        )
       }
 
-      switch (this.cmd) {
-        case "defaultRsp":
-        case "discover":
-          this._getObj(zBuf, function(
-            err: Error | null | undefined,
-            result?: typeof err extends null | undefined
-              ? { data: any; leftBuf: Buffer }
-              : any
-          ) {
-            if (err) throw new Error("Couldn't getObj")
-            parsedData = result.data ? result.data : {}
-            callback(null, parsedData)
-          })
-          break
-
-        case "discoverRsp":
-          parsedData = {
-            discComplete: zBuf.readUInt8(0),
-            attrInfos: []
-          }
-
-          zBuf = zBuf.slice(1)
-          parsedBufLen += 1
-          this._getObj(zBuf, getObjCB)
-          break
-
-        default:
-          parsedData = []
-          this._getObj(zBuf, getObjCB)
-          break
+      if (this.cmd === "discoverRsp") {
+        const pBuf = new BufferWithPointer(zBuf)
+        const discComplete = pBuf.uint8()
+        parsedBufLen += pBuf.pointer
+        const rest = pBuf.rest()
+        return this.readObjArray(rest).then(
+          attrInfos => callback(undefined, { discComplete, attrInfos }),
+          callback
+        )
       }
+
+      return this.readObjArray(zBuf).then(
+        result => callback(undefined, result),
+        callback
+      )
     }
 
     frame(payload: any) {
@@ -219,7 +194,7 @@ function foundPayloadFactory(zclId: ZclID) {
       return c.result()
     }
 
-    _getBuf(arg: any, c: Concentrate) {
+    private _getBuf(arg: any, c: Concentrate) {
       const self = this
       const fn = writeBuf[this.cmd]
       if (fn) {
@@ -233,7 +208,7 @@ function foundPayloadFactory(zclId: ZclID) {
           )
 
         if (type === "variable") {
-          c.buffer(getDataTypeBuf(getDataType(arg.dataType), arg.attrData))
+          getDataTypeAndWrite(arg.dataType, c, arg.attrData)
         } else if (type === "selector") {
           getChunkBufTable.selector(c, arg.selector)
         } else if (type === "multi") {
@@ -244,32 +219,73 @@ function foundPayloadFactory(zclId: ZclID) {
       }
     }
 
-    _getObj(buf: Buffer, callback: Callback<{ data: any; leftBuf: Buffer }>) {
+    private async readObjArray(buf: Buffer) {
+      let parsedData = [] as any[]
+      while (true) {
+        const result = await this.readObj(buf)
+        buf = result.leftBuf
+        const { data } = result
+        if (data) parsedData.push(data)
+
+        if (!buf.length) return parsedData
+      }
+    }
+
+    private readObj(buf: Buffer) {
       const { params } = this
 
-      const knownBufLen = params.reduce((acc, { type }) => {
-        switch (type) {
-          case "uint8":
-            return acc + 1
+      const knownBufLen = params.reduce(
+        (acc, { type }) =>
+          type === "uint8" ? acc + 1 : type === "uint16" ? acc + 2 : acc,
+        0
+      )
 
-          case "uint16":
-            return acc + 2
-        }
-        return acc
-      }, 0)
+      parsedBufLen = knownBufLen
 
-      if (buf.length === 0) {
-        const result = {
-          data: null,
-          leftBuf: new Buffer(0)
-        }
-        callback(null, result)
-        return
-      }
+      const chunkRules = params.map(({ type, name }) => ru[type]([name]))
 
-      parsedBufLen = 0
+      let parser = dissolveChunks()
+        .join(chunkRules)
+        .compile({ once: true })
 
-      parsedBufLen += knownBufLen
+      let resolve
+
+      const resultPromise = new Promise(res => {
+        resolve = res
+        parser.once("parsed", resolve)
+        parser.end(buf)
+      })
+
+      const parseTimeout = timeout(1000)
+
+      return Promise.race([
+        resultPromise.then(parsed => {
+          parseTimeout.cancel()
+          return {
+            data: parsed,
+            leftBuf: buf.slice(parsedBufLen)
+          }
+        }),
+        parseTimeout.then(() => {
+          parser.removeListener("parsed", resolve)
+          throw new Error("zcl functional parse timeout")
+        })
+      ])
+    }
+
+    private _getObj(
+      buf: Buffer,
+      callback: Callback<{ data: any; leftBuf: Buffer } | undefined>
+    ) {
+      const { params } = this
+
+      const knownBufLen = params.reduce(
+        (acc, { type }) =>
+          type === "uint8" ? acc + 1 : type === "uint16" ? acc + 2 : acc,
+        0
+      )
+
+      parsedBufLen = knownBufLen
 
       const chunkRules = params.map(({ type, name }) => ru[type]([name]))
 
@@ -325,7 +341,7 @@ function foundPayloadFactory(zclId: ZclID) {
       } else if (type === "struct") {
         getChunkBufTable.attrValStruct(c, attrData)
       } else {
-        c.buffer(getDataTypeBuf(getDataType(dataType), attrData))
+        getDataTypeAndWrite(dataType, c, attrData)
       }
     },
     attrVal: (
@@ -338,7 +354,7 @@ function foundPayloadFactory(zclId: ZclID) {
     ): void => {
       c.uint8(elmType).uint16le(numElms)
       for (let i = 0; i < numElms; i += 1) {
-        c.buffer(getDataTypeBuf(getDataType(elmType), elmVals[i]))
+        getDataTypeAndWrite(elmType, c, elmVals[i])
       }
     },
     attrValStruct: (
@@ -360,7 +376,8 @@ function foundPayloadFactory(zclId: ZclID) {
       c: Concentrate,
       { elmType, elmVal }: { elmType: number; elmVal: unknown }
     ): void => {
-      c.uint8(elmType).buffer(getDataTypeBuf(getDataType(elmType), elmVal))
+      c.uint8(elmType)
+      getDataTypeAndWrite(elmType, c, elmVal)
     },
     selector: (
       c: Concentrate,
@@ -520,111 +537,107 @@ function foundPayloadFactory(zclId: ZclID) {
     return newDataType
   }
 
-  function getDataTypeBuf(type: string, value) {
-    const c = new Concentrate()
-    let buf: Buffer | undefined
-
-    switch (type) {
-      case "uint8":
-      case "int8":
-      case "uint16":
-      case "int16":
-      case "uint32":
-      case "int32":
-      case "floatle":
-      case "doublele":
-        c[type](value)
-        break
-      case "uint24":
-        c.uint32le(value)
-        buf = c.result().slice(0, 3)
-        break
-      case "int24":
-        c.int32le(value)
-        buf = c.result().slice(0, 3)
-        break
-      case "uint40":
-        if (Array.isArray(value) && value.length === 2) {
-          if (value[0] > 255) {
-            throw new Error(
-              "The value[0] for UINT40/BITMAP40/DATA40 must be smaller than 255."
-            )
-          }
-          c.uint32le(value[1]).uint8(value[0])
-        } else {
-          throw new Error(
-            "The value for UINT40/BITMAP40/DATA40 must be orgnized in an 2-element number array."
-          )
-        }
-        break
-      case "int40":
-        // TODO
-        break
-      case "uint48":
-        if (Array.isArray(value) && value.length === 2) {
-          if (value[0] > 65535) {
-            throw new Error(
-              "The value[0] for UINT48/BITMAP48/DATA48 must be smaller than 65535."
-            )
-          }
-          c.uint32le(value[1]).uint16le(value[0])
-        } else {
-          throw new Error(
-            "The value for UINT48/BITMAP48/DATA48 must be orgnized in an 2-element number array."
-          )
-        }
-        break
-      case "int48":
-        // TODO
-        break
-      case "uint56":
-        if (Array.isArray(value) && value.length === 2) {
-          if (value[0] > 16777215) {
-            throw new Error(
-              "The value[0] for UINT56/BITMAP56/DATA56 must be smaller than 16777215."
-            )
-          }
-          c.uint32le(value[1]).uint32le(value[0])
-          buf = c.result().slice(0, 7)
-        } else {
-          throw new Error(
-            "The value for UINT56/BITMAP56/DATA56 must be orgnized in an 2-element number array."
-          )
-        }
-        break
-      case "int56":
-        // TODO
-        break
-      case "uint64": {
-        const msb = parseInt(value.slice(2, 10), 16)
-        const lsb = parseInt(value.slice(10), 16)
-
-        c.uint32le(lsb).uint32le(msb)
-        break
+  const writeDataTypeBufTable = {
+    uint8: (c: Concentrate, value: number) => c.uint8(value),
+    int8: (c: Concentrate, value: number) => c.int8(value),
+    uint16: (c: Concentrate, value: number) => c.uint16le(value),
+    int16: (c: Concentrate, value: number) => c.int16le(value),
+    uint32: (c: Concentrate, value: number) => c.uint32le(value),
+    int32: (c: Concentrate, value: number) => c.int32le(value),
+    floatle: (c: Concentrate, value: number) => c.floatle(value),
+    doublele: (c: Concentrate, value: number) => c.doublele(value),
+    uint24: (c: Concentrate, value: number) =>
+      c.buffer(
+        new Concentrate()
+          .uint32le(value)
+          .result()
+          .slice(0, 3)
+      ),
+    int24: (c: Concentrate, value: number) =>
+      c.buffer(
+        new Concentrate()
+          .int32le(value)
+          .result()
+          .slice(0, 3)
+      ),
+    uint40: (c: Concentrate, value: number) => {
+      if (!Array.isArray(value) || value.length !== 2) {
+        throw new Error(
+          "The value for UINT40/BITMAP40/DATA40 must be orgnized in an 2-element number array."
+        )
       }
-      case "strPreLenUint8": {
-        if (typeof value !== "string") {
-          throw new Error("The value for " + type + " must be an string.")
-        }
-        const string = value
-        const strLen = string.length
-        c.uint8(strLen).string(value, "utf8")
-        break
+      if (value[0] > 0xff) {
+        throw new Error(
+          "The value[0] for UINT40/BITMAP40/DATA40 must be smaller than 0xff (255)."
+        )
       }
-      case "strPreLenUint16": {
-        if (typeof value !== "string") {
-          throw new Error("The value for " + type + " must be an string.")
-        }
-        const string = value
-        const strLen = string.length
-        c.uint16le(strLen).string(value, "ucs2")
-        break
+      c.uint32le(value[1]).uint8(value[0])
+    },
+    int40: (c: Concentrate, value: number) => {
+      /* TODO: Not implemented */
+    },
+    uint48: (c: Concentrate, value: number) => {
+      if (!Array.isArray(value) || value.length !== 2) {
+        throw new Error(
+          "The value for UINT48/BITMAP48/DATA48 must be orgnized in an 2-element number array."
+        )
       }
+      if (value[0] > 0xffff) {
+        throw new Error(
+          "The value[0] for UINT48/BITMAP48/DATA48 must be smaller than 0xffff (65535)."
+        )
+      }
+      c.uint32le(value[1]).uint16le(value[0])
+    },
+    int48: (c: Concentrate, value: number) => {
+      /* TODO: Not implemented */
+    },
+    uint56: (c: Concentrate, value: number) => {
+      if (!Array.isArray(value) || value.length !== 2) {
+        throw new Error(
+          "The value for UINT56/BITMAP56/DATA56 must be orgnized in an 2-element number array."
+        )
+      }
+      if (value[0] > 0xffffff) {
+        throw new Error(
+          "The value[0] for UINT56/BITMAP56/DATA56 must be smaller than 0xffffff (16777215)."
+        )
+      }
+      c.uint32le(value[1])
+      c.buffer(
+        new Concentrate()
+          .uint32le(value[0])
+          .result()
+          .slice(0, 3)
+      )
+    },
+    int56: (c: Concentrate, value: number) => {
+      /* TODO: Not implemented */
+    },
+    uint64: writeUInt64,
+    strPreLenUint8: (c: Concentrate, value: string) => {
+      if (typeof value !== "string") {
+        throw new Error("The value for strPreLenUint8 must be a string.")
+      }
+      const strLen = value.length
+      c.uint8(strLen).string(value, "utf8")
+    },
+    strPreLenUint16: (c: Concentrate, value: string) => {
+      if (typeof value !== "string") {
+        throw new Error("The value for strPreLenUint16 must be a string.")
+      }
+      const strLen = value.length
+      c.uint16le(strLen).string(value, "ucs2")
     }
+  }
 
-    if (buf) return buf
-
-    return c.result()
+  function getDataTypeAndWrite(type: string | number, c: Concentrate, value) {
+    const stdType = getDataType(type)
+    const fn = writeDataTypeBufTable[stdType]
+    if (fn) {
+      fn(c, value)
+      return
+    }
   }
 
   function isDataAnalogDigital(type: number) {
@@ -767,8 +780,8 @@ function foundPayloadFactory(zclId: ZclID) {
     if (!dataTypeParam) dataTypeParam = "dataType"
 
     this.tap(function() {
-      const dataType = getDataType(this.vars[dataTypeParam])
-      ru[dataType](name)(this)
+      const stdType = getDataType(this.vars[dataTypeParam])
+      ru[stdType](name)(this)
     })
   })
 
@@ -828,8 +841,8 @@ function foundPayloadFactory(zclId: ZclID) {
           this.indexes = []
         } else {
           this.loop("indexes", function(end) {
-            parsedBufLen += 2
             this.uint16("ind")
+            parsedBufLen += 2
 
             count += 1
             if (count === this.vars.indicator) end()
@@ -879,8 +892,8 @@ function foundPayloadFactory(zclId: ZclID) {
       if (this.vars.status === 0) {
         parsedBufLen += 1
       } else {
-        parsedBufLen += 3
         this.uint16("attrId")
+        parsedBufLen += 3
       }
     })
   })
@@ -897,8 +910,8 @@ function foundPayloadFactory(zclId: ZclID) {
             if (analogOrDigital === "ANALOG") ru.variable("repChange")(this)
           })
       } else {
-        parsedBufLen += 2
         this.uint16("timeout")
+        parsedBufLen += 2
       }
     })
   })
@@ -908,8 +921,8 @@ function foundPayloadFactory(zclId: ZclID) {
       if (this.vars.status === 0) {
         parsedBufLen += 1
       } else {
-        parsedBufLen += 4
         this.uint8("direction").uint16("attrId")
+        parsedBufLen += 4
       }
     })
   })

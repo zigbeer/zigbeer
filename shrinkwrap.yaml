@@ -11,7 +11,7 @@ devDependencies:
   prettier: 1.16.1
   ts-jest: 23.10.5
   ts-node: 8.0.2
-  typescript: 3.2.4
+  typescript: 3.3.1
   zcl-id: 'link:../zcl-id'
 packages:
   /@babel/code-frame/7.0.0:
@@ -3454,13 +3454,13 @@ packages:
       node: '>= 0.8.0'
     resolution:
       integrity: sha1-WITKtRLPHTVeP7eE8wgEsrUg23I=
-  /typescript/3.2.4:
+  /typescript/3.3.1:
     dev: true
     engines:
       node: '>=4.2.0'
     hasBin: true
     resolution:
-      integrity: sha512-0RNDbSdEokBeEAkgNbxJ+BLwSManFy9TeXz8uW+48j/xhEXv1ePME60olyzw2XzUqUBNAYFeJadIqAgNqIACwg==
+      integrity: sha512-cTmIDFW7O0IHbn1DPYjkiebHxwtCMU+eTy30ZtJNBPF9j2O1ITu5XH2YnBeVRKWHqF+3JQwWJv0Q0aUgX8W7IA==
   /uglify-js/3.4.9:
     dependencies:
       commander: 2.17.1
@@ -3703,5 +3703,5 @@ specifiers:
   prettier: ^1.16.1
   ts-jest: ^23.10.5
   ts-node: ^8.0.2
-  typescript: ^3.2.4
+  typescript: ^3.3.1
   zcl-id: ^0.5.0-6
