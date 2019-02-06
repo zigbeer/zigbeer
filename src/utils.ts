@@ -21,3 +21,18 @@ export const writeUInt64 = (c: Concentrate, hexString: string) => {
   const lsb = parseInt(hexString.slice(10), 16)
   c.uint32le(lsb).uint32le(msb)
 }
+
+type Cancellable<T> = Promise<T> & { cancel(): void }
+export const timeout = (ms: number) => {
+  let timeout: NodeJS.Timeout
+  let cancel: (reason?: any) => void
+  const promise = new Promise((resolve, reject) => {
+    timeout = setTimeout(resolve, ms)
+    cancel = reject
+  }) as Cancellable<undefined>
+  promise.cancel = () => {
+    clearTimeout(timeout)
+    cancel(new Error("Cancelled"))
+  }
+  return promise
+}

@@ -81,23 +81,23 @@ describe("Functional CmdRsp framer and parser Check", function() {
 function randomArg(type) {
   switch (type) {
     case "uint8":
-      return chance.integer({ min: 0, max: 255 })
+      return chance.integer({ min: 0, max: 0xff })
     case "uint16":
-      return chance.integer({ min: 0, max: 65535 })
+      return chance.integer({ min: 0, max: 0xffff })
     case "uint32":
-      return chance.integer({ min: 0, max: 4294967295 })
+      return chance.integer({ min: 0, max: 0xffffffff })
     case "int8":
-      return chance.integer({ min: -128, max: 127 })
+      return chance.integer({ min: -0x80, max: 0x7f })
     case "int16":
-      return chance.integer({ min: -32768, max: 32767 })
+      return chance.integer({ min: -0x8000, max: 0x7fff })
     case "int32":
-      return chance.integer({ min: -2147483648, max: 2147483647 })
+      return chance.integer({ min: -0x80000000, max: 0x7fffffff })
     case "floatle":
-      return chance.floating({ min: 0, max: 4294967295 })
+      return chance.floating({ min: 0, max: 0xffffffff })
     case "longaddr":
       return "0x00124b00019c2ee9"
     case "stringPreLen":
-      const length = chance.integer({ min: 0, max: 255 })
+      const length = chance.integer({ min: 0, max: 0xff })
       return chance.string({ length })
     case "preLenUint8":
     case "preLenUint16":
@@ -110,13 +110,13 @@ function randomArg(type) {
       const testArr = []
       for (let k = 0; k < 10; k += 1) {
         if (type === "dynUint8") {
-          testArr[k] = chance.integer({ min: 0, max: 255 })
+          testArr[k] = chance.integer({ min: 0, max: 0xff })
         } else if (type === "dynUint16") {
-          testArr[k] = chance.integer({ min: 0, max: 65535 })
+          testArr[k] = chance.integer({ min: 0, max: 0xffff })
         } else if (type === "dynUint24") {
-          testArr[k] = chance.integer({ min: 0, max: 16777215 })
+          testArr[k] = chance.integer({ min: 0, max: 0xffffff })
         } else if (type === "dynUint32") {
-          testArr[k] = chance.integer({ min: 0, max: 4294967295 })
+          testArr[k] = chance.integer({ min: 0, max: 0xffffffff })
         }
       }
       return testArr
@@ -124,14 +124,14 @@ function randomArg(type) {
     case "locationbuffer":
       const testBuf = new Buffer(16)
       for (let k = 0; k < 16; k += 1) {
-        testBuf[k] = chance.integer({ min: 0, max: 255 })
+        testBuf[k] = chance.integer({ min: 0, max: 0xff })
       }
       return testBuf
     case "zonebuffer":
       const testArr = []
       for (let k = 0; k < 20; k += 2) {
-        testArr[k] = chance.integer({ min: 0, max: 255 })
-        testArr[k + 1] = chance.integer({ min: 0, max: 65535 })
+        testArr[k] = chance.integer({ min: 0, max: 0xff })
+        testArr[k + 1] = chance.integer({ min: 0, max: 0xffff })
       }
       return testArr
     case "extfieldsets":

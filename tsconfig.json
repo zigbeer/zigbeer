@@ -1,6 +1,7 @@
 {
   "compilerOptions": { 
-    "strict": false,
+    "strict": true,
+    "noImplicitAny": false,
     "target": "es6",
     "module": "commonjs",
     "lib": ["es2017"],
@@ -10,5 +11,5 @@
     "declaration": false,
     "noFallthroughCasesInSwitch": true
   },
-  "include": ["src", "index.d.ts", "index.d.ts"]
+  "include": ["src"]
 }
