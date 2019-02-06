@@ -272,57 +272,6 @@ function foundPayloadFactory(zclId: ZclID) {
         })
       ])
     }
-
-    private _getObj(
-      buf: Buffer,
-      callback: Callback<{ data: any; leftBuf: Buffer } | undefined>
-    ) {
-      const { params } = this
-
-      const knownBufLen = params.reduce(
-        (acc, { type }) =>
-          type === "uint8" ? acc + 1 : type === "uint16" ? acc + 2 : acc,
-        0
-      )
-
-      parsedBufLen = knownBufLen
-
-      const chunkRules = params.map(({ type, name }) => ru[type]([name]))
-
-      let parser = dissolveChunks()
-        .join(chunkRules)
-        .compile({ once: true })
-
-      let finished = false
-
-      const listener = (parsed: any) => {
-        if (finished) return
-        finished = true
-        clearTimeout(parseTimeout)
-
-        const result = {
-          data: parsed,
-          leftBuf: buf.slice(parsedBufLen)
-        }
-        // TODO: Do we need this:
-        // // reset parsedBufLen when buffer is empty
-        // if (result.leftBuf.length == 0) {
-        //     parsedBufLen = knownBufLen;
-        // }
-        callback(null, result)
-      }
-
-      const parseTimeout = setTimeout(() => {
-        if (finished) return
-        finished = true
-        parser.removeListener("parsed", listener)
-        callback(new Error("zcl functional parse timeout"))
-      }, 1000)
-
-      parser.once("parsed", listener)
-
-      parser.end(buf)
-    }
   }
 
   /*
