@@ -12,6 +12,100 @@ const bufToArray = (buf: Buffer) => {
   return arr
 }
 
+const writeDataTypeBufTable = {
+  uint8: (c: Concentrate, value: number) => c.uint8(value),
+  int8: (c: Concentrate, value: number) => c.int8(value),
+  uint16: (c: Concentrate, value: number) => c.uint16le(value),
+  int16: (c: Concentrate, value: number) => c.int16le(value),
+  uint32: (c: Concentrate, value: number) => c.uint32le(value),
+  int32: (c: Concentrate, value: number) => c.int32le(value),
+  floatle: (c: Concentrate, value: number) => c.floatle(value),
+  doublele: (c: Concentrate, value: number) => c.doublele(value),
+  uint24: (c: Concentrate, value: number) =>
+    c.buffer(
+      new Concentrate()
+        .uint32le(value)
+        .result()
+        .slice(0, 3)
+    ),
+  int24: (c: Concentrate, value: number) =>
+    c.buffer(
+      new Concentrate()
+        .int32le(value)
+        .result()
+        .slice(0, 3)
+    ),
+  uint40: (c: Concentrate, value: number) => {
+    if (!Array.isArray(value) || value.length !== 2) {
+      throw new Error(
+        "The value for UINT40/BITMAP40/DATA40 must be orgnized in an 2-element number array."
+      )
+    }
+    if (value[0] > 0xff) {
+      throw new Error(
+        "The value[0] for UINT40/BITMAP40/DATA40 must be smaller than 0xff (255)."
+      )
+    }
+    c.uint32le(value[1]).uint8(value[0])
+  },
+  int40: (c: Concentrate, value: number) => {
+    /* TODO: Not implemented */
+  },
+  uint48: (c: Concentrate, value: number) => {
+    if (!Array.isArray(value) || value.length !== 2) {
+      throw new Error(
+        "The value for UINT48/BITMAP48/DATA48 must be orgnized in an 2-element number array."
+      )
+    }
+    if (value[0] > 0xffff) {
+      throw new Error(
+        "The value[0] for UINT48/BITMAP48/DATA48 must be smaller than 0xffff (65535)."
+      )
+    }
+    c.uint32le(value[1]).uint16le(value[0])
+  },
+  int48: (c: Concentrate, value: number) => {
+    /* TODO: Not implemented */
+  },
+  uint56: (c: Concentrate, value: number) => {
+    if (!Array.isArray(value) || value.length !== 2) {
+      throw new Error(
+        "The value for UINT56/BITMAP56/DATA56 must be orgnized in an 2-element number array."
+      )
+    }
+    if (value[0] > 0xffffff) {
+      throw new Error(
+        "The value[0] for UINT56/BITMAP56/DATA56 must be smaller than 0xffffff (16777215)."
+      )
+    }
+    c.uint32le(value[1])
+    c.buffer(
+      new Concentrate()
+        .uint32le(value[0])
+        .result()
+        .slice(0, 3)
+    )
+  },
+  int56: (c: Concentrate, value: number) => {
+    /* TODO: Not implemented */
+  },
+  uint64: writeUInt64,
+  strPreLenUint8: (c: Concentrate, value: string) => {
+    if (typeof value !== "string") {
+      throw new Error("The value for strPreLenUint8 must be a string.")
+    }
+    const strLen = value.length
+    c.uint8(strLen).string(value, "utf8")
+  },
+  strPreLenUint16: (c: Concentrate, value: string) => {
+    if (typeof value !== "string") {
+      throw new Error("The value for strPreLenUint16 must be a string.")
+    }
+    const strLen = value.length
+    c.uint16le(strLen).string(value, "ucs2")
+  }
+}
+
 function foundPayloadFactory(zclId: ZclID) {
   const dChunks = dissolveChunks()
   const ru = dChunks.Rule()
@@ -162,7 +256,7 @@ function foundPayloadFactory(zclId: ZclID) {
                 " command should be an object"
             )
 
-          this._getBuf(payload, c)
+          this.writeBuf(payload, c)
           break
 
         case "discoverRsp":
@@ -175,7 +269,7 @@ function foundPayloadFactory(zclId: ZclID) {
 
           c = c.uint8(payload.discComplete)
           payload.attrInfos.forEach((attrInfo: any) => {
-            self._getBuf(attrInfo, c)
+            self.writeBuf(attrInfo, c)
           })
           break
 
@@ -186,7 +280,7 @@ function foundPayloadFactory(zclId: ZclID) {
             )
 
           payload.forEach(function(argObj) {
-            self._getBuf(argObj, c)
+            self.writeBuf(argObj, c)
           })
           break
       }
@@ -194,7 +288,7 @@ function foundPayloadFactory(zclId: ZclID) {
       return c.result()
     }
 
-    private _getBuf(arg: any, c: Concentrate) {
+    private writeBuf(arg: any, c: Concentrate) {
       const self = this
       const fn = writeBuf[this.cmd]
       if (fn) {
@@ -486,106 +580,11 @@ function foundPayloadFactory(zclId: ZclID) {
     return newDataType
   }
 
-  const writeDataTypeBufTable = {
-    uint8: (c: Concentrate, value: number) => c.uint8(value),
-    int8: (c: Concentrate, value: number) => c.int8(value),
-    uint16: (c: Concentrate, value: number) => c.uint16le(value),
-    int16: (c: Concentrate, value: number) => c.int16le(value),
-    uint32: (c: Concentrate, value: number) => c.uint32le(value),
-    int32: (c: Concentrate, value: number) => c.int32le(value),
-    floatle: (c: Concentrate, value: number) => c.floatle(value),
-    doublele: (c: Concentrate, value: number) => c.doublele(value),
-    uint24: (c: Concentrate, value: number) =>
-      c.buffer(
-        new Concentrate()
-          .uint32le(value)
-          .result()
-          .slice(0, 3)
-      ),
-    int24: (c: Concentrate, value: number) =>
-      c.buffer(
-        new Concentrate()
-          .int32le(value)
-          .result()
-          .slice(0, 3)
-      ),
-    uint40: (c: Concentrate, value: number) => {
-      if (!Array.isArray(value) || value.length !== 2) {
-        throw new Error(
-          "The value for UINT40/BITMAP40/DATA40 must be orgnized in an 2-element number array."
-        )
-      }
-      if (value[0] > 0xff) {
-        throw new Error(
-          "The value[0] for UINT40/BITMAP40/DATA40 must be smaller than 0xff (255)."
-        )
-      }
-      c.uint32le(value[1]).uint8(value[0])
-    },
-    int40: (c: Concentrate, value: number) => {
-      /* TODO: Not implemented */
-    },
-    uint48: (c: Concentrate, value: number) => {
-      if (!Array.isArray(value) || value.length !== 2) {
-        throw new Error(
-          "The value for UINT48/BITMAP48/DATA48 must be orgnized in an 2-element number array."
-        )
-      }
-      if (value[0] > 0xffff) {
-        throw new Error(
-          "The value[0] for UINT48/BITMAP48/DATA48 must be smaller than 0xffff (65535)."
-        )
-      }
-      c.uint32le(value[1]).uint16le(value[0])
-    },
-    int48: (c: Concentrate, value: number) => {
-      /* TODO: Not implemented */
-    },
-    uint56: (c: Concentrate, value: number) => {
-      if (!Array.isArray(value) || value.length !== 2) {
-        throw new Error(
-          "The value for UINT56/BITMAP56/DATA56 must be orgnized in an 2-element number array."
-        )
-      }
-      if (value[0] > 0xffffff) {
-        throw new Error(
-          "The value[0] for UINT56/BITMAP56/DATA56 must be smaller than 0xffffff (16777215)."
-        )
-      }
-      c.uint32le(value[1])
-      c.buffer(
-        new Concentrate()
-          .uint32le(value[0])
-          .result()
-          .slice(0, 3)
-      )
-    },
-    int56: (c: Concentrate, value: number) => {
-      /* TODO: Not implemented */
-    },
-    uint64: writeUInt64,
-    strPreLenUint8: (c: Concentrate, value: string) => {
-      if (typeof value !== "string") {
-        throw new Error("The value for strPreLenUint8 must be a string.")
-      }
-      const strLen = value.length
-      c.uint8(strLen).string(value, "utf8")
-    },
-    strPreLenUint16: (c: Concentrate, value: string) => {
-      if (typeof value !== "string") {
-        throw new Error("The value for strPreLenUint16 must be a string.")
-      }
-      const strLen = value.length
-      c.uint16le(strLen).string(value, "ucs2")
-    }
-  }
-
   function getDataTypeAndWrite(type: string | number, c: Concentrate, value) {
     const stdType = getDataType(type)
     const fn = writeDataTypeBufTable[stdType]
     if (fn) {
-      fn(c, value)
-      return
+      return fn(c, value)
     }
   }
 

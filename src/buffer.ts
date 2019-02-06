@@ -29,11 +29,74 @@ export class BufferWithPointer {
   uint8() {
     return this.buf.readUInt8(this.fwd(1))
   }
+  int8() {
+    return this.buf.readInt8(this.fwd(1))
+  }
   uint16le() {
+    return this.buf.readUInt16LE(this.fwd(2))
+  }
+  int16le() {
     return this.buf.readInt16LE(this.fwd(2))
   }
-  buffer(length) {
+  uint24le() {
+    return this.buf.readUIntLE(this.fwd(3), 3)
+  }
+  int24le() {
+    return this.buf.readIntLE(this.fwd(3), 3)
+  }
+  uint32le() {
+    return this.buf.readUInt32LE(this.fwd(4))
+  }
+  int32le() {
+    return this.buf.readInt32LE(this.fwd(4))
+  }
+  uint40le() {
+    return this.buf.readUIntLE(this.fwd(5), 5)
+  }
+  int40le() {
+    return this.buf.readIntLE(this.fwd(5), 5)
+  }
+  uint48le() {
+    return this.buf.readUIntLE(this.fwd(6), 6)
+  }
+  int48le() {
+    return this.buf.readIntLE(this.fwd(6), 6)
+  }
+  uint56le(): [number, number] {
+    return [
+      this.buf.readUInt32LE(this.fwd(4)),
+      this.buf.readUIntLE(this.fwd(3), 3)
+    ]
+  }
+  int56le(): [number, number] {
+    return [
+      this.buf.readInt32LE(this.fwd(4)),
+      this.buf.readIntLE(this.fwd(3), 3)
+    ]
+  }
+  uint64le(): [number, number] {
+    return [
+      this.buf.readUInt32LE(this.fwd(4)),
+      this.buf.readUInt32LE(this.fwd(4))
+    ]
+  }
+  int64le(): [number, number] {
+    return [
+      this.buf.readInt32LE(this.fwd(4)),
+      this.buf.readInt32LE(this.fwd(4))
+    ]
+  }
+  floatle() {
+    return this.buf.readFloatLE(this.fwd(4))
+  }
+  doublele() {
+    return this.buf.readDoubleLE(this.fwd(8))
+  }
+  buffer(length: number) {
     return this.buf.slice(this.fwd(length), this.pointer)
+  }
+  string(length: number, encoding: "latin1" | "utf8") {
+    return this.buf.toString(encoding, this.fwd(length), this.pointer)
   }
   rest() {
     return this.buf.slice(this.goTo(this.len))
