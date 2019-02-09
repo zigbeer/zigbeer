@@ -251,7 +251,7 @@ describe("Module Methods Check", function() {
         cmdId: "writeUndiv",
         payload: [
           { attrId: 0x1234, dataType: 0x41, attrData: "hello" },
-          { attrId: 0xabcd, dataType: 0x24, attrData: [100, 2406] },
+          { attrId: 0xabcd, dataType: 0x24, attrData: 0x6400000966 },
           { attrId: 0x1234, dataType: 0x08, attrData: 60 }
         ]
       },
@@ -320,10 +320,10 @@ describe("Module Methods Check", function() {
       }
     ]
 
-    zclFrames.forEach(function(zclFrame) {
+    zclFrames.forEach(zclFrame => {
       let zBuf
 
-      it("zcl foundation framer and parser Check", function() {
+      it("should frame and parse foundation/" + zclFrame.cmdId, () => {
         zBuf = zcl.frame(
           zclFrame.frameCntl,
           zclFrame.manufCode,
@@ -331,8 +331,13 @@ describe("Module Methods Check", function() {
           zclFrame.cmdId,
           zclFrame.payload
         )
-        zcl.parse(zBuf, function(err, result) {
-          expect(result).toEqual(zclFrame)
+        expect.assertions(1)
+        return new Promise((resolve, reject) => {
+          zcl.parse(zBuf, (err, result) => {
+            if (err) reject(err)
+            expect(result).toEqual(zclFrame)
+            resolve()
+          })
         })
       })
     })
@@ -404,26 +409,34 @@ describe("Module Methods Check", function() {
     zclFrames.forEach(function(zclFrame) {
       let zBuf
 
-      it("zcl functional framer and parser Check", function() {
-        zBuf = zcl.frame(
-          zclFrame.frameCntl,
-          zclFrame.manufCode,
-          zclFrame.seqNum,
-          zclFrame.cmdId,
-          zclFrame.payload,
-          0x0005
-        )
-        zcl.parse(zBuf, 0x0005, function(err, result) {
-          if (err) throw err
-          if (result.cmdId === "add") {
-            result.frameCntl.direction = 0
-          } else {
-            result.frameCntl.direction = 1
-          }
+      it(
+        "should frame and parse " + zclFrame.clstId + "/" + zclFrame.cmdId,
+        function() {
+          zBuf = zcl.frame(
+            zclFrame.frameCntl,
+            zclFrame.manufCode,
+            zclFrame.seqNum,
+            zclFrame.cmdId,
+            zclFrame.payload,
+            0x0005
+          )
 
-          expect(result).toEqual(zclFrame)
-        })
-      })
+          expect.assertions(1)
+          return new Promise((resolve, reject) => {
+            zcl.parse(zBuf, 0x0005, (err, result) => {
+              if (err) reject(err)
+              if (result.cmdId === "add") {
+                result.frameCntl.direction = 0
+              } else {
+                result.frameCntl.direction = 1
+              }
+
+              expect(result).toEqual(zclFrame)
+              resolve()
+            })
+          })
+        }
+      )
     })
   })
 
