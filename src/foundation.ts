@@ -366,22 +366,18 @@ function foundPayloadFactory(zclId: ZclID) {
     }
 
     innerParse(zBuf: Buffer) {
+      const r = new BufferWithPointer(zBuf)
       if (this.cmd === "defaultRsp" || this.cmd === "discover") {
-        const result = this.readObj(zBuf)
-        const { data } = result
-        return data
+        return this.readObj(r)
       }
 
       if (this.cmd === "discoverRsp") {
-        const pBuf = new BufferWithPointer(zBuf)
-        const discComplete = pBuf.uint8()
-        const rest = pBuf.rest()
-
-        const arr = this.readObjArray(rest)
+        const discComplete = r.uint8()
+        const arr = this.readObjArray(r)
         return { discComplete, attrInfos: arr }
       }
 
-      const arr = this.readObjArray(zBuf)
+      const arr = this.readObjArray(r)
       return arr
     }
 
@@ -463,23 +459,18 @@ function foundPayloadFactory(zclId: ZclID) {
       }
     }
 
-    private readObjArray(buf: Buffer) {
+    private readObjArray(r: BufferWithPointer) {
       let parsedData = [] as any[]
-      while (true) {
-        const result = this.readObj(buf)
-        buf = result.pBuf.rest()
-        const { data } = result
-        if (data) parsedData.push(data)
-
-        if (!buf.length) return parsedData
+      while (r.remaining()) {
+        parsedData.push(this.readObj(r))
       }
+      return parsedData
     }
 
-    private readObj(buf: Buffer) {
+    private readObj(r: BufferWithPointer) {
       const { params } = this
 
-      const r = new BufferWithPointer(buf)
-      const output: Record<string, any> = {}
+      const data: Record<string, any> = {}
       for (const { type, name } of params) {
         const fn = readDataTable[type] || readDataTable[stdTypeMapping[type]]
 
@@ -488,12 +479,12 @@ function foundPayloadFactory(zclId: ZclID) {
         // TODO: Remove all these dirty hacks
         if (type === "variable") {
           const { attrData, dataType } = out
-          output.attrData = attrData
-          output.dataType = dataType
+          data.attrData = attrData
+          data.dataType = dataType
           continue
         }
         if (name === "extra") {
-          Object.assign(output, out)
+          Object.assign(data, out)
           continue
         }
         if (type === "selector") {
@@ -501,9 +492,9 @@ function foundPayloadFactory(zclId: ZclID) {
         }
         // End of dirty hacks
 
-        output[name] = out
+        data[name] = out
       }
-      return { data: output, pBuf: r }
+      return data
     }
   }
 
