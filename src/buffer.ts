@@ -23,7 +23,7 @@ export class BufferWithPointer {
    * @param {number} dist How far to wind the buffer pointer. Can be negative to rewind and overwrite.
    * @returns {number} the previous pointer, before winding
    */
-  private fwd(dist: number): number {
+  fwd(dist: number): number {
     return this.goTo(this.pointer + dist)
   }
   uint8() {
@@ -62,29 +62,17 @@ export class BufferWithPointer {
   int48le() {
     return this.buf.readIntLE(this.fwd(6), 6)
   }
-  uint56le(): [number, number] {
-    return [
-      this.buf.readUInt32LE(this.fwd(4)),
-      this.buf.readUIntLE(this.fwd(3), 3)
-    ]
+  uint56le() {
+    return this.buffer(7)
   }
-  int56le(): [number, number] {
-    return [
-      this.buf.readInt32LE(this.fwd(4)),
-      this.buf.readIntLE(this.fwd(3), 3)
-    ]
+  int56le() {
+    return this.buffer(7)
   }
-  uint64le(): [number, number] {
-    return [
-      this.buf.readUInt32LE(this.fwd(4)),
-      this.buf.readUInt32LE(this.fwd(4))
-    ]
+  uint64le() {
+    return this.buffer(8)
   }
-  int64le(): [number, number] {
-    return [
-      this.buf.readInt32LE(this.fwd(4)),
-      this.buf.readInt32LE(this.fwd(4))
-    ]
+  int64le() {
+    return this.buffer(8)
   }
   floatle() {
     return this.buf.readFloatLE(this.fwd(4))
@@ -92,8 +80,15 @@ export class BufferWithPointer {
   doublele() {
     return this.buf.readDoubleLE(this.fwd(8))
   }
-  buffer(length: number) {
+  slice(length: number) {
     return this.buf.slice(this.fwd(length), this.pointer)
+  }
+  buffer(length: number) {
+    // has to come first so we don't allocate on error
+    const start = this.fwd(length)
+    const newBuf = Buffer.allocUnsafe(length)
+    this.buf.copy(newBuf, 0, start, this.pointer)
+    return newBuf
   }
   string(length: number, encoding: "latin1" | "utf8") {
     return this.buf.toString(encoding, this.fwd(length), this.pointer)

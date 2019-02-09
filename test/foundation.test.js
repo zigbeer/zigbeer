@@ -33,17 +33,17 @@ const valObj = {
       attrId: 0x4444,
       status: 0,
       dataType: 0x27,
-      attrData: "0x000205680001e240"
+      attrData: Buffer.from("000205680001e240", "hex")
     }
   ],
   write: [
     { attrId: 0x1234, dataType: 0x41, attrData: "hello" },
-    { attrId: 0xabcd, dataType: 0x24, attrData: [100, 2406] },
+    { attrId: 0xabcd, dataType: 0x24, attrData: 0x6400000966 },
     { attrId: 0x1234, dataType: 0x08, attrData: 60 }
   ],
   writeUndiv: [
     { attrId: 0x1234, dataType: 0x41, attrData: "hello" },
-    { attrId: 0xabcd, dataType: 0x24, attrData: [100, 2406] },
+    { attrId: 0xabcd, dataType: 0x24, attrData: 0x6400000966 },
     { attrId: 0x1234, dataType: 0x08, attrData: 60 }
   ],
   writeRsp: [
@@ -53,7 +53,7 @@ const valObj = {
   ],
   writeNoRsp: [
     { attrId: 0x1234, dataType: 0x41, attrData: "hello" },
-    { attrId: 0xabcd, dataType: 0x24, attrData: [100, 2406] },
+    { attrId: 0xabcd, dataType: 0x24, attrData: 0x6400000966 },
     { attrId: 0x1234, dataType: 0x08, attrData: 60 }
   ],
   configReport: [
@@ -164,24 +164,29 @@ const valObj = {
   ]
 }
 
-describe("Foundation Cmd framer and parser Check", function() {
-  foundCmd.forEach(function(cmd) {
-    if (!valObj[cmd]) return
+describe("Foundation Cmd framer and parser Check", () => {
+  for (const cmd of foundCmd) {
+    if (!valObj[cmd]) continue
 
-    it(cmd + " frame() and parse() check", function() {
+    it("should frame and parse " + cmd, () => {
       let cmdPayload = new FoundClass(cmd)
 
       let zBuf = cmdPayload.frame(valObj[cmd])
 
-      cmdPayload.parse(zBuf, function(err, result) {
-        expect(result).toEqual(valObj[cmd])
+      expect.assertions(1)
+      return new Promise((resolve, reject) => {
+        cmdPayload.parse(zBuf, (err, result) => {
+          if (err) reject(err)
+          expect(result).toEqual(valObj[cmd])
+          resolve()
+        })
       })
     })
-  })
+  }
 })
 
 describe("Binary attributes parsing", () => {
-  it("should parse ascii encoded not null-terminated charStr(datatype 66)", done => {
+  it("should parse ascii encoded not null-terminated charStr(datatype 66)", () => {
     const binary = Buffer.from(
       ["0121950b0328200421a84305217b0", "0062400000000000a210000641001"].join(
         ""
@@ -196,15 +201,18 @@ describe("Binary attributes parsing", () => {
 
     const parser = new FoundClass(10)
 
-    parser.parse(frame, (err, result) => {
-      result[1].attrData = Buffer.from(result[1].attrData, "ascii")
+    expect.assertions(1)
+    return new Promise((resolve, reject) => {
+      parser.parse(frame, (err, result) => {
+        if (err) reject(err)
+        result[1].attrData = Buffer.from(result[1].attrData, "ascii")
 
-      expect(result).toEqual([
-        { attrId: 5, dataType: 66, attrData: "sensor" },
-        { attrId: 1000, dataType: 66, attrData: binary }
-      ])
-
-      done()
+        expect(result).toEqual([
+          { attrId: 5, dataType: 66, attrData: "sensor" },
+          { attrId: 1000, dataType: 66, attrData: binary }
+        ])
+        resolve()
+      })
     })
   })
 })
