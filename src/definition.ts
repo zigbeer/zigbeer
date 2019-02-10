@@ -1,228 +1,162 @@
-export const stdTypeMapping: {
-  data8: "uint8"
-  boolean: "uint8"
-  bitmap8: "uint8"
-  uint8: "uint8"
-  enum8: "uint8"
-  int8: "int8"
-  data16: "uint16"
-  bitmap16: "uint16"
-  uint16: "uint16"
-  enum16: "uint16"
-  clusterId: "uint16"
-  attrId: "uint16"
-  int16: "int16"
-  semiPrec: undefined
-  data24: "uint24"
-  bitmap24: "uint24"
-  uint24: "uint24"
-  int24: "int24"
-  data32: "uint32"
-  bitmap32: "uint32"
-  uint32: "uint32"
-  tod: "uint32"
-  date: "uint32"
-  utc: "uint32"
-  bacOid: "uint32"
-  int32: "int32"
-  singlePrec: "floatle"
-  doubleprec: "doublele"
-  uint40: "uint40"
-  bitmap40: "uint40"
-  data40: "uint40"
-  int40: "int40"
-  uint48: "uint48"
-  bitmap48: "uint48"
-  int48: "int48"
-  data48: "uint48"
-  uint56: "uint56"
-  bitmap56: "uint56"
-  data56: "uint56"
-  int56: "int56"
-  uint64: "uint64"
-  bitmap64: "uint64"
-  data64: "uint64"
-  ieeeAddr: "uint64"
-  int64: "int64"
-  octetStr: "strPreLenUint8"
-  charStr: "strPreLenUint8"
-  longOctetStr: "strPreLenUint16"
-  longCharStr: "strPreLenUint16"
-  struct: "attrValStruct"
-  noData: undefined
-  unknown: undefined
-  secKey: "secKey"
-} = {
+export const stdTypeMapping = {
+  noData: "noData",
+
   data8: "uint8",
-  boolean: "uint8",
-  bitmap8: "uint8",
-  uint8: "uint8",
-  enum8: "uint8",
-  int8: "int8",
   data16: "uint16",
-  bitmap16: "uint16",
-  uint16: "uint16",
-  enum16: "uint16",
-  clusterId: "uint16",
-  attrId: "uint16",
-  int16: "int16",
-  semiPrec: undefined,
   data24: "uint24",
-  bitmap24: "uint24",
-  uint24: "uint24",
-  int24: "int24",
   data32: "uint32",
-  bitmap32: "uint32",
+  data40: "uint40",
+  data48: "uint48",
+  data56: "uint56",
+  data64: "uint64",
+
+  boolean: "uint8",
+
+  map8: "uint8",
+  map16: "uint16",
+  map24: "uint24",
+  map32: "uint32",
+  map40: "uint40",
+  map48: "uint48",
+  map56: "uint56",
+  map64: "uint64",
+
+  uint8: "uint8",
+  uint16: "uint16",
+  uint24: "uint24",
   uint32: "uint32",
-  tod: "uint32",
+  uint40: "uint40",
+  uint48: "uint48",
+  uint56: "uint56",
+  uint64: "uint64",
+
+  int8: "int8",
+  int16: "int16",
+  int24: "int24",
+  int32: "int32",
+  int40: "int40",
+  int48: "int48",
+  int56: "int56",
+  int64: "int64",
+
+  enum8: "uint8",
+  enum16: "uint16",
+
+  semi: undefined,
+  single: "floatle",
+  double: "doublele",
+
+  octstr: "strPreLenUint8",
+  string: "strPreLenUint8",
+  octstr16: "strPreLenUint16",
+  string16: "strPreLenUint16",
+
+  array: undefined,
+  struct: "attrValStruct",
+
+  set: undefined,
+  bag: undefined,
+
+  ToD: "uint32",
   date: "uint32",
   utc: "uint32",
+
+  clusterId: "uint16",
+  attrId: "uint16",
   bacOid: "uint32",
-  int32: "int32",
-  singlePrec: "floatle",
-  doubleprec: "doublele",
-  uint40: "uint40",
-  bitmap40: "uint40",
-  data40: "uint40",
-  int40: "int40",
-  uint48: "uint48",
-  bitmap48: "uint48",
-  int48: "int48",
-  data48: "uint48",
-  uint56: "uint56",
-  bitmap56: "uint56",
-  data56: "uint56",
-  int56: "int56",
-  uint64: "uint64",
-  bitmap64: "uint64",
-  data64: "uint64",
+
   ieeeAddr: "uint64",
-  int64: "int64",
-  octetStr: "strPreLenUint8",
-  charStr: "strPreLenUint8",
-  longOctetStr: "strPreLenUint16",
-  longCharStr: "strPreLenUint16",
-  struct: "attrValStruct",
-  noData: undefined,
-  unknown: undefined,
-  secKey: "secKey"
+  secKey: "secKey",
+  opaque: undefined,
+
+  unknown: undefined
+} as const
+
+export const getStdType = <T extends string>(
+  type: T
+): Exclude<
+  T extends keyof typeof stdTypeMapping
+    ? typeof stdTypeMapping[T]
+    : typeof stdTypeMapping[keyof typeof stdTypeMapping],
+  undefined
+> => {
+  const stdType = stdTypeMapping[type as keyof typeof stdTypeMapping]
+  if (!stdType) throw new Error(`stdType for type ${type} missing`)
+  return stdType as any
 }
 
-export const zclTypes: {
-  noData: 0
-  data8: 8
-  data16: 9
-  data24: 10
-  data32: 11
-  data40: 12
-  data48: 13
-  data56: 14
-  data64: 15
-  boolean: 16
-  bitmap8: 24
-  bitmap16: 25
-  bitmap24: 26
-  bitmap32: 27
-  bitmap40: 28
-  bitmap48: 29
-  bitmap56: 30
-  bitmap64: 31
-  uint8: 32
-  uint16: 33
-  uint24: 34
-  uint32: 35
-  uint40: 36
-  uint48: 37
-  uint56: 38
-  uint64: 39
-  int8: 40
-  int16: 41
-  int24: 42
-  int32: 43
-  int40: 44
-  int48: 45
-  int56: 46
-  int64: 47
-  enum8: 48
-  enum16: 49
-  semiPrec: 56
-  singlePrec: 57
-  doublePrec: 58
-  octetStr: 65
-  charStr: 66
-  longOctetStr: 67
-  longCharStr: 68
-  array: 72
-  struct: 76
-  set: 80
-  bag: 81
-  tod: 224
-  date: 225
-  utc: 226
-  clusterId: 232
-  attrId: 233
-  bacOid: 234
-  ieeeAddr: 240
-  secKey: 241
-  unknown: 255
-} = {
-  noData: 0,
-  data8: 8,
-  data16: 9,
-  data24: 10,
-  data32: 11,
-  data40: 12,
-  data48: 13,
-  data56: 14,
-  data64: 15,
-  boolean: 16,
-  bitmap8: 24,
-  bitmap16: 25,
-  bitmap24: 26,
-  bitmap32: 27,
-  bitmap40: 28,
-  bitmap48: 29,
-  bitmap56: 30,
-  bitmap64: 31,
-  uint8: 32,
-  uint16: 33,
-  uint24: 34,
-  uint32: 35,
-  uint40: 36,
-  uint48: 37,
-  uint56: 38,
-  uint64: 39,
-  int8: 40,
-  int16: 41,
-  int24: 42,
-  int32: 43,
-  int40: 44,
-  int48: 45,
-  int56: 46,
-  int64: 47,
-  enum8: 48,
-  enum16: 49,
-  semiPrec: 56,
-  singlePrec: 57,
-  doublePrec: 58,
-  octetStr: 65,
-  charStr: 66,
-  longOctetStr: 67,
-  longCharStr: 68,
-  array: 72,
-  struct: 76,
-  set: 80,
-  bag: 81,
-  tod: 224,
-  date: 225,
-  utc: 226,
-  clusterId: 232,
-  attrId: 233,
-  bacOid: 234,
-  ieeeAddr: 240,
-  secKey: 241,
-  unknown: 255
-}
+export const zclTypes = {
+  noData: 0x00,
+
+  data8: 0x08,
+  data16: 0x09,
+  data24: 0x0a,
+  data32: 0x0b,
+  data40: 0x0c,
+  data48: 0x0d,
+  data56: 0x0e,
+  data64: 0x0f,
+
+  boolean: 0x10,
+
+  map8: 0x18,
+  map16: 0x19,
+  map24: 0x1a,
+  map32: 0x1b,
+  map40: 0x1c,
+  map48: 0x1d,
+  map56: 0x1e,
+  map64: 0x1f,
+
+  uint8: 0x20,
+  uint16: 0x21,
+  uint24: 0x22,
+  uint32: 0x23,
+  uint40: 0x24,
+  uint48: 0x25,
+  uint56: 0x26,
+  uint64: 0x27,
+
+  int8: 0x28,
+  int16: 0x29,
+  int24: 0x2a,
+  int32: 0x2b,
+  int40: 0x2c,
+  int48: 0x2d,
+  int56: 0x2e,
+  int64: 0x2f,
+
+  enum8: 0x30,
+  enum16: 0x31,
+
+  semi: 0x38,
+  single: 0x39,
+  double: 0x3a,
+
+  octstr: 0x41,
+  string: 0x42,
+  octstr16: 0x43,
+  string16: 0x44,
+
+  array: 0x48,
+  struct: 0x4c,
+
+  set: 0x50,
+  bag: 0x51,
+
+  ToD: 0xe0,
+  date: 0xe1,
+  utc: 0xe2,
+
+  clusterId: 0xe8,
+  attrId: 0xe9,
+  bacOid: 0xea,
+
+  ieeeAddr: 0xf0,
+  secKey: 0xf1,
+
+  unknown: 0xff
+} as const
 const typeNameLookup = new Map()
 for (const [name, id] of Object.entries(zclTypes)) {
   typeNameLookup.set(id, name)

@@ -1,3 +1,4 @@
+type Encoding = "utf8" | "latin1"
 export class BufferWithPointer {
   public pointer = 0
   constructor(private buf: Buffer) {}
@@ -38,47 +39,23 @@ export class BufferWithPointer {
   int16le() {
     return this.buf.readInt16LE(this.fwd(2))
   }
-  uint24le() {
-    return this.buf.readUIntLE(this.fwd(3), 3)
-  }
-  int24le() {
-    return this.buf.readIntLE(this.fwd(3), 3)
-  }
   uint32le() {
     return this.buf.readUInt32LE(this.fwd(4))
   }
   int32le() {
     return this.buf.readInt32LE(this.fwd(4))
   }
-  uint40le() {
-    return this.buf.readUIntLE(this.fwd(5), 5)
-  }
-  int40le() {
-    return this.buf.readIntLE(this.fwd(5), 5)
-  }
-  uint48le() {
-    return this.buf.readUIntLE(this.fwd(6), 6)
-  }
-  int48le() {
-    return this.buf.readIntLE(this.fwd(6), 6)
-  }
-  uint56le() {
-    return this.buffer(7)
-  }
-  int56le() {
-    return this.buffer(7)
-  }
-  uint64le() {
-    return this.buffer(8)
-  }
-  int64le() {
-    return this.buffer(8)
-  }
   floatle() {
     return this.buf.readFloatLE(this.fwd(4))
   }
   doublele() {
     return this.buf.readDoubleLE(this.fwd(8))
+  }
+  uintle(length:number) {
+    return this.buf.readUIntLE(this.fwd(length), length)
+  }
+  intle(length:number) {
+    return this.buf.readIntLE(this.fwd(length), length)
   }
   slice(length: number) {
     return this.buf.slice(this.fwd(length), this.pointer)
@@ -90,7 +67,7 @@ export class BufferWithPointer {
     this.buf.copy(newBuf, 0, start, this.pointer)
     return newBuf
   }
-  string(length: number, encoding: "latin1" | "utf8") {
+  string(length: number, encoding: Encoding) {
     return this.buf.toString(encoding, this.fwd(length), this.pointer)
   }
   rest() {
@@ -98,5 +75,130 @@ export class BufferWithPointer {
   }
   remaining() {
     return this.len - this.pointer
+  }
+}
+
+type Args<T extends (...args: any[]) => any> = T extends (
+  ...args: infer U
+) => any
+  ? U
+  : never
+
+type Task =
+  | ["copy", Buffer]
+  | ["write", string, Encoding]
+  | ["writeUIntLE" | "writeIntLE", number, number]
+  | [
+
+        | "writeUInt8"
+        | "writeUInt16LE"
+        | "writeUInt32LE"
+        | "writeInt8"
+        | "writeInt16LE"
+        | "writeInt32LE"
+        | "writeFloatLE"
+        | "writeDoubleLE",
+      number
+    ]
+
+export class BufferBuilder {
+  private tasks: Task[] = []
+  private len = 0
+  int8(value: number): this {
+    this.tasks.push(["writeInt8", value])
+    this.len += 1
+    return this
+  }
+  uint8(value: number): this {
+    this.tasks.push(["writeUInt8", value])
+    this.len += 1
+    return this
+  }
+  int16le(value: number): this {
+    this.tasks.push(["writeInt16LE", value])
+    this.len += 2
+    return this
+  }
+  uint16le(value: number): this {
+    this.tasks.push(["writeUInt16LE", value])
+    this.len += 2
+    return this
+  }
+  int32le(value: number): this {
+    this.tasks.push(["writeInt32LE", value])
+    this.len += 4
+    return this
+  }
+  uint32le(value: number): this {
+    this.tasks.push(["writeUInt32LE", value])
+    this.len += 4
+    return this
+  }
+  floatle(value: number): this {
+    this.tasks.push(["writeFloatLE", value])
+    this.len += 4
+    return this
+  }
+  doublele(value: number): this {
+    this.tasks.push(["writeDoubleLE", value])
+    this.len += 8
+    return this
+  }
+  intle(value: number, length: number): this {
+    this.tasks.push(["writeIntLE", value, length])
+    this.len += length
+    return this
+  }
+  uintle(value: number, length: number): this {
+    this.tasks.push(["writeUIntLE", value, length])
+    this.len += length
+    return this
+  }
+  string(value: string, encoding: Encoding): this {
+    this.tasks.push(["write", value, encoding])
+    this.len += Buffer.byteLength(value, encoding)
+    return this
+  }
+  buffer(data: Buffer): this {
+    const { length } = data
+    const buf = Buffer.allocUnsafe(length)
+    data.copy(buf)
+    this.tasks.push(["copy", buf])
+    this.len += length
+    return this
+  }
+  result(): Buffer {
+    const buf = Buffer.allocUnsafe(this.len)
+    let pointer = 0
+    for (const task of this.tasks) {
+      switch (task[0]) {
+        case "copy": {
+          const toCopy = task[1]
+          pointer += toCopy.copy(buf, pointer)
+          continue
+        }
+        case "write": {
+          const [, string, encoding] = task
+          pointer += (buf.write as (
+            string: Args<typeof buf.write>[0],
+            offset: Args<typeof buf.write>[1],
+            encoding: Args<typeof buf.write>[3]
+          ) => number)(string, pointer, encoding)
+          continue
+        }
+        case "writeUIntLE":
+        case "writeIntLE": {
+          const [method, number, bytelength] = task
+          pointer = buf[method](number, pointer, bytelength)
+          continue
+        }
+        default: {
+          const [method, number] = task
+          pointer = buf[method](number, pointer)
+          continue
+        }
+      }
+    }
+    return buf
   }
 }

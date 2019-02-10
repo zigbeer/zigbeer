@@ -46,15 +46,15 @@
     "enum": "^2.5.0"
   },
   "devDependencies": {
-    "@types/jest": "^23.3.13",
-    "@types/node": "^10.12.18",
+    "@types/jest": "^23.3.14",
+    "@types/node": "^10.12.24",
     "busyman": "^0.3.0",
     "chance": "^1.0.4",
     "jest": "^23.6.0",
-    "prettier": "^1.16.1",
+    "prettier": "^1.16.4",
     "ts-jest": "^23.10.5",
     "ts-node": "^8.0.2",
-    "typescript": "^3.3.1",
+    "typescript": "^3.4.0-dev.20190209",
     "zcl-id": "^0.5.0-6"
   }
 }
