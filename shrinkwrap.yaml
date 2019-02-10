@@ -3,15 +3,15 @@ dependencies:
   dissolve-chunks: 1.3.0
   enum: 2.5.0
 devDependencies:
-  '@types/jest': 23.3.13
-  '@types/node': 10.12.19
+  '@types/jest': 23.3.14
+  '@types/node': 10.12.24
   busyman: 0.3.0
   chance: 1.0.18
   jest: 23.6.0
-  prettier: 1.16.1
+  prettier: 1.16.4
   ts-jest: 23.10.5
   ts-node: 8.0.2
-  typescript: 3.3.1
+  typescript: 3.4.0-dev.20190209
   zcl-id: 'link:../zcl-id'
 packages:
   /@babel/code-frame/7.0.0:
@@ -28,14 +28,14 @@ packages:
     dev: true
     resolution:
       integrity: sha512-UFMC4ZeFC48Tpvj7C8UgLvtkaUuovQX+5xNWrsIoMG8o2z+XFKjKaN9iVmS84dPwVN00W4wPmqvYoZF3EGAsfw==
-  /@types/jest/23.3.13:
+  /@types/jest/23.3.14:
     dev: true
     resolution:
-      integrity: sha512-ePl4l+7dLLmCucIwgQHAgjiepY++qcI6nb8eAwGNkB6OxmTe3Z9rQU3rSpomqu42PCCnlThZbOoxsf+qylJsLA==
-  /@types/node/10.12.19:
+      integrity: sha512-Q5hTcfdudEL2yOmluA1zaSyPbzWPmJ3XfSWeP3RyoYvS9hnje1ZyagrZOuQ6+1nQC1Gw+7gap3pLNL3xL6UBug==
+  /@types/node/10.12.24:
     dev: true
     resolution:
-      integrity: sha512-2NVovndCjJQj6fUUn9jCgpP4WSqr+u1SoUZMZyJkhGeBFsm6dE46l31S7lPUYt9uQ28XI+ibrJA1f5XyH5HNtA==
+      integrity: sha512-GWWbvt+z9G5otRBW8rssOFgRY87J9N/qbhqfjMZ+gUuL6zoL+Hm6gP/8qQBG4jjimqdaNLCehcVapZ/Fs2WjCQ==
   /abab/2.0.0:
     dev: true
     resolution:
@@ -2688,13 +2688,13 @@ packages:
       node: '>=0.10.0'
     resolution:
       integrity: sha1-gV7R9uvGWSb4ZbMQwHE7yzMVzks=
-  /prettier/1.16.1:
+  /prettier/1.16.4:
     dev: true
     engines:
       node: '>=4'
     hasBin: true
     resolution:
-      integrity: sha512-XXUITwIkGb3CPJ2hforHah/zTINRyie5006Jd2HKy2qz7snEJXl0KLfsJZW/wst9g6R2rFvqba3VpNYdu1hDcA==
+      integrity: sha512-ZzWuos7TI5CKUeQAtFd6Zhm2s6EpAD/ZLApIhsF9pRvRtM1RFo61dM/4MSRUA0SuLugA/zgrZD8m0BaY46Og7g==
   /pretty-format/23.6.0:
     dependencies:
       ansi-regex: 3.0.0
@@ -3454,13 +3454,13 @@ packages:
       node: '>= 0.8.0'
     resolution:
       integrity: sha1-WITKtRLPHTVeP7eE8wgEsrUg23I=
-  /typescript/3.3.1:
+  /typescript/3.4.0-dev.20190209:
     dev: true
     engines:
       node: '>=4.2.0'
     hasBin: true
     resolution:
-      integrity: sha512-cTmIDFW7O0IHbn1DPYjkiebHxwtCMU+eTy30ZtJNBPF9j2O1ITu5XH2YnBeVRKWHqF+3JQwWJv0Q0aUgX8W7IA==
+      integrity: sha512-7CnV0zp1W05jFzz/Ka+WVUPbPdG9eEXUCa8g2m7kFfDaJHsHaWCIBfux4G6Q/li0zmIG8OPEenoLdpXCmgkd1Q==
   /uglify-js/3.4.9:
     dependencies:
       commander: 2.17.1
@@ -3692,16 +3692,16 @@ registry: 'https://registry.npmjs.org/'
 shrinkwrapMinorVersion: 9
 shrinkwrapVersion: 3
 specifiers:
-  '@types/jest': ^23.3.13
-  '@types/node': ^10.12.18
+  '@types/jest': ^23.3.14
+  '@types/node': ^10.12.24
   busyman: ^0.3.0
   chance: ^1.0.4
   concentrate: ^0.2.3
   dissolve-chunks: ^1.3.0
   enum: ^2.5.0
   jest: ^23.6.0
-  prettier: ^1.16.1
+  prettier: ^1.16.4
   ts-jest: ^23.10.5
   ts-node: ^8.0.2
-  typescript: ^3.3.1
+  typescript: ^3.4.0-dev.20190209
   zcl-id: ^0.5.0-6

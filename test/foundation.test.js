@@ -6,7 +6,7 @@ const foundCmd = Object.keys(
   require("zcl-id/src/definitions/common.json").foundation
 )
 
-const valObj = {
+const valObjs = {
   read: [{ attrId: 0x1111 }, { attrId: 0x2222 }, { attrId: 0x3333 }],
   readRsp: [
     {
@@ -165,19 +165,19 @@ const valObj = {
 }
 
 describe("Foundation Cmd framer and parser Check", () => {
-  for (const cmd of foundCmd) {
-    if (!valObj[cmd]) continue
-
+  foundCmd;
+  //TODO: Compare keys to `foundCmd`
+  for (const [cmd,valObj] of Object.entries(valObjs)) {
     it("should frame and parse " + cmd, () => {
       let cmdPayload = new FoundClass(cmd)
 
-      let zBuf = cmdPayload.frame(valObj[cmd])
+      let zBuf = cmdPayload.frame(valObj)
 
       expect.assertions(1)
       return new Promise((resolve, reject) => {
         cmdPayload.parse(zBuf, (err, result) => {
           if (err) reject(err)
-          expect(result).toEqual(valObj[cmd])
+          expect(result).toEqual(valObj)
           resolve()
         })
       })
@@ -186,7 +186,7 @@ describe("Foundation Cmd framer and parser Check", () => {
 })
 
 describe("Binary attributes parsing", () => {
-  it("should parse ascii encoded not null-terminated charStr(datatype 66)", () => {
+  it("should parse ascii encoded not null-terminated string(datatype 66)", () => {
     const binary = Buffer.from(
       ["0121950b0328200421a84305217b0", "0062400000000000a210000641001"].join(
         ""
