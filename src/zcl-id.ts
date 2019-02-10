@@ -301,7 +301,7 @@ export class ZclID {
       const attrTypeName = cInfo.attrType.enums[i].value
       const _dataType = this.dataTypeId.values.get(attrTypeName)
       // Because zero is a valid type id
-      const dataType = _dataType !== undefined ? _dataType : 255
+      const dataType = _dataType !== undefined ? _dataType : 0xff
       return { attrId, dataType }
     })
   }

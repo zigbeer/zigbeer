@@ -40,6 +40,9 @@ function zclmetaFactory(
       | {
           dir: 0 | 1
           id: number
+          /**
+           * `[name, type]`
+           */
           params: [string, string][]
           TODO: undefined
         }
