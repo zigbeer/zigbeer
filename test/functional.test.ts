@@ -1,9 +1,12 @@
-const Chance = require("chance")
+import Chance = require("chance")
 const chance = new Chance()
-const zclId = require("zcl-id/dist/legacy")
-const { getStdType } = require("../src/definition")
+import { ZclID } from "zcl-id"
+const zclId: ZclID = require("zcl-id/dist/legacy")
+import { getStdType } from "../src/definition"
+import { funcPayloadFactory } from "../src/functional"
+import { BufferWithPointer, BufferBuilder } from "../src/buffer"
 
-const FuncClass = require("../src/functional").funcPayloadFactory(zclId)
+const FuncClass = funcPayloadFactory(zclId)
 
 const clusterIds = Object.keys(
   require("zcl-id/src/definitions/common.json").clusterId
@@ -29,15 +32,10 @@ describe("Functional Cmd framer and parser Check", function() {
 
       it(`${cmd} frame() and parse()`, () => {
         const funcObj = new FuncClass(cluster, 0, cmd)
-        const payload = funcObj.frame(args)
-        expect.assertions(1)
-        return new Promise((resolve, reject) => {
-          funcObj.parse(payload, (err, result) => {
-            if (err) reject(err)
-            expect(result).toEqual(args)
-            resolve()
-          })
-        })
+        const c = new BufferBuilder()
+        funcObj.frame(c, args)
+        const result = funcObj.parse(new BufferWithPointer(c.result()))
+        expect(result).toEqual(args)
       })
     }
   }
@@ -65,16 +63,11 @@ describe("Functional CmdRsp framer and parser Check", function() {
 
       it(`${cmdRsp} frame() and parse()`, () => {
         const funcObj = new FuncClass(cluster, 1, cmdRsp)
-        const payload = funcObj.frame(args)
+        const c = new BufferBuilder()
+        funcObj.frame(c, args)
 
-        expect.assertions(1)
-        return new Promise((resolve, reject) => {
-          funcObj.parse(payload, (err, result) => {
-            if (err) reject(err)
-            expect(result).toEqual(args)
-            resolve()
-          })
-        })
+        const result = funcObj.parse(new BufferWithPointer(c.result()))
+        expect(result).toEqual(args)
       })
     }
   }
@@ -109,7 +102,7 @@ function tryRandomArg(type) {
     case "dynUint16":
     case "dynUint24":
     case "dynUint32": {
-      const testArr = []
+      const testArr: number[] = []
       for (let k = 0; k < 10; k += 1) {
         if (type === "dynUint8") {
           testArr[k] = chance.integer({ min: 0, max: 0xff })
@@ -130,7 +123,7 @@ function tryRandomArg(type) {
       }
       return testBuf
     case "zonebuffer":
-      const testArr = []
+      const testArr: number[] = []
       for (let k = 0; k < 20; k += 2) {
         testArr[k] = chance.integer({ min: 0, max: 0xff })
         testArr[k + 1] = chance.integer({ min: 0, max: 0xffff })

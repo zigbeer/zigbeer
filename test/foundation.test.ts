@@ -1,6 +1,8 @@
-const zclId = require("zcl-id/dist/legacy")
+import zclId = require("zcl-id/dist/legacy")
 
-var FoundClass = require("../src/foundation").foundPayloadFactory(zclId)
+import { foundPayloadFactory } from "../src/foundation"
+import { BufferWithPointer, BufferBuilder } from "../src/buffer"
+var FoundClass = foundPayloadFactory(zclId as any)
 
 const foundCmd = Object.keys(
   require("zcl-id/src/definitions/common.json").foundation
@@ -166,53 +168,36 @@ const valObjs = {
 
 describe("Foundation Cmd framer and parser Check", () => {
   foundCmd
-  //TODO: Compare keys to `foundCmd`
+  // TODO: Compare keys to `foundCmd`
   for (const [cmd, valObj] of Object.entries(valObjs)) {
     it("should frame and parse " + cmd, () => {
-      let cmdPayload = new FoundClass(cmd)
+      const cmdPayload = new FoundClass(cmd)
+      const c = new BufferBuilder()
+      cmdPayload.frame(c, valObj)
 
-      let zBuf = cmdPayload.frame(valObj)
-
-      expect.assertions(1)
-      return new Promise((resolve, reject) => {
-        cmdPayload.parse(zBuf, (err, result) => {
-          if (err) reject(err)
-          expect(result).toEqual(valObj)
-          resolve()
-        })
-      })
+      const result = cmdPayload.parse(new BufferWithPointer(c.result()))
+      expect(result).toEqual(valObj)
     })
   }
 })
 
 describe("Binary attributes parsing", () => {
+  const datahex =
+    "0121950b0328200421a84305217b0" + "0062400000000000a210000641001"
+
+  const binary = Buffer.from(datahex, "hex")
+
+  const frame = Buffer.from("0500420673656e736f72e803421d" + datahex, "hex")
+
   it("should parse ascii encoded not null-terminated string(datatype 66)", () => {
-    const binary = Buffer.from(
-      ["0121950b0328200421a84305217b0", "0062400000000000a210000641001"].join(
-        ""
-      ),
-      "hex"
-    )
-
-    const frame = Buffer.from(
-      ["0500420673656e736f72e803421d", binary.toString("hex")].join(""),
-      "hex"
-    )
-
     const parser = new FoundClass(10)
+    const result = parser.parse(new BufferWithPointer(frame))
 
-    expect.assertions(1)
-    return new Promise((resolve, reject) => {
-      parser.parse(frame, (err, result) => {
-        if (err) reject(err)
-        result[1].attrData = Buffer.from(result[1].attrData, "ascii")
+    result[1].attrData = Buffer.from(result[1].attrData, "ascii")
 
-        expect(result).toEqual([
-          { attrId: 5, dataType: 66, attrData: "sensor" },
-          { attrId: 1000, dataType: 66, attrData: binary }
-        ])
-        resolve()
-      })
-    })
+    expect(result).toEqual([
+      { attrId: 5, dataType: 66, attrData: "sensor" },
+      { attrId: 1000, dataType: 66, attrData: binary }
+    ])
   })
 })
