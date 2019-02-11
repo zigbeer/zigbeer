@@ -1,80 +1,92 @@
-import Concentrate = require("concentrate")
-import dissolveChunks = require("dissolve-chunks")
-import { buf2Str, writeUInt64 } from "./utils"
 import { ZclID } from "zcl-id"
 import { SecondArgument } from "./typeUtils"
 
-const buf2ArrMap = {
-  dynUint8: (buf: Buffer) => {
-    const { length } = buf
-    const repeats = length
+import { BufferWithPointer, BufferBuilder } from "./buffer"
+import { writeDataTable } from "./writeDataTypes"
+import { readDataTable } from "./readDataTypes"
+import { getStdType } from "./definition"
+
+type ParamTypes = keyof (typeof frameArgMap & typeof writeDataTable)
+
+const specialReads = {
+  preLenUint8: (r: BufferWithPointer) => r.uint8(), // TODO: Remove this once gone from zcl-id
+  preLenUint16: (r: BufferWithPointer) => r.uint16le(), // TODO: Remove this once gone from zcl-id
+  preLenUint32: (r: BufferWithPointer) => r.uint32le(), // TODO: Remove this once gone from zcl-id
+  len8uint8: (r: BufferWithPointer) => {
+    const length = r.uint8()
     const arr: number[] = new Array(length)
-    for (let i = 0; i < repeats; i++) {
-      arr[i] = buf.readUInt8(i)
+    for (let i = 0; i < length; i++) {
+      arr[i] = r.uint8()
     }
     return arr
   },
-  dynUint16: (buf: Buffer) => {
-    const { length } = buf
-    const repeats = length / 2
-    const arr: number[] = new Array(repeats)
-    for (let i = 0; i < repeats; i++) {
-      arr[i] = buf.readUInt16LE(i * 2)
+  len32uint8: (r: BufferWithPointer) => {
+    const length = r.uint32le()
+    const arr: number[] = new Array(length)
+    for (let i = 0; i < length; i++) {
+      arr[i] = r.uint8()
     }
     return arr
   },
-  dynUint24: (buf: Buffer) => {
-    const { length } = buf
-    const repeats = length / 3
-    const arr: number[] = new Array(repeats)
-    for (let i = 0; i < repeats; i++) {
-      const offset = i * 3
-      const lsb = buf.readUInt16LE(offset)
-      const msb = buf.readUInt8(offset + 2)
-      const val = (msb << 16) + lsb
-      arr[i] = val
+  intervals: (r: BufferWithPointer) => {
+    const intervals = r.uint8()
+    r.fwd(2) //Skip attrId
+    // const arr: Buffer[] = new Array(intervals)
+    // const lenghtOfEach = r.remaining() / intervals
+    const arr: number[] = new Array(intervals)
+    for (let i = 0; i < intervals; i++) {
+      // TODO: This isn't always a uint8! It depends on the attribute's normal type!
+      // arr[i] = r.buffer(lenghtOfEach)
+      arr[i] = r.uint8()
     }
     return arr
   },
-  dynUint32: (buf: Buffer) => {
-    const { length } = buf
-    const repeats = length / 4
-    const arr: number[] = new Array(repeats)
-    for (let i = 0; i < repeats; i++) {
-      const offset = i * 4
-      arr[i] = buf.readUInt32LE(offset)
+  len8uint16: (r: BufferWithPointer) => {
+    const length = r.uint8()
+    const arr: number[] = new Array(length)
+    for (let i = 0; i < length; i++) {
+      arr[i] = r.uint16le()
     }
     return arr
   },
-  zonebuffer: (buf: Buffer) => {
-    const { length } = buf
-    const repeats = (length * 2) / 3
-    const arr: number[] = new Array(repeats)
-    for (let i = 0; i < repeats; i += 2) {
-      const offset = (i * 3) / 2
-      arr[i] = buf.readUInt8(offset)
-      arr[i + 1] = buf.readUInt16LE(offset + 1)
+  len8uint24: (r: BufferWithPointer) => {
+    const length = r.uint8()
+    const arr: number[] = new Array(length)
+    for (let i = 0; i < length; i++) {
+      arr[i] = r.uintle(3)
     }
     return arr
   },
-  extfieldsets: (buf: Buffer) => {
-    const { length } = buf
+  len8uint32: (r: BufferWithPointer) => {
+    const length = r.uint8()
+    const arr: number[] = new Array(length)
+    for (let i = 0; i < length; i++) {
+      arr[i] = r.uint32le()
+    }
+    return arr
+  },
+  zonebuffer: (r: BufferWithPointer) => {
+    const length = r.uint8()
+    const arr: number[] = new Array(length * 2)
+    for (let i = 0, off = 0; i < length; i++) {
+      arr[off++] = r.uint8()
+      arr[off++] = r.uint16le()
+    }
+    return arr
+  },
+  extfieldsets: (r: BufferWithPointer) => {
     const arr: {
       clstId: number
       len: number
       extField: number[]
     }[] = []
-    let offset = 0
-    while (offset < length) {
-      const clstId = buf.readUInt16LE(offset)
-      offset += 2
-      const len = buf.readUInt8(offset)
-      offset += 1
+    while (r.remaining()) {
+      const clstId = r.uint16le()
+      const len = r.uint8()
       const extField: number[] = new Array(len)
-      for (let j = 0; j < len; j++) {
-        extField[j] = buf.readUInt8(offset + j)
+      for (let i = 0; i < len; i++) {
+        extField[i] = r.uint8()
       }
-      offset += len
       arr.push({
         clstId,
         len,
@@ -83,41 +95,30 @@ const buf2ArrMap = {
     }
     return arr
   },
-  locationbuffer: (buf: Buffer) => {
-    const { length } = buf
-    const repeats = (length * 6) / 16
-    const arr: (number | string)[] = new Array(repeats)
-    for (let i = 0; i < repeats; i++) {
-      const offset = (i * 16) / 6
-      const addr = buf2Str(buf.slice(offset, offset + 8))
-      arr[i] = addr
-      arr[i + 1] = buf.readInt16LE(offset + 8)
-      arr[i + 2] = buf.readInt16LE(offset + 10)
-      arr[i + 3] = buf.readInt16LE(offset + 12)
-      arr[i + 4] = buf.readInt8(offset + 14)
-      arr[i + 5] = buf.readUInt8(offset + 15)
+  neighborsInfo: (r: BufferWithPointer) => {
+    const length = r.uint8()
+    const arr: (number | Buffer)[] = new Array(length * 6)
+    for (let i = 0, off = 0; i < length; i++) {
+      const addr = r.buffer(8)
+      arr[off++] = addr
+      arr[off++] = r.int16le()
+      arr[off++] = r.int16le()
+      arr[off++] = r.int16le()
+      arr[off++] = r.int8()
+      arr[off++] = r.uint8()
     }
+
     return arr
   }
 }
-const buf2Arr = (buf: Buffer, type: keyof typeof buf2ArrMap) => {
-  const fn = buf2ArrMap[type]
-  if (!fn) throw new Error(`Unknown dataType ${type}`)
-
-  return fn(buf)
-}
 
 function funcPayloadFactory(zclId: ZclID) {
-  const ru = dissolveChunks().Rule()
-
-  let parsedBufLen = 0
-
   class FuncPayload {
     direction: string
     cluster: string
     cmd: string
     cmdId: number
-    params: [string, keyof typeof frameArgMap][]
+    params: [string, ParamTypes][]
     constructor(
       clusterId: string | number,
       direction: 0 | 1,
@@ -142,7 +143,7 @@ function funcPayloadFactory(zclId: ZclID) {
       if (!wholeCommand)
         throw new Error(`Unknown command ${this.cluster}/${this.cmd}`)
       this.cmdId = wholeCommand.id
-      this.params = wholeCommand.params as [string, keyof typeof frameArgMap][]
+      this.params = wholeCommand.params as [string, ParamTypes][]
 
       const _direction = zclId.zclmeta.functional.getDirection(
         this.cluster,
@@ -157,64 +158,103 @@ function funcPayloadFactory(zclId: ZclID) {
       this.direction = _direction
     }
 
-    parse(zclBuf: Buffer, callback) {
+    innerParse(zclBuf: Buffer) {
       const { params } = this
-      if (
-        this.cluster === "genScenes" &&
-        ["add", "enhancedAdd", "viewRsp", "enhancedViewRsp"].includes(this.cmd)
-      ) {
-        parsedBufLen = params.reduce((acc, [, type]) => {
-          switch (type) {
-            case "uint8":
-            case "stringPreLen":
-              return acc + 1
 
-            case "uint16":
-              return acc + 2
-          }
-          return acc
-        }, 0)
+      const r = new BufferWithPointer(zclBuf)
+      const data: Record<string, any> = {}
+      for (let [name, type] of params) {
+        // TODO: Remove all these dirty hacks
+        switch (type) {
+          case "dynUint8":
+            switch (name) {
+              case "scenelist":
+              case "zoneidlist":
+              case "zoneid":
+              case "bypassresult":
+                r.fwd(-1)
+                type = "len8uint8" as any
+                break
+              case "logpayload":
+                r.fwd(-4)
+                type = "len32uint8" as any
+                break
+              case "intervals":
+                r.fwd(-3) // len8 and attrId
+                type = "intervals" as any
+                break
+              default:
+                throw new Error(`unknown dynUint8 name: ${name}`)
+            }
+            break
+          case "dynUint16":
+            switch (name) {
+              case "grouplist":
+              case "thermoseqmode":
+              case "listofattr":
+              case "bypassresult":
+                r.fwd(-1)
+                type = "len8uint16" as any
+                break
+              default:
+                throw new Error(`unknown dynUint16 name: ${name}`)
+            }
+            break
+          case "dynUint24":
+            switch (name) {
+              case "aalert":
+                r.fwd(-1)
+                type = "len8uint24" as any
+                break
+              default:
+                throw new Error(`unknown dynUint24 name: ${name}`)
+            }
+            break
+          case "dynUint32":
+            switch (name) {
+              case "logid":
+                r.fwd(-1)
+                type = "len8uint32" as any
+                break
+              default:
+                throw new Error(`unknown dynUint32 name: ${name}`)
+            }
+            break
+          case "zonebuffer":
+            r.fwd(-1)
+            break
+          case "neighborsInfo":
+            r.fwd(-1)
+            break
+        }
+        // End of dirty hacks
+
+        const fn =
+          specialReads[type] ||
+          readDataTable[type] ||
+          readDataTable[getStdType(type)]
+
+        if (!fn) throw new Error(`No read function for ${type}`)
+
+        let out = fn(r)
+
+        // TODO: Remove all these dirty hacks
+        if (name === "extra") {
+          Object.assign(data, out)
+          continue
+        }
+        // End of dirty hacks
+
+        data[name] = out
       }
+      return data
+    }
+
+    parse(zclBuf: Buffer, callback) {
       try {
-        const chunkRules = params.map(([name, type]) => {
-          const rule = ru[type]
-          if (!rule)
-            throw new Error("Parsing rule for " + type + " is not found.")
-          return rule(name, zclBuf.length)
-        })
-
-        if (chunkRules.length === 0) {
-          callback(null, {})
-          return
-        }
-
-        const parser = dissolveChunks()
-          .join(chunkRules)
-          .compile({ once: true })
-
-        let finished = false
-
-        const listener = (result: any) => {
-          if (finished) return
-          finished = true
-          clearTimeout(parseTimeout)
-
-          callback(null, result)
-        }
-
-        const parseTimeout = setTimeout(() => {
-          if (finished) return
-          finished = true
-          parser.removeListener("parsed", listener)
-          callback(new Error("zcl functional parse timeout"))
-        }, 1000)
-
-        parser.once("parsed", listener)
-
-        parser.end(zclBuf)
-      } catch (error) {
-        callback(error)
-        throw error
+        callback(undefined, this.innerParse(zclBuf))
+      } catch (err) {
+        callback(err)
       }
     }
 
@@ -222,126 +262,48 @@ function funcPayloadFactory(zclId: ZclID) {
     frame(args) {
       if (typeof args !== "object")
         throw new TypeError("`args` must be an object or array")
-      const newArgs = Array.isArray(args)
-        ? this.params.map(([, type], i) => ({ type, value: args[i] }))
-        : this.params.map(([name, type]) => {
-            if (!args.hasOwnProperty(name)) {
-              throw new Error("The argument object has incorrect properties")
+      const newArgs = this.params.map(
+        Array.isArray(args)
+          ? ([, type], i) => ({ type, value: args[i] })
+          : ([name, type]) => {
+              if (!args.hasOwnProperty(name)) {
+                throw new Error("The argument object has incorrect properties")
+              }
+              return { type, value: args[name] }
             }
-            return { type, value: args[name] }
-          })
+      )
 
       return frameArgs(newArgs)
     }
   }
-
-  /*
-        Add Parsing Rules to DChunks
-    */
-  for (const ruName of ["preLenUint8", "preLenUint16", "preLenUint32"]) {
-    ru.clause(ruName, function(name) {
-      if (ruName === "preLenUint8") {
-        this.uint8(name)
-      } else if (ruName === "preLenUint16") {
-        this.uint16(name)
-      } else if (ruName === "preLenUint32") {
-        this.uint32(name)
-      }
-
-      this.tap(function() {
-        this.vars.preLenNum = this.vars[name]
-      })
-    })
-  }
-
-  const ruleNames2: (keyof typeof buf2ArrMap)[] = [
-    "dynUint8",
-    "dynUint16",
-    "dynUint24",
-    "dynUint32",
-    "zonebuffer",
-    "extfieldsets",
-    "locationbuffer"
-  ]
-  for (const ruName of ruleNames2) {
-    ru.clause(ruName, function(name: string, bufLen: number) {
-      this.tap(function() {
-        const { preLenNum } = this.vars
-        delete this.vars.preLenNum
-
-        let length
-        switch (ruName) {
-          case "zonebuffer":
-            length = preLenNum * 3
-            break
-          case "extfieldsets":
-            length = bufLen - parsedBufLen
-            break
-          case "locationbuffer":
-            length = preLenNum * 16
-            break
-          default:
-            length = preLenNum * (parseInt(ruName.slice(7)) / 8)
-        }
-
-        this.buffer(name, length).tap(function() {
-          const buf = this.vars[name]
-          this.vars[name] = buf2Arr(buf, ruName)
-        })
-      })
-    })
-  }
-
-  ru.clause("longaddr", function(name) {
-    this.buffer(name, 8).tap(function() {
-      this.vars[name] = buf2Str(this.vars[name])
-    })
-  })
-
-  ru.clause("stringPreLen", function(name) {
-    this.uint8("len").tap(function() {
-      const { len } = this.vars
-      delete this.vars.len
-      this.string(name, len)
-      parsedBufLen += len
-    })
-  })
 
   return FuncPayload
 }
 
 export { funcPayloadFactory }
 const frameArgMap = {
-  int8: (c: Concentrate, value: number) => c.int8(value),
-  uint8: (c: Concentrate, value: number) => c.uint8(value),
-  int16: (c: Concentrate, value: number) => c.int16le(value),
-  uint16: (c: Concentrate, value: number) => c.uint16le(value),
-  int32: (c: Concentrate, value: number) => c.int32le(value),
-  uint32: (c: Concentrate, value: number) => c.uint32le(value),
-  floatle: (c: Concentrate, value: number) => c.floatle(value),
-  preLenUint8: (c: Concentrate, value: number) => c.uint8(value),
-  preLenUint16: (c: Concentrate, value: number) => c.uint16le(value),
-  preLenUint32: (c: Concentrate, value: number) => c.uint32le(value),
-  buffer: (c: Concentrate, value: Buffer) => c.buffer(Buffer.from(value)),
-  longaddr: writeUInt64,
-  stringPreLen: (c: Concentrate, value: string) =>
+  preLenUint8: (c: BufferBuilder, value: number) => c.uint8(value),
+  preLenUint16: (c: BufferBuilder, value: number) => c.uint16le(value),
+  preLenUint32: (c: BufferBuilder, value: number) => c.uint32le(value),
+  buffer: (c: BufferBuilder, value: Buffer) => c.buffer(Buffer.from(value)),
+  strPreLenUint8: (c: BufferBuilder, value: string) =>
     c.uint8(value.length).string(value, "utf8"),
-  dynUint8: (c: Concentrate, value: number[]): void => {
+  dynUint8: (c: BufferBuilder, value: number[]): void => {
     for (const val of value) {
       c.uint8(val)
     }
   },
-  dynUint16: (c: Concentrate, value: number[]): void => {
+  dynUint16: (c: BufferBuilder, value: number[]): void => {
     for (const val of value) {
       c.uint16le(val)
     }
   },
-  dynUint32: (c: Concentrate, value: number[]): void => {
+  dynUint32: (c: BufferBuilder, value: number[]): void => {
     for (const val of value) {
       c.uint32le(val)
     }
   },
-  dynUint24: (c: Concentrate, value: number[]): void => {
+  dynUint24: (c: BufferBuilder, value: number[]): void => {
     for (const val of value) {
       const msb24 = (val & 0xff0000) >> 16
       const mid24 = (val & 0xff00) >> 8
@@ -351,20 +313,30 @@ const frameArgMap = {
         .uint8(msb24)
     }
   },
-  locationbuffer: (c: Concentrate, value: (string | number)[]): void => {
+  neighborsInfo: (c: BufferBuilder, value: (Buffer | number)[]): void => {
     let k = 0
     // [ '0x00124b00019c2ee9', int16, int16, int16, int8, uint8, ... ]
     for (let idxarr = 0; idxarr < value.length / 6; idxarr += 1) {
-      writeUInt64(c, value[k++] as string) // there's a check inside
-
-      c.int16le(value[k++] as number) // Do we need to test this is number?
+      const addr = value[k++]
+      if (!((addr as unknown) instanceof Buffer))
+        throw new Error(
+          `The first element of neighborsInfo must be a buffer, got ${addr} instead`
+        )
+      if ((addr as Buffer).length !== 8)
+        throw new Error(
+          `The address buffer must be 8 bytes, got ${
+            (addr as Buffer).length
+          } instead`
+        )
+      c.buffer(addr as Buffer)
+        .int16le(value[k++] as number) // Do we need to test this is number?
         .int16le(value[k++] as number)
         .int16le(value[k++] as number)
         .int8(value[k++] as number)
         .uint8(value[k++] as number)
     }
   },
-  zonebuffer: (c: Concentrate, value: number[]): void => {
+  zonebuffer: (c: BufferBuilder, value: number[]): void => {
     let k = 0
     // [ uint8, uint16, ... ]
     for (let idxarr = 0; idxarr < value.length / 2; idxarr += 1) {
@@ -373,7 +345,7 @@ const frameArgMap = {
     }
   },
   extfieldsets: (
-    c: Concentrate,
+    c: BufferBuilder,
     value: { clstId: number; len: number; extField: any }[]
   ) => {
     for (const { clstId, len, extField } of value) {
@@ -383,18 +355,24 @@ const frameArgMap = {
     }
   }
 }
-const frameArg = <T extends keyof typeof frameArgMap>(
+const frameArg = <T extends ParamTypes>(
   type: T,
-  c: Concentrate,
-  value: SecondArgument<typeof frameArgMap[T]>
+  c: BufferBuilder,
+  value: SecondArgument<
+    T extends keyof typeof writeDataTable
+      ? typeof writeDataTable[T]
+      : T extends keyof typeof frameArgMap
+      ? typeof frameArgMap[T]
+      : never
+  >
 ): void => {
-  const fn: ((c: Concentrate, val: typeof value) => void) | undefined =
-    frameArgMap[type]
-  if (!fn) throw `No frameArgMapp defined for ${type}`
+  const fn: ((c: BufferBuilder, val: typeof value) => void) | undefined =
+    frameArgMap[type as string] || writeDataTable[getStdType(type as string)]
+  if (!fn) throw new Error(`No frameArgMap defined for ${type}`)
   fn(c, value)
 }
-const frameArgs = (args: { type: keyof typeof frameArgMap; value: any }[]) => {
-  const c = new Concentrate()
+const frameArgs = (args: { type: ParamTypes; value: any }[]) => {
+  const c = new BufferBuilder()
 
   for (const { type, value } of args) {
     frameArg(type, c, value)

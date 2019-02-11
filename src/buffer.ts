@@ -51,10 +51,10 @@ export class BufferWithPointer {
   doublele() {
     return this.buf.readDoubleLE(this.fwd(8))
   }
-  uintle(length:number) {
+  uintle(length: number) {
     return this.buf.readUIntLE(this.fwd(length), length)
   }
-  intle(length:number) {
+  intle(length: number) {
     return this.buf.readIntLE(this.fwd(length), length)
   }
   slice(length: number) {
