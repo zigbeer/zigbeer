@@ -99,14 +99,8 @@ describe("Module Methods Check", function() {
           zclFrame.cmdId,
           zclFrame.payload
         )
-        expect.assertions(1)
-        return new Promise((resolve, reject) => {
-          zcl.parse(buf, ((err, result) => {
-            if (err) reject(err)
-            expect(result).toEqual(zclFrame)
-            resolve()
-          }) as any)
-        })
+        const result = zcl.parse(buf)
+        expect(result).toEqual(zclFrame)
       })
     })
   })
@@ -187,20 +181,14 @@ describe("Module Methods Check", function() {
             0x0005
           )
 
-          expect.assertions(1)
-          return new Promise((resolve, reject) => {
-            zcl.parse(buf, 0x0005, ((err, result) => {
-              if (err) reject(err)
-              if (result.cmdId === "add") {
-                result.frameCntl.direction = 0
-              } else {
-                result.frameCntl.direction = 1
-              }
+          const result = zcl.parse(buf, 0x0005)
+          if (result.cmdId === "add") {
+            result.frameCntl.direction = 0
+          } else {
+            result.frameCntl.direction = 1
+          }
 
-              expect(result).toEqual(zclFrame)
-              resolve()
-            }) as any)
-          })
+          expect(result).toEqual(zclFrame)
         }
       )
     })
