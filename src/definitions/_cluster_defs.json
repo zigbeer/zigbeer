@@ -91,7 +91,7 @@
     "cmd": {
       "add": {
         "id": 0,
-        "params": [["groupid", "uint16"], ["groupname", "stringPreLen"]]
+        "params": [["groupid", "uint16"], ["groupname", "strPreLenUint8"]]
       },
       "view": { "id": 1, "params": [["groupid", "uint16"]] },
       "getMembership": {
@@ -102,7 +102,7 @@
       "removeAll": { "id": 4, "params": [] },
       "addIfIdentifying": {
         "id": 5,
-        "params": [["groupid", "uint16"], ["groupname", "stringPreLen"]]
+        "params": [["groupid", "uint16"], ["groupname", "strPreLenUint8"]]
       }
     },
     "cmdRsp": {
@@ -115,7 +115,7 @@
         "params": [
           ["status", "uint8"],
           ["groupid", "uint16"],
-          ["groupname", "stringPreLen"]
+          ["groupname", "strPreLenUint8"]
         ]
       },
       "getMembershipRsp": {
@@ -149,7 +149,7 @@
           ["groupid", "uint16"],
           ["sceneid", "uint8"],
           ["transtime", "uint16"],
-          ["scenename", "stringPreLen"],
+          ["scenename", "strPreLenUint8"],
           ["extensionfieldsets", "extfieldsets"]
         ]
       },
@@ -177,7 +177,7 @@
           ["groupid", "uint16"],
           ["sceneid", "uint8"],
           ["transtime", "uint16"],
-          ["scenename", "stringPreLen"],
+          ["scenename", "strPreLenUint8"],
           ["extensionfieldsets", "extfieldsets"]
         ]
       },
@@ -212,7 +212,7 @@
           ["groupid", "uint16"],
           ["sceneid", "uint8"],
           ["transtime", "uint16"],
-          ["scenename", "stringPreLen"],
+          ["scenename", "strPreLenUint8"],
           ["extensionfieldsets", "extfieldsets"]
         ]
       },
@@ -254,7 +254,7 @@
           ["groupid", "uint16"],
           ["sceneid", "uint8"],
           ["transtime", "uint16"],
-          ["scenename", "stringPreLen"],
+          ["scenename", "strPreLenUint8"],
           ["extensionfieldsets", "extfieldsets"]
         ]
       },
@@ -432,19 +432,19 @@
           ["reportingperiod", "uint16"]
         ]
       },
-      "getDevCfg": { "id": 2, "params": [["targetaddr", "longaddr"]] },
+      "getDevCfg": { "id": 2, "params": [["targetaddr", "ieeeAddr"]] },
       "getData": {
         "id": 3,
         "params": [
           ["getdatainfo", "uint8"],
           ["numrsp", "uint8"],
-          ["targetaddr", "longaddr"]
+          ["targetaddr", "ieeeAddr"]
         ]
       },
       "rssiRsp": {
         "id": 4,
         "params": [
-          ["replyingdev", "longaddr"],
+          ["replyingdev", "ieeeAddr"],
           ["coord1", "int16"],
           ["coord2", "int16"],
           ["coord3", "int16"],
@@ -455,7 +455,7 @@
       "sendPings": {
         "id": 5,
         "params": [
-          ["targetaddr", "longaddr"],
+          ["targetaddr", "ieeeAddr"],
           ["numrssimeasurements", "uint8"],
           ["calperiod", "uint16"]
         ]
@@ -463,7 +463,7 @@
       "anchorNodeAnnounce": {
         "id": 6,
         "params": [
-          ["anchornodeaddr", "longaddr"],
+          ["anchornodeaddr", "ieeeAddr"],
           ["coord1", "int16"],
           ["coord2", "int16"],
           ["coord3", "int16"]
@@ -527,12 +527,12 @@
       "reportRssiMeas": {
         "id": 6,
         "params": [
-          ["reportingaddr", "longaddr"],
+          ["reportingaddr", "ieeeAddr"],
           ["numofneighbors", "preLenUint8"],
-          ["neighborsinfo", "locationbuffer"]
+          ["neighborsinfo", "neighborsInfo"]
         ]
       },
-      "reqOwnLocation": { "id": 7, "params": [["reqaddr", "longaddr"]] }
+      "reqOwnLocation": { "id": 7, "params": [["reqaddr", "ieeeAddr"]] }
     }
   },
   "genAnalogInput": {
@@ -923,12 +923,12 @@
       "rfidProgrammingEventMask": { "id": 71, "type": "map16" }
     },
     "cmd": {
-      "lockDoor": { "id": 0, "params": [["pincodevalue", "stringPreLen"]] },
-      "unlockDoor": { "id": 1, "params": [["pincodevalue", "stringPreLen"]] },
-      "toggleDoor": { "id": 2, "params": [["pincodevalue", "stringPreLen"]] },
+      "lockDoor": { "id": 0, "params": [["pincodevalue", "strPreLenUint8"]] },
+      "unlockDoor": { "id": 1, "params": [["pincodevalue", "strPreLenUint8"]] },
+      "toggleDoor": { "id": 2, "params": [["pincodevalue", "strPreLenUint8"]] },
       "unlockWithTimeout": {
         "id": 3,
-        "params": [["timeout", "uint16"], ["pincodevalue", "stringPreLen"]]
+        "params": [["timeout", "uint16"], ["pincodevalue", "strPreLenUint8"]]
       },
       "getLogRecord": { "id": 4, "params": [["logindex", "uint16"]] },
       "setPinCode": {
@@ -937,7 +937,7 @@
           ["userid", "uint16"],
           ["userstatus", "uint8"],
           ["usertype", "uint8"],
-          ["pincodevalue", "stringPreLen"]
+          ["pincodevalue", "strPreLenUint8"]
         ]
       },
       "getPinCode": { "id": 6, "params": [["userid", "uint16"]] },
@@ -1013,7 +1013,7 @@
           ["userid", "uint16"],
           ["userstatus", "uint8"],
           ["usertype", "uint8"],
-          ["pincodevalue", "stringPreLen"]
+          ["pincodevalue", "strPreLenUint8"]
         ]
       },
       "getRfidCode": { "id": 23, "params": [["userid", "uint16"]] },
@@ -1034,7 +1034,7 @@
           ["source", "uint8"],
           ["eventidalarmcode", "uint8"],
           ["userid", "uint16"],
-          ["pincodevalue", "stringPreLen"]
+          ["pincodevalue", "strPreLenUint8"]
         ]
       },
       "setPinCodeRsp": { "id": 5, "params": [["status", "uint8"]] },
@@ -1044,7 +1044,7 @@
           ["userid", "uint16"],
           ["userstatus", "uint8"],
           ["usertype", "uint8"],
-          ["pincodevalue", "stringPreLen"]
+          ["pincodevalue", "strPreLenUint8"]
         ]
       },
       "clearPinCodeRsp": { "id": 7, "params": [["status", "uint8"]] },
@@ -1105,7 +1105,7 @@
           ["userid", "uint16"],
           ["userstatus", "uint8"],
           ["usertype", "uint8"],
-          ["pincodevalue", "stringPreLen"]
+          ["pincodevalue", "strPreLenUint8"]
         ]
       },
       "clearRfidCodeRsp": { "id": 24, "params": [["status", "uint8"]] },
@@ -1682,7 +1682,7 @@
         "params": [
           ["zoneid", "uint8"],
           ["zonetype", "uint16"],
-          ["ieeeaddr", "longaddr"]
+          ["ieeeaddr", "ieeeAddr"]
         ]
       },
       "zoneStatusChanged": {
@@ -1692,7 +1692,7 @@
           ["zonestatus", "uint16"],
           ["audiblenotif", "uint8"],
           ["strlen", "uint8"],
-          ["string", "stringPreLen"]
+          ["string", "strPreLenUint8"]
         ]
       },
       "panelStatusChanged": {
@@ -1752,20 +1752,20 @@
     "cmd": {
       "matchProtocolAddr": {
         "id": 0,
-        "params": [["protocoladdr", "stringPreLen"]]
+        "params": [["protocoladdr", "strPreLenUint8"]]
       }
     },
     "cmdRsp": {
       "matchProtocolAddrRsp": {
         "id": 0,
         "params": [
-          ["devieeeaddr", "longaddr"],
-          ["protocoladdr", "stringPreLen"]
+          ["devieeeaddr", "ieeeAddr"],
+          ["protocoladdr", "strPreLenUint8"]
         ]
       },
       "advertiseProtocolAddr": {
         "id": 1,
-        "params": [["protocoladdr", "stringPreLen"]]
+        "params": [["protocoladdr", "strPreLenUint8"]]
       }
     }
   },
@@ -2528,9 +2528,9 @@
       "getMeasurementProfile": {
         "id": 1,
         "params": [
-          ["attrId", "uint16"],
+          ["attrId", "attrId"],
           ["starttime", "uint32"],
-          ["numofuntervals", "uint8"]
+          ["numofintervals", "uint8"]
         ]
       }
     },
@@ -2539,7 +2539,7 @@
         "id": 0,
         "params": [
           ["profilecount", "uint8"],
-          ["profileintervalperiod", "uint8"],
+          ["profileintervalperiod", "enum8"],
           ["maxnumofintervals", "uint8"],
           ["numofattrs", "preLenUint8"],
           ["listofattr", "dynUint16"]
@@ -2548,11 +2548,11 @@
       "getMeasurementProfileRsp": {
         "id": 1,
         "params": [
-          ["starttime", "uint32"],
-          ["status", "uint8"],
-          ["profileintervalperiod", "uint8"],
+          ["starttime", "utc"],
+          ["status", "enum8"],
+          ["profileintervalperiod", "enum8"],
           ["numofintervalsdeliv", "preLenUint8"],
-          ["attrId", "uint16"],
+          ["attrId", "attrId"],
           ["intervals", "dynUint8"]
         ]
       }

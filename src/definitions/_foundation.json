@@ -1,13 +1,13 @@
 {
-  "read": { "id": 0, "params": [["attrId", "uint16"]] },
+  "read": { "id": 0, "params": [["attrId", "attrId"]] },
   "readRsp": {
     "id": 1,
-    "params": [["attrId", "uint16"], ["status", "uint8"], ["extra", "readRsp"]]
+    "params": [["attrId", "attrId"], ["status", "uint8"], ["extra", "readRsp"]]
   },
   "write": {
     "id": 2,
     "params": [
-      ["attrId", "uint16"],
+      ["attrId", "attrId"],
       ["dataType", "uint8"],
       ["attrData", "variable"]
     ]
@@ -15,7 +15,7 @@
   "writeUndiv": {
     "id": 3,
     "params": [
-      ["attrId", "uint16"],
+      ["attrId", "attrId"],
       ["dataType", "uint8"],
       ["attrData", "variable"]
     ]
@@ -24,7 +24,7 @@
   "writeNoRsp": {
     "id": 5,
     "params": [
-      ["attrId", "uint16"],
+      ["attrId", "attrId"],
       ["dataType", "uint8"],
       ["attrData", "variable"]
     ]
@@ -33,28 +33,28 @@
     "id": 6,
     "params": [
       ["direction", "uint8"],
-      ["attrId", "uint16"],
+      ["attrId", "attrId"],
       ["extra", "configReport"]
     ]
   },
   "configReportRsp": { "id": 7, "params": [["extra", "configReportRsp"]] },
   "readReportConfig": {
     "id": 8,
-    "params": [["direction", "uint8"], ["attrId", "uint16"]]
+    "params": [["direction", "uint8"], ["attrId", "attrId"]]
   },
   "readReportConfigRsp": {
     "id": 9,
     "params": [
       ["status", "uint8"],
       ["direction", "uint8"],
-      ["attrId", "uint16"],
+      ["attrId", "attrId"],
       ["extra", "readReportConfigRsp"]
     ]
   },
   "report": {
     "id": 10,
     "params": [
-      ["attrId", "uint16"],
+      ["attrId", "attrId"],
       ["dataType", "uint8"],
       ["attrData", "variable"]
     ]
@@ -69,16 +69,16 @@
   },
   "discoverRsp": {
     "id": 13,
-    "params": [["attrId", "uint16"], ["dataType", "uint8"]]
+    "params": [["attrId", "attrId"], ["dataType", "uint8"]]
   },
   "readStruct": {
     "id": 14,
-    "params": [["attrId", "uint16"], ["selector", "selector"]]
+    "params": [["attrId", "attrId"], ["selector", "selector"]]
   },
   "writeStruct": {
     "id": 15,
     "params": [
-      ["attrId", "uint16"],
+      ["attrId", "attrId"],
       ["selector", "selector"],
       ["dataType", "uint8"],
       ["attrData", "multi"]
@@ -88,7 +88,7 @@
     "id": 16,
     "params": [
       ["status", "uint8"],
-      ["attrId", "uint16"],
+      ["attrId", "attrId"],
       ["selector", "selector"]
     ]
   },

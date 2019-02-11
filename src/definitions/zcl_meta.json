@@ -1,12 +1,12 @@
 {
   "foundation": {
     "read": {
-      "params": [{ "attrId": "uint16" }],
+      "params": [{ "attrId": "attrId" }],
       "knownBufLen": 2
     },
     "readRsp": {
       "params": [
-        { "attrId": "uint16" },
+        { "attrId": "attrId" },
         { "status": "uint8" },
         { "extra": "readRsp" }
       ],
@@ -14,7 +14,7 @@
     },
     "write": {
       "params": [
-        { "attrId": "uint16" },
+        { "attrId": "attrId" },
         { "dataType": "uint8" },
         { "attrData": "variable" }
       ],
@@ -22,7 +22,7 @@
     },
     "writeUndiv": {
       "params": [
-        { "attrId": "uint16" },
+        { "attrId": "attrId" },
         { "dataType": "uint8" },
         { "attrData": "variable" }
       ],
@@ -34,7 +34,7 @@
     },
     "writeNoRsp": {
       "params": [
-        { "attrId": "uint16" },
+        { "attrId": "attrId" },
         { "dataType": "uint8" },
         { "attrData": "variable" }
       ],
@@ -43,7 +43,7 @@
     "configReport": {
       "params": [
         { "direction": "uint8" },
-        { "attrId": "uint16" },
+        { "attrId": "attrId" },
         { "extra": "configReport" }
       ],
       "knownBufLen": 3
@@ -53,21 +53,21 @@
       "knownBufLen": 0
     },
     "readReportConfig": {
-      "params": [{ "direction": "uint8" }, { "attrId": "uint16" }],
+      "params": [{ "direction": "uint8" }, { "attrId": "attrId" }],
       "knownBufLen": 3
     },
     "readReportConfigRsp": {
       "params": [
         { "status": "uint8" },
         { "direction": "uint8" },
-        { "attrId": "uint16" },
+        { "attrId": "attrId" },
         { "extra": "readReportConfigRsp" }
       ],
       "knownBufLen": 4
     },
     "report": {
       "params": [
-        { "attrId": "uint16" },
+        { "attrId": "attrId" },
         { "dataType": "uint8" },
         { "attrData": "variable" }
       ],
@@ -82,16 +82,16 @@
       "knownBufLen": 3
     },
     "discoverRsp": {
-      "params": [{ "attrId": "uint16" }, { "dataType": "uint8" }],
+      "params": [{ "attrId": "attrId" }, { "dataType": "uint8" }],
       "knownBufLen": 3
     },
     "readStruct": {
-      "params": [{ "attrId": "uint16" }, { "selector": "selector" }],
+      "params": [{ "attrId": "attrId" }, { "selector": "selector" }],
       "knownBufLen": 2
     },
     "writeStruct": {
       "params": [
-        { "attrId": "uint16" },
+        { "attrId": "attrId" },
         { "selector": "selector" },
         { "dataType": "uint8" },
         { "attrData": "multi" }
@@ -101,7 +101,7 @@
     "writeStructRsp": {
       "params": [
         { "status": "uint8" },
-        { "attrId": "uint16" },
+        { "attrId": "attrId" },
         { "selector": "selector" }
       ],
       "knownBufLen": 3
@@ -142,7 +142,7 @@
     },
     "genGroups": {
       "add": {
-        "params": [{ "groupid": "uint16" }, { "groupname": "stringPreLen" }],
+        "params": [{ "groupid": "uint16" }, { "groupname": "strPreLenUint8" }],
         "dir": 0
       },
       "view": {
@@ -165,7 +165,7 @@
         "dir": 0
       },
       "addIfIdentifying": {
-        "params": [{ "groupid": "uint16" }, { "groupname": "stringPreLen" }],
+        "params": [{ "groupid": "uint16" }, { "groupname": "strPreLenUint8" }],
         "dir": 0
       },
       "addRsp": {
@@ -176,7 +176,7 @@
         "params": [
           { "status": "uint8" },
           { "groupid": "uint16" },
-          { "groupname": "stringPreLen" }
+          { "groupname": "strPreLenUint8" }
         ],
         "dir": 1
       },
@@ -199,7 +199,7 @@
           { "groupid": "uint16" },
           { "sceneid": "uint8" },
           { "transtime": "uint16" },
-          { "scenename": "stringPreLen" },
+          { "scenename": "strPreLenUint8" },
           { "extensionfieldsets": "extfieldsets" }
         ],
         "dir": 0,
@@ -234,7 +234,7 @@
           { "groupid": "uint16" },
           { "sceneid": "uint8" },
           { "transtime": "uint16" },
-          { "scenename": "stringPreLen" },
+          { "scenename": "strPreLenUint8" },
           { "extensionfieldsets": "extfieldsets" }
         ],
         "dir": 0,
@@ -268,7 +268,7 @@
           { "groupid": "uint16" },
           { "sceneid": "uint8" },
           { "transtime": "uint16" },
-          { "scenename": "stringPreLen" },
+          { "scenename": "strPreLenUint8" },
           { "extensionfieldsets": "extfieldsets" }
         ],
         "dir": 1,
@@ -314,7 +314,7 @@
           { "groupid": "uint16" },
           { "sceneid": "uint8" },
           { "transtime": "uint16" },
-          { "scenename": "stringPreLen" },
+          { "scenename": "strPreLenUint8" },
           { "extensionfieldsets": "extfieldsets" }
         ],
         "dir": 1,
@@ -463,20 +463,20 @@
         "dir": 0
       },
       "getDevCfg": {
-        "params": [{ "targetaddr": "longaddr" }],
+        "params": [{ "targetaddr": "ieeeAddr" }],
         "dir": 0
       },
       "getData": {
         "params": [
           { "getdatainfo": "uint8" },
           { "numrsp": "uint8" },
-          { "targetaddr": "longaddr" }
+          { "targetaddr": "ieeeAddr" }
         ],
         "dir": 0
       },
       "rssiRsp": {
         "params": [
-          { "replyingdev": "longaddr" },
+          { "replyingdev": "ieeeAddr" },
           { "coord1": "int16" },
           { "coord2": "int16" },
           { "coord3": "int16" },
@@ -487,7 +487,7 @@
       },
       "sendPings": {
         "params": [
-          { "targetaddr": "longaddr" },
+          { "targetaddr": "ieeeAddr" },
           { "numrssimeasurements": "uint8" },
           { "calperiod": "uint16" }
         ],
@@ -495,7 +495,7 @@
       },
       "anchorNodeAnnounce": {
         "params": [
-          { "anchornodeaddr": "longaddr" },
+          { "anchornodeaddr": "ieeeAddr" },
           { "coord1": "int16" },
           { "coord2": "int16" },
           { "coord3": "int16" }
@@ -563,14 +563,14 @@
       },
       "reportRssiMeas": {
         "params": [
-          { "reportingaddr": "longaddr" },
+          { "reportingaddr": "ieeeAddr" },
           { "numofneighbors": "preLenUint8" },
-          { "neighborsinfo": "locationbuffer" }
+          { "neighborsinfo": "neighborsInfo" }
         ],
         "dir": 1
       },
       "reqOwnLocation": {
-        "params": [{ "reqaddr": "longaddr" }],
+        "params": [{ "reqaddr": "ieeeAddr" }],
         "dir": 1
       }
     },
@@ -639,19 +639,19 @@
     },
     "closuresDoorLock": {
       "lockDoor": {
-        "params": [{ "pincodevalue": "stringPreLen" }],
+        "params": [{ "pincodevalue": "strPreLenUint8" }],
         "dir": 0
       },
       "unlockDoor": {
-        "params": [{ "pincodevalue": "stringPreLen" }],
+        "params": [{ "pincodevalue": "strPreLenUint8" }],
         "dir": 0
       },
       "toggleDoor": {
-        "params": [{ "pincodevalue": "stringPreLen" }],
+        "params": [{ "pincodevalue": "strPreLenUint8" }],
         "dir": 0
       },
       "unlockWithTimeout": {
-        "params": [{ "timeout": "uint16" }, { "pincodevalue": "stringPreLen" }],
+        "params": [{ "timeout": "uint16" }, { "pincodevalue": "strPreLenUint8" }],
         "dir": 0
       },
       "getLogRecord": {
@@ -663,7 +663,7 @@
           { "userid": "uint16" },
           { "userstatus": "uint8" },
           { "usertype": "uint8" },
-          { "pincodevalue": "stringPreLen" }
+          { "pincodevalue": "strPreLenUint8" }
         ],
         "dir": 0
       },
@@ -754,7 +754,7 @@
           { "userid": "uint16" },
           { "userstatus": "uint8" },
           { "usertype": "uint8" },
-          { "pincodevalue": "stringPreLen" }
+          { "pincodevalue": "strPreLenUint8" }
         ],
         "dir": 0
       },
@@ -794,7 +794,7 @@
           { "source": "uint8" },
           { "eventidalarmcode": "uint8" },
           { "userid": "uint16" },
-          { "pincodevalue": "stringPreLen" }
+          { "pincodevalue": "strPreLenUint8" }
         ],
         "dir": 1
       },
@@ -807,7 +807,7 @@
           { "userid": "uint16" },
           { "userstatus": "uint8" },
           { "usertype": "uint8" },
-          { "pincodevalue": "stringPreLen" }
+          { "pincodevalue": "strPreLenUint8" }
         ],
         "dir": 1
       },
@@ -901,7 +901,7 @@
           { "userid": "uint16" },
           { "userstatus": "uint8" },
           { "usertype": "uint8" },
-          { "pincodevalue": "stringPreLen" }
+          { "pincodevalue": "strPreLenUint8" }
         ],
         "dir": 1
       },
@@ -1247,7 +1247,7 @@
         "params": [
           { "zoneid": "uint8" },
           { "zonetype": "uint16" },
-          { "ieeeaddr": "longaddr" }
+          { "ieeeaddr": "ieeeAddr" }
         ],
         "dir": 1
       },
@@ -1257,7 +1257,7 @@
           { "zonestatus": "uint16" },
           { "audiblenotif": "uint8" },
           { "strlen": "uint8" },
-          { "string": "stringPreLen" }
+          { "string": "strPreLenUint8" }
         ],
         "dir": 1
       },
@@ -1314,18 +1314,18 @@
     },
     "piGenericTunnel": {
       "matchProtocolAddr": {
-        "params": [{ "protocoladdr": "stringPreLen" }],
+        "params": [{ "protocoladdr": "strPreLenUint8" }],
         "dir": 0
       },
       "matchProtocolAddrRsp": {
         "params": [
-          { "devieeeaddr": "longaddr" },
-          { "protocoladdr": "stringPreLen" }
+          { "devieeeaddr": "ieeeAddr" },
+          { "protocoladdr": "strPreLenUint8" }
         ],
         "dir": 1
       },
       "advertiseProtocolAddr": {
-        "params": [{ "protocoladdr": "stringPreLen" }],
+        "params": [{ "protocoladdr": "strPreLenUint8" }],
         "dir": 1
       }
     },
@@ -1482,9 +1482,9 @@
       },
       "getMeasurementProfile": {
         "params": [
-          { "attrId": "uint16" },
+          { "attrId": "attrId" },
           { "starttime": "uint32" },
-          { "numofuntervals": "uint8" }
+          { "numofintervals": "uint8" }
         ],
         "dir": 0
       },
@@ -1504,7 +1504,7 @@
           { "status": "uint8" },
           { "profileintervalperiod": "uint8" },
           { "numofintervalsdeliv": "preLenUint8" },
-          { "attrId": "uint16" },
+          { "attrId": "attrId" },
           { "intervals": "dynUint8" }
         ],
         "dir": 1
