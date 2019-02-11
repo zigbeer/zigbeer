@@ -80,7 +80,7 @@ controller._coord = coordDev;
 
 var transId = 0;
 controller.nextTransId = function () {
-    if (++transId > 255)
+    if (++transId > 0xff)
         transId = 1;
     return transId;
 };
