@@ -30,7 +30,7 @@ const specialReads = {
   },
   intervals: (r: BufferWithPointer) => {
     const intervals = r.uint8()
-    r.fwd(2) //Skip attrId
+    r.fwd(2) // Skip attrId
     // const arr: Buffer[] = new Array(intervals)
     // const lenghtOfEach = r.remaining() / intervals
     const arr: number[] = new Array(intervals)
@@ -158,12 +158,9 @@ function funcPayloadFactory(zclId: ZclID) {
       this.direction = _direction
     }
 
-    innerParse(zclBuf: Buffer) {
-      const { params } = this
-
-      const r = new BufferWithPointer(zclBuf)
+    parse(r: BufferWithPointer) {
       const data: Record<string, any> = {}
-      for (let [name, type] of params) {
+      for (let [name, type] of this.params) {
         // TODO: Remove all these dirty hacks
         switch (type) {
           case "dynUint8":
@@ -250,16 +247,8 @@ function funcPayloadFactory(zclId: ZclID) {
       return data
     }
 
-    parse(zclBuf: Buffer, callback) {
-      try {
-        callback(undefined, this.innerParse(zclBuf))
-      } catch (err) {
-        callback(err)
-      }
-    }
-
     // args can be an array or a value-object if given
-    frame(args) {
+    frame(c: BufferBuilder, args) {
       if (typeof args !== "object")
         throw new TypeError("`args` must be an object or array")
       const newArgs = this.params.map(
@@ -273,7 +262,7 @@ function funcPayloadFactory(zclId: ZclID) {
             }
       )
 
-      return frameArgs(newArgs)
+      frameArgs(c, newArgs)
     }
   }
 
@@ -371,12 +360,11 @@ const frameArg = <T extends ParamTypes>(
   if (!fn) throw new Error(`No frameArgMap defined for ${type}`)
   fn(c, value)
 }
-const frameArgs = (args: { type: ParamTypes; value: any }[]) => {
-  const c = new BufferBuilder()
-
+const frameArgs = (
+  c: BufferBuilder,
+  args: { type: ParamTypes; value: any }[]
+) => {
   for (const { type, value } of args) {
     frameArg(type, c, value)
   }
-
-  return c.result()
 }

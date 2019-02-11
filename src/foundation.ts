@@ -126,7 +126,7 @@ const specialReads = {
     return { status, attrId }
   },
   multi: (r: BufferWithPointer) => {
-    r.fwd(-1) //TODO: Fix
+    r.fwd(-1) // TODO: Fix
     const dataType = r.uint8()
     return innerMulti(r, dataType)
   },
@@ -324,8 +324,7 @@ const foundPayloadFactory = (zclId: ZclID) => {
       this.params = params
     }
 
-    innerParse(zBuf: Buffer) {
-      const r = new BufferWithPointer(zBuf)
+    parse(r: BufferWithPointer) {
       if (this.cmd === "defaultRsp" || this.cmd === "discover") {
         return this.readObj(r)
       }
@@ -340,17 +339,7 @@ const foundPayloadFactory = (zclId: ZclID) => {
       return arr
     }
 
-    parse(zBuf: Buffer, callback: Callback<any>) {
-      try {
-        return callback(undefined, this.innerParse(zBuf))
-      } catch (error) {
-        return callback(error)
-      }
-    }
-
-    frame(payload: any) {
-      let c = new BufferBuilder()
-
+    frame(c: BufferBuilder, payload: any) {
       switch (this.cmd) {
         case "defaultRsp":
         case "discover":
@@ -383,8 +372,6 @@ const foundPayloadFactory = (zclId: ZclID) => {
             this.writeBuf(argObj, c)
           }
       }
-
-      return c.result()
     }
 
     private writeBuf(arg: any, c: BufferBuilder) {

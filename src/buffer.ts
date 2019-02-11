@@ -179,7 +179,7 @@ export class BufferBuilder {
         }
         case "write": {
           const [, string, encoding] = task
-          pointer += (buf.write as (
+          pointer += ((buf.write as any) as (
             string: Args<typeof buf.write>[0],
             offset: Args<typeof buf.write>[1],
             encoding: Args<typeof buf.write>[3]
