@@ -165,9 +165,9 @@ const valObjs = {
 }
 
 describe("Foundation Cmd framer and parser Check", () => {
-  foundCmd;
+  foundCmd
   //TODO: Compare keys to `foundCmd`
-  for (const [cmd,valObj] of Object.entries(valObjs)) {
+  for (const [cmd, valObj] of Object.entries(valObjs)) {
     it("should frame and parse " + cmd, () => {
       let cmdPayload = new FoundClass(cmd)
 

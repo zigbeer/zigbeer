@@ -1,6 +1,7 @@
 const Chance = require("chance")
 const chance = new Chance()
 const zclId = require("zcl-id/dist/legacy")
+const { getStdType } = require("../src/definition")
 
 const FuncClass = require("../src/functional").funcPayloadFactory(zclId)
 
@@ -9,76 +10,77 @@ const clusterIds = Object.keys(
 )
 
 describe("Functional Cmd framer and parser Check", function() {
-  clusterIds.forEach(function(cluster) {
+  for (const cluster of clusterIds) {
     const cInfo = zclId._getCluster(cluster)
-    const cmdIds = []
 
-    if (!cInfo || !cInfo.cmd) return
+    if (!cInfo || !cInfo.cmd) continue
 
-    cInfo.cmd.enums.forEach(function(cmdObj) {
-      cmdIds.push(cmdObj.key)
-    })
+    const cmdIds = cInfo.cmd.enums.map(cmdObj => cmdObj.key)
 
-    cmdIds.forEach(function(cmd) {
+    for (const cmd of cmdIds) {
       const reqParams = zclId.zclmeta.functional.getParams(cluster, cmd)
 
-      if (!reqParams) return
+      if (!reqParams) continue
 
       const args = {}
       for (const param of reqParams) {
         args[param.name] = randomArg(param.type)
       }
 
-      const funcObj = new FuncClass(cluster, 0, cmd)
-      const payload = funcObj.frame(args)
-
-      it(`${funcObj.cmd} frame() and parse()`, () => {
-        funcObj.parse(payload, (err, result) => {
-          expect(err).toBe(null)
-          expect(result).toEqual(args)
+      it(`${cmd} frame() and parse()`, () => {
+        const funcObj = new FuncClass(cluster, 0, cmd)
+        const payload = funcObj.frame(args)
+        expect.assertions(1)
+        return new Promise((resolve, reject) => {
+          funcObj.parse(payload, (err, result) => {
+            if (err) reject(err)
+            expect(result).toEqual(args)
+            resolve()
+          })
         })
       })
-    })
-  })
+    }
+  }
 })
 
 describe("Functional CmdRsp framer and parser Check", function() {
-  clusterIds.forEach(function(cluster) {
+  for (const cluster of clusterIds) {
     const cInfo = zclId._getCluster(cluster)
-    const cmdRspIds = []
 
-    if (!cInfo || !cInfo.cmdRsp) return
+    if (!cInfo || !cInfo.cmdRsp) continue
 
-    cInfo.cmdRsp.enums.forEach(function(cmdObj) {
-      cmdRspIds.push(cmdObj.key)
-    })
+    const cmdRspIds = cInfo.cmdRsp.enums.map(cmdObj => cmdObj.key)
 
-    cmdRspIds.forEach(function(cmdRsp) {
-      if (["reportRssiMeas"].includes(cmdRsp)) return
+    for (const cmdRsp of cmdRspIds) {
+      if (["reportRssiMeas"].includes(cmdRsp)) continue
 
       const reqParams = zclId.zclmeta.functional.getParams(cluster, cmdRsp)
 
-      if (!reqParams) return
+      if (!reqParams) continue
 
       const args = {}
       for (const param of reqParams) {
         args[param.name] = randomArg(param.type)
       }
 
-      const funcObj = new FuncClass(cluster, 1, cmdRsp)
-      const payload = funcObj.frame(args)
+      it(`${cmdRsp} frame() and parse()`, () => {
+        const funcObj = new FuncClass(cluster, 1, cmdRsp)
+        const payload = funcObj.frame(args)
 
-      it(`${funcObj.cmd} frame() and parse()`, () => {
-        funcObj.parse(payload, (err, result) => {
-          expect(err).toBe(null)
-          expect(result).toEqual(args)
+        expect.assertions(1)
+        return new Promise((resolve, reject) => {
+          funcObj.parse(payload, (err, result) => {
+            if (err) reject(err)
+            expect(result).toEqual(args)
+            resolve()
+          })
         })
       })
-    })
-  })
+    }
+  }
 })
 
-function randomArg(type) {
+function tryRandomArg(type) {
   switch (type) {
     case "uint8":
       return chance.integer({ min: 0, max: 0xff })
@@ -94,9 +96,9 @@ function randomArg(type) {
       return chance.integer({ min: -0x80000000, max: 0x7fffffff })
     case "floatle":
       return chance.floating({ min: 0, max: 0xffffffff })
-    case "longaddr":
-      return "0x00124b00019c2ee9"
-    case "stringPreLen":
+    case "ieeeAddr":
+      return Buffer.from("00124b00019c2ee9", "hex")
+    case "strPreLenUint8":
       const length = chance.integer({ min: 0, max: 0xff })
       return chance.string({ length })
     case "preLenUint8":
@@ -121,7 +123,7 @@ function randomArg(type) {
       }
       return testArr
     }
-    case "locationbuffer":
+    case "neighborsInfo":
       const testBuf = new Buffer(16)
       for (let k = 0; k < 16; k += 1) {
         testBuf[k] = chance.integer({ min: 0, max: 0xff })
@@ -142,6 +144,12 @@ function randomArg(type) {
     default:
       break
   }
+}
 
-  return
+function randomArg(type) {
+  const arg = tryRandomArg(type)
+  if (typeof arg !== "undefined") return arg
+  try {
+    return tryRandomArg(getStdType(type))
+  } catch (error) {}
 }
