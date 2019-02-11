@@ -94,30 +94,24 @@ const zclFactory = (zclId: ZclID) => {
   const FoundPayload = foundPayloadFactory(zclId)
   const FuncPayload = funcPayloadFactory(zclId)
 
-  function parse(buf: Buffer, callback: Callback<any>): void
-  function parse(
-    buf: Buffer,
-    clusterId: string | number,
-    callback: Callback<any>
-  ): void
-  function parse(
-    buf: Buffer,
-    arg2: string | number | Callback<any>,
-    arg3?: Callback<any>
-  ): void {
+  function parse(buf: Buffer, clusterId?: string | number) {
     if (!Buffer.isBuffer(buf)) {
       throw new TypeError("buf should be a buffer.")
     }
-    if (!arg3) {
-      const callback = arg2 as Callback<any>
-      const data = innerParse(buf)
-      callback(null, data)
-      return
+    const r = new BufferWithPointer(buf)
+    const data = specialReads.header(r)
+    const { frameCntl, manufCode, seqNum, cmdId } = data
+    const { frameType, direction } = frameCntl
+    const zclObj = getPayloadInstance(frameType, cmdId, direction, clusterId)
+    const payload = zclObj.parse(r)
+    return {
+      frameCntl,
+      manufCode,
+      seqNum,
+      // to make sure data.cmdId will be string
+      cmdId: zclObj.cmd,
+      payload
     }
-    const callback = arg3 as Callback<any>
-    const clusterId = arg2 as string | number | undefined
-    const data = innerParse(buf, clusterId)
-    callback(null, data)
   }
 
   const zcl = {
@@ -178,29 +172,11 @@ const zclFactory = (zclId: ZclID) => {
           case 1:
             assertNumberOrString("clusterId", clusterId)
             return new FuncPayload(clusterId!, direction, cmd)
-
           default:
             throw new TypeError(`Reserved direction: ${direction}`)
         }
       default:
         throw new TypeError(`Reserved frameType: ${frameType}`)
-    }
-  }
-
-  function innerParse(buf: Buffer, clusterId?: string | number) {
-    const r = new BufferWithPointer(buf)
-    const data = specialReads.header(r)
-    const { frameCntl, manufCode, seqNum, cmdId } = data
-    const { frameType, direction } = frameCntl
-    const zclObj = getPayloadInstance(frameType, cmdId, direction, clusterId)
-    const payload = zclObj.parse(r)
-    return {
-      frameCntl,
-      manufCode,
-      seqNum,
-      // to make sure data.cmdId will be string
-      cmdId: zclObj.cmd,
-      payload
     }
   }
 }
