@@ -1,8 +1,8 @@
-import zclId = require("zcl-id/dist/legacy")
+import { ZclID } from "zcl-id"
+const zclId: ZclID = require("zcl-id/dist/legacy")
 
-import { foundPayloadFactory } from "../src/foundation"
+import { FoundPayload } from "../src/foundation"
 import { BufferWithPointer, BufferBuilder } from "../src/buffer"
-var FoundClass = foundPayloadFactory(zclId as any)
 
 const foundCmd = Object.keys(
   require("zcl-id/src/definitions/common.json").foundation
@@ -171,7 +171,7 @@ describe("Foundation Cmd framer and parser Check", () => {
   // TODO: Compare keys to `foundCmd`
   for (const [cmd, valObj] of Object.entries(valObjs)) {
     it("should frame and parse " + cmd, () => {
-      const cmdPayload = new FoundClass(cmd)
+      const cmdPayload = new FoundPayload(cmd, zclId)
       const c = new BufferBuilder()
       cmdPayload.frame(c, valObj)
 
@@ -190,7 +190,7 @@ describe("Binary attributes parsing", () => {
   const frame = Buffer.from("0500420673656e736f72e803421d" + datahex, "hex")
 
   it("should parse ascii encoded not null-terminated string(datatype 66)", () => {
-    const parser = new FoundClass(10)
+    const parser = new FoundPayload(10, zclId)
     const result = parser.parse(new BufferWithPointer(frame))
 
     result[1].attrData = Buffer.from(result[1].attrData, "ascii")

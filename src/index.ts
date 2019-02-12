@@ -1,6 +1,6 @@
 import { ZclID } from "zcl-id"
-import { foundPayloadFactory } from "./foundation"
-import { funcPayloadFactory } from "./functional"
+import { FoundPayload } from "./foundation"
+import { FuncPayload } from "./functional"
 import { Callback } from "./typeUtils"
 import { BufferBuilder, BufferWithPointer } from "./buffer"
 
@@ -91,9 +91,6 @@ const specialWrites = {
 }
 
 const zclFactory = (zclId: ZclID) => {
-  const FoundPayload = foundPayloadFactory(zclId)
-  const FuncPayload = funcPayloadFactory(zclId)
-
   function parse(buf: Buffer, clusterId?: string | number) {
     if (!Buffer.isBuffer(buf)) {
       throw new TypeError("buf should be a buffer.")
@@ -102,7 +99,13 @@ const zclFactory = (zclId: ZclID) => {
     const data = specialReads.header(r)
     const { frameCntl, manufCode, seqNum, cmdId } = data
     const { frameType, direction } = frameCntl
-    const zclObj = getPayloadInstance(frameType, cmdId, direction, clusterId)
+    const zclObj = getPayloadInstance(
+      zclId,
+      frameType,
+      cmdId,
+      direction,
+      clusterId
+    )
     const payload = zclObj.parse(r)
     return {
       frameCntl,
@@ -133,6 +136,7 @@ const zclFactory = (zclId: ZclID) => {
       }
 
       const zclObj = getPayloadInstance(
+        zclId,
         frameCntl.frameType,
         cmd,
         frameCntl.direction,
@@ -158,6 +162,7 @@ const zclFactory = (zclId: ZclID) => {
   return zcl
 
   function getPayloadInstance(
+    zclId: ZclID,
     frameType: number,
     cmd: string | number,
     direction?: 0 | 1 | number,
@@ -165,13 +170,13 @@ const zclFactory = (zclId: ZclID) => {
   ) {
     switch (frameType) {
       case 0:
-        return new FoundPayload(cmd)
+        return new FoundPayload(cmd, zclId)
       case 1:
         switch (direction) {
           case 0:
           case 1:
             assertNumberOrString("clusterId", clusterId)
-            return new FuncPayload(clusterId!, direction, cmd)
+            return new FuncPayload(clusterId!, direction, cmd, zclId)
           default:
             throw new TypeError(`Reserved direction: ${direction}`)
         }

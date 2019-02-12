@@ -3,10 +3,8 @@ const chance = new Chance()
 import { ZclID } from "zcl-id"
 const zclId: ZclID = require("zcl-id/dist/legacy")
 import { getStdType } from "../src/definition"
-import { funcPayloadFactory } from "../src/functional"
+import { FuncPayload } from "../src/functional"
 import { BufferWithPointer, BufferBuilder } from "../src/buffer"
-
-const FuncClass = funcPayloadFactory(zclId)
 
 const clusterIds = Object.keys(
   require("zcl-id/src/definitions/common.json").clusterId
@@ -31,7 +29,7 @@ describe("Functional Cmd framer and parser Check", function() {
       }
 
       it(`${cmd} frame() and parse()`, () => {
-        const funcObj = new FuncClass(cluster, 0, cmd)
+        const funcObj = new FuncPayload(cluster, 0, cmd, zclId)
         const c = new BufferBuilder()
         funcObj.frame(c, args)
         const result = funcObj.parse(new BufferWithPointer(c.result()))
@@ -62,7 +60,7 @@ describe("Functional CmdRsp framer and parser Check", function() {
       }
 
       it(`${cmdRsp} frame() and parse()`, () => {
-        const funcObj = new FuncClass(cluster, 1, cmdRsp)
+        const funcObj = new FuncPayload(cluster, 1, cmdRsp, zclId)
         const c = new BufferBuilder()
         funcObj.frame(c, args)
 

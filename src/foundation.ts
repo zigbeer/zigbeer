@@ -9,6 +9,8 @@ import { writeDataTable } from "./writeDataTypes"
 type ZCLType = keyof typeof stdTypeMapping
 type StdType = typeof stdTypeMapping[ZCLType]
 
+type ParamTypes = keyof (typeof specialWrites & typeof writeDataTable)
+
 const isAnalogType = (type: number) => {
   // GENERAL_DATA, LOGICAL, BITMAP
   // ENUM
@@ -299,152 +301,135 @@ const getChunkBufTable = {
   }
 }
 
-const foundPayloadFactory = (zclId: ZclID) => {
-  class FoundPayload {
-    readonly cmd: string
-    readonly cmdId: number
-    readonly params: {
-      name: string
-      type: string
-    }[]
-    constructor(cmd: string | number) {
-      const command = zclId.foundation(cmd)
+export class FoundPayload {
+  readonly cmd: string
+  readonly cmdId: number
+  readonly params: [string, string][]
+  constructor(cmd: string | number, zclId: ZclID) {
+    const command = zclId.foundation(cmd)
 
-      if (!command) throw new Error("Unrecognized command: " + cmd)
+    if (!command) throw new Error("Unrecognized command: " + cmd)
 
-      const { key: cmdName, value: cmdId } = command
+    this.cmd = command.key
+    this.cmdId = command.value
 
-      this.cmd = cmdName
-      this.cmdId = cmdId
+    const wholeCommand = zclId.zclmeta.foundation.get(this.cmd)
+    if (!wholeCommand) throw new Error(`Unknown command foundation/${this.cmd}`)
+    this.cmdId = wholeCommand.id
+    this.params = wholeCommand.params
+  }
 
-      const params = zclId.zclmeta.foundation.getParams(cmdName)
-      if (!params)
-        throw new Error("Zcl Foundation not support " + cmd + " command.")
-
-      this.params = params
+  parse(r: BufferWithPointer) {
+    if (this.cmd === "defaultRsp" || this.cmd === "discover") {
+      return this.readObj(r)
     }
 
-    parse(r: BufferWithPointer) {
-      if (this.cmd === "defaultRsp" || this.cmd === "discover") {
-        return this.readObj(r)
-      }
-
-      if (this.cmd === "discoverRsp") {
-        const discComplete = r.uint8()
-        const arr = this.readObjArray(r)
-        return { discComplete, attrInfos: arr }
-      }
-
+    if (this.cmd === "discoverRsp") {
+      const discComplete = r.uint8()
       const arr = this.readObjArray(r)
-      return arr
+      return { discComplete, attrInfos: arr }
     }
 
-    frame(c: BufferBuilder, payload: any) {
-      switch (this.cmd) {
-        case "defaultRsp":
-        case "discover":
-          if (typeof payload !== "object" || Array.isArray(payload))
-            throw new TypeError(
-              "Payload arguments of " +
-                this.cmd +
-                " command should be an object"
-            )
-          this.writeBuf(payload, c)
-          break
-        case "discoverRsp":
-          if (typeof payload !== "object" || Array.isArray(payload))
-            throw new TypeError(
-              "Payload arguments of " +
-                this.cmd +
-                " command should be an object"
-            )
-          c.uint8(payload.discComplete)
-          for (const attrInfo of payload.attrInfos) {
-            this.writeBuf(attrInfo, c)
-          }
-          break
-        default:
-          if (!Array.isArray(payload))
-            throw new TypeError(
-              "Payload arguments of " + this.cmd + " command should be an array"
-            )
-          for (const argObj of payload) {
-            this.writeBuf(argObj, c)
-          }
-      }
-    }
+    const arr = this.readObjArray(r)
+    return arr
+  }
 
-    private writeBuf(arg: any, c: BufferBuilder) {
-      const fn = specialWrites[this.cmd]
-      if (fn) {
-        fn(c, arg)
-        return
+  private readObjArray(r: BufferWithPointer) {
+    let parsedData = [] as any[]
+    while (r.remaining()) {
+      parsedData.push(this.readObj(r))
+    }
+    return parsedData
+  }
+
+  private readObj(r: BufferWithPointer) {
+    const data: Record<string, any> = {}
+    for (const [name, type] of this.params) {
+      const fn =
+        specialReads[type] ||
+        readDataTable[type] ||
+        readDataTable[getStdType(type)]
+
+      if (!fn) throw new Error(`No read function for ${type}`)
+
+      let out = fn(r)
+
+      // TODO: Remove all these dirty hacks
+      if (type === "variable") {
+        const { attrData, dataType } = out
+        data.attrData = attrData
+        data.dataType = dataType
+        continue
       }
-      for (const { name, type } of this.params) {
-        if (arg[name] === undefined)
-          throw new Error(
-            `Payload of command: ${this.cmd} must have property ${name}`
+      if (name === "extra") {
+        Object.assign(data, out)
+        continue
+      }
+      if (type === "selector") {
+        if (out.indicator === 0) delete out.indexes
+      }
+      // End of dirty hacks
+
+      data[name] = out
+    }
+    return data
+  }
+
+  frame(c: BufferBuilder, payload: any) {
+    switch (this.cmd) {
+      case "defaultRsp":
+      case "discover":
+        if (typeof payload !== "object" || Array.isArray(payload))
+          throw new TypeError(
+            "Payload arguments of " + this.cmd + " command should be an object"
           )
-
-        if (type === "variable") {
-          writeDataTypeByTypeID(arg.dataType, c, arg.attrData)
-        } else if (type === "selector") {
-          getChunkBufTable.selector(c, arg.selector)
-        } else if (type === "multi") {
-          getChunkBufTable.multi(c, arg)
-        } else {
-          const stdType = getStdType(type)
-          const fn = writeDataTable[stdType]
-          if (!fn) throw new Error(`No builder method for ${stdType}`)
-          fn(c, arg[name])
+        this.writeBuf(payload, c)
+        break
+      case "discoverRsp":
+        if (typeof payload !== "object" || Array.isArray(payload))
+          throw new TypeError(
+            "Payload arguments of " + this.cmd + " command should be an object"
+          )
+        c.uint8(payload.discComplete)
+        for (const attrInfo of payload.attrInfos) {
+          this.writeBuf(attrInfo, c)
         }
-      }
-    }
-
-    private readObjArray(r: BufferWithPointer) {
-      let parsedData = [] as any[]
-      while (r.remaining()) {
-        parsedData.push(this.readObj(r))
-      }
-      return parsedData
-    }
-
-    private readObj(r: BufferWithPointer) {
-      const { params } = this
-
-      const data: Record<string, any> = {}
-      for (const { type, name } of params) {
-        const fn =
-          specialReads[type] ||
-          readDataTable[type] ||
-          readDataTable[getStdType(type)]
-
-        if (!fn) throw new Error(`No read function for ${type}`)
-
-        let out = fn(r)
-
-        // TODO: Remove all these dirty hacks
-        if (type === "variable") {
-          const { attrData, dataType } = out
-          data.attrData = attrData
-          data.dataType = dataType
-          continue
+        break
+      default:
+        if (!Array.isArray(payload))
+          throw new TypeError(
+            "Payload arguments of " + this.cmd + " command should be an array"
+          )
+        for (const argObj of payload) {
+          this.writeBuf(argObj, c)
         }
-        if (name === "extra") {
-          Object.assign(data, out)
-          continue
-        }
-        if (type === "selector") {
-          if (out.indicator === 0) delete out.indexes
-        }
-        // End of dirty hacks
-
-        data[name] = out
-      }
-      return data
     }
   }
-  return FoundPayload
-}
 
-export { foundPayloadFactory }
+  private writeBuf(arg: any, c: BufferBuilder) {
+    const fn = specialWrites[this.cmd]
+    if (fn) {
+      fn(c, arg)
+      return
+    }
+    for (const [name, type] of this.params) {
+      if (arg[name] === undefined)
+        throw new Error(
+          `Payload of command: ${this.cmd} must have property ${name}`
+        )
+
+      if (type === "variable") {
+        writeDataTypeByTypeID(arg.dataType, c, arg.attrData)
+      } else if (type === "selector") {
+        getChunkBufTable.selector(c, arg.selector)
+      } else if (type === "multi") {
+        getChunkBufTable.multi(c, arg)
+      } else {
+        const stdType = getStdType(type)
+        const fn = writeDataTable[stdType]
+        if (!fn) throw new Error(`No builder method for ${stdType}`)
+        fn(c, arg[name])
+      }
+    }
+  }
+}
