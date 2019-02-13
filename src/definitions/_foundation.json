@@ -69,7 +69,7 @@
   },
   "discoverRsp": {
     "id": 13,
-    "params": [["attrId", "attrId"], ["dataType", "uint8"]]
+    "params": [["discComplete","boolean"],["attrInfos", "discoverRsp"]]
   },
   "readStruct": {
     "id": 14,
