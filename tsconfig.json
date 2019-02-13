@@ -8,5 +8,6 @@
     "resolveJsonModule": true,
     "noFallthroughCasesInSwitch": true,
     "noEmit": true
-  }
+  },
+  "exclude": ["dist"]
 }

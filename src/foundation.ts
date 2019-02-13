@@ -5,6 +5,7 @@ import { BufferWithPointer, BufferBuilder } from "./buffer"
 import { stdTypeMapping, zclTypeName, getStdType } from "./definition"
 import { readDataTable } from "./readDataTypes"
 import { writeDataTable } from "./writeDataTypes"
+import { readUntilEnd, fixedLength } from "./readUtils"
 
 type ZCLType = keyof typeof stdTypeMapping
 type StdType = typeof stdTypeMapping[ZCLType]
@@ -90,7 +91,7 @@ const innerConfigReport = (r: BufferWithPointer) => {
   return { direction, dataType, minRepIntval, maxRepIntval, repChange }
 }
 
-const specialReads = {
+const specialTypeReads = {
   selector: (r: BufferWithPointer) => {
     const indicator = r.uint8()
     const indexes = new Array(indicator)
@@ -151,7 +152,11 @@ const specialReads = {
       return { status }
     }
     return innerConfigReport(r)
-  }
+  },
+  discoverRsp: readUntilEnd(r => ({
+    attrId: r.uint16le(),
+    dataType: r.uint8()
+  }))
 }
 
 const writeDataTypeByTypeID = (typeID: number, c: BufferBuilder, value) => {
@@ -179,7 +184,7 @@ const specialWrites = {
 
     if (arg.status === 0) {
       c.uint8(arg.dataType)
-      getChunkBufTable.multi(c, arg)
+      writeMulti(c, arg.dataType, arg.attrData)
     }
   },
   writeRsp: (c: BufferBuilder, arg: { status: number; attrId: number }) => {
@@ -240,64 +245,93 @@ const specialWrites = {
   }
 }
 
-const getChunkBufTable = {
-  multi: (
+const specialTypeWrites = {
+  discoverRsp: (
     c: BufferBuilder,
-    { dataType, attrData }: { dataType: number; attrData: any }
-  ): void => {
-    const type = zclTypeName(dataType)
-    if (type === "array" || type === "set" || type === "bag") {
-      getChunkBufTable.attrVal(c, attrData)
-    } else if (type === "struct") {
-      getChunkBufTable.attrValStruct(c, attrData)
-    } else {
-      writeDataTypeByTypeID(dataType, c, attrData)
+    attrInfos: { attrId: number; dataType: number }[]
+  ) => {
+    for (const { attrId, dataType } of attrInfos) {
+      c.uint16le(attrId)
+      c.uint8(dataType)
     }
-  },
-  attrVal: (
-    c: BufferBuilder,
-    {
-      elmType,
-      numElms,
-      elmVals
-    }: { elmType: number; numElms: number; elmVals: any[] }
-  ): void => {
-    c.uint8(elmType).uint16le(numElms)
-    for (let i = 0; i < numElms; i += 1) {
-      writeDataTypeByTypeID(elmType, c, elmVals[i])
-    }
-  },
-  attrValStruct: (
-    c: BufferBuilder,
-    {
-      numElms,
-      structElms
-    }: {
-      numElms: number
-      structElms: { elmType: number; elmVal: unknown }[]
-    }
-  ): void => {
-    c.uint16le(numElms)
-    for (let i = 0; i < numElms; i++) {
-      getChunkBufTable.attrValStructNip(c, structElms[i])
-    }
-  },
-  attrValStructNip: (
-    c: BufferBuilder,
-    { elmType, elmVal }: { elmType: number; elmVal: unknown }
-  ): void => {
-    c.uint8(elmType)
-    writeDataTypeByTypeID(elmType, c, elmVal)
-  },
-  selector: (
-    c: BufferBuilder,
-    { indicator, indexes }: { indicator: number; indexes: number[] }
-  ): void => {
-    c.uint8(indicator)
+  }
+}
 
-    for (let i = 0; i < indicator; i += 1) {
-      c.uint16le(indexes[i])
-    }
+const writeMulti = (
+  c: BufferBuilder,
+  dataType: number,
+  attrData: any
+): void => {
+  const type = zclTypeName(dataType)
+  if (type === "array" || type === "set" || type === "bag") {
+    writeAttrVal(c, attrData)
+  } else if (type === "struct") {
+    writeAttrValStruct(c, attrData)
+  } else {
+    writeDataTypeByTypeID(dataType, c, attrData)
+  }
+}
+const writeAttrVal = (
+  c: BufferBuilder,
+  {
+    elmType,
+    numElms,
+    elmVals
+  }: {
+    elmType: number
+    numElms: number
+    elmVals: any[]
+  }
+): void => {
+  c.uint8(elmType).uint16le(numElms)
+  for (let i = 0; i < numElms; i += 1) {
+    writeDataTypeByTypeID(elmType, c, elmVals[i])
+  }
+}
+const writeAttrValStruct = (
+  c: BufferBuilder,
+  {
+    numElms,
+    structElms
+  }: {
+    numElms: number
+    structElms: {
+      elmType: number
+      elmVal: unknown
+    }[]
+  }
+): void => {
+  c.uint16le(numElms)
+  for (let i = 0; i < numElms; i++) {
+    writeAttrValStructNip(c, structElms[i])
+  }
+}
+const writeAttrValStructNip = (
+  c: BufferBuilder,
+  {
+    elmType,
+    elmVal
+  }: {
+    elmType: number
+    elmVal: unknown
+  }
+): void => {
+  c.uint8(elmType)
+  writeDataTypeByTypeID(elmType, c, elmVal)
+}
+const writeSelector = (
+  c: BufferBuilder,
+  {
+    indicator,
+    indexes
+  }: {
+    indicator: number
+    indexes: number[]
+  }
+): void => {
+  c.uint8(indicator)
+  for (let i = 0; i < indicator; i += 1) {
+    c.uint16le(indexes[i])
   }
 }
 
@@ -320,14 +354,12 @@ export class FoundPayload {
   }
 
   parse(r: BufferWithPointer) {
-    if (this.cmd === "defaultRsp" || this.cmd === "discover") {
+    if (
+      this.cmd === "defaultRsp" ||
+      this.cmd === "discover" ||
+      this.cmd === "discoverRsp"
+    ) {
       return this.readObj(r)
-    }
-
-    if (this.cmd === "discoverRsp") {
-      const discComplete = r.uint8()
-      const arr = this.readObjArray(r)
-      return { discComplete, attrInfos: arr }
     }
 
     const arr = this.readObjArray(r)
@@ -346,13 +378,13 @@ export class FoundPayload {
     const data: Record<string, any> = {}
     for (const [name, type] of this.params) {
       const fn =
-        specialReads[type] ||
+        specialTypeReads[type] ||
         readDataTable[type] ||
         readDataTable[getStdType(type)]
 
       if (!fn) throw new Error(`No read function for ${type}`)
 
-      let out = fn(r)
+      const out = fn(r)
 
       // TODO: Remove all these dirty hacks
       if (type === "variable") {
@@ -390,10 +422,11 @@ export class FoundPayload {
           throw new TypeError(
             "Payload arguments of " + this.cmd + " command should be an object"
           )
-        c.uint8(payload.discComplete)
-        for (const attrInfo of payload.attrInfos) {
-          this.writeBuf(attrInfo, c)
-        }
+        this.writeBuf(payload, c)
+        // c.uint8(payload.discComplete)
+        // for (const attrInfo of payload.attrInfos) {
+        //   this.writeBuf(attrInfo, c)
+        // }
         break
       default:
         if (!Array.isArray(payload))
@@ -406,29 +439,34 @@ export class FoundPayload {
     }
   }
 
-  private writeBuf(arg: any, c: BufferBuilder) {
+  private writeBuf(args, c: BufferBuilder) {
     const fn = specialWrites[this.cmd]
     if (fn) {
-      fn(c, arg)
+      fn(c, args)
       return
     }
     for (const [name, type] of this.params) {
-      if (arg[name] === undefined)
+      if (args[name] === undefined)
         throw new Error(
           `Payload of command: ${this.cmd} must have property ${name}`
         )
 
       if (type === "variable") {
-        writeDataTypeByTypeID(arg.dataType, c, arg.attrData)
+        writeDataTypeByTypeID(args.dataType, c, args.attrData)
       } else if (type === "selector") {
-        getChunkBufTable.selector(c, arg.selector)
+        writeSelector(c, args.selector)
       } else if (type === "multi") {
-        getChunkBufTable.multi(c, arg)
+        writeMulti(c, args.dataType, args.attrData)
       } else {
+        const sfn = specialTypeWrites[type]
+        if (sfn) {
+          sfn(c, args[name])
+          return
+        }
         const stdType = getStdType(type)
         const fn = writeDataTable[stdType]
         if (!fn) throw new Error(`No builder method for ${stdType}`)
-        fn(c, arg[name])
+        fn(c, args[name])
       }
     }
   }
