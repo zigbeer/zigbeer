@@ -212,3 +212,6 @@ export const statusCodes = {
   calibrationError: 0xc2,
   unsupportedCluster: 0xc3
 } as const
+
+export type Status = Values<typeof statusCodes>
+export type FailureStatus = Exclude<Status, 0>

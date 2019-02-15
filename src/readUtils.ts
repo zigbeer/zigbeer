@@ -1,4 +1,5 @@
 import { BufferWithPointer } from "./buffer"
+import { Status, FailureStatus } from "./definition"
 
 const byteLengths = new WeakMap<(r: BufferWithPointer) => any, number>()
 
@@ -46,7 +47,7 @@ export const readUntilEnd = <R>(
     : r => {
         const arr: R[] = []
         let last = r.remaining()
-        while (last) {
+        while (last !== 0) {
           arr.push(fn(r))
           const remaining = r.remaining()
           if (remaining >= last)
@@ -55,4 +56,46 @@ export const readUntilEnd = <R>(
         }
         return arr
       }
+}
+
+export const collapseSuccess = <R>(
+  fn: (r: BufferWithPointer) => R
+): ((
+  r: BufferWithPointer
+) => readonly [{readonly status: 0x00 }] | readonly ({ readonly status: FailureStatus } & R)[]) => {
+  type Items = ({ status: FailureStatus } & R)[]
+  const len = byteLengths.get(fn)
+  return len?(r: BufferWithPointer) => {
+    const repeats = r.remaining() / len
+    if (!Number.isInteger(repeats))
+      throw new RangeError(
+        `Bad buffer: Remaining length not multiple of repeat unit length`
+      )
+    const arr: Items = new Array(repeats)
+    for (let i = 0; i < repeats; i++) {
+      const status = r.uint8() as Status // TODO: Validate that it's a known status?
+      if (status === 0x00)
+        if (i === 0 && r.remaining() === 0) return [{ status }] as const
+        else throw new Error("Bad payload: successful status not alone")
+      arr[i] = { status, ...fn(r) } as const
+    }
+    return arr
+  }:(r: BufferWithPointer) => {
+    let i = 0
+    const arr: Items = []
+    let last = r.remaining()
+    while (r.remaining() !== 0) {
+      const status = r.uint8() as Status // TODO: Validate that it's a known status?
+      if (status === 0x00)
+        if (i === 0 && r.remaining() === 0) return [{ status }] as const
+        else throw new Error("Bad payload: successful status not alone")
+      arr.push({ status, ...fn(r) } as const)
+      const remaining = r.remaining()
+      if (remaining >= last)
+        throw new Error(`Infinite loop: repeat unit isn't consuming buffer`)
+      last = remaining
+      i++
+    }
+    return arr
+  }
 }
