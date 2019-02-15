@@ -226,23 +226,11 @@ export class FuncPayload {
       }
       // End of dirty hacks
 
-      const fn =
-        specialReads[type] ||
-        readDataTable[type] ||
-        readDataTable[getStdType(type)]
+      const fn = specialReads[type] || readDataTable[getStdType(type)]
 
       if (!fn) throw new Error(`No read function for ${type}`)
 
-      let out = fn(r)
-
-      // TODO: Remove all these dirty hacks
-      if (name === "extra") {
-        Object.assign(data, out)
-        continue
-      }
-      // End of dirty hacks
-
-      data[name] = out
+      data[name] = fn(r)
     }
     return data
   }

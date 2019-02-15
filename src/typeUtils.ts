@@ -9,3 +9,5 @@ export type SecondArgument<T> = T extends (
 ) => any
   ? U
   : any
+
+export type Values<T> = T[keyof T]

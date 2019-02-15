@@ -140,7 +140,5 @@ function tryRandomArg(type) {
 function randomArg(type) {
   const arg = tryRandomArg(type)
   if (typeof arg !== "undefined") return arg
-  try {
-    return tryRandomArg(getStdType(type))
-  } catch (error) {}
+  return tryRandomArg(getStdType(type))
 }
