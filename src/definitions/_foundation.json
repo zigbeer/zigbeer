@@ -1,63 +1,38 @@
 {
-  "read": { "id": 0, "params": [["attrId", "attrId"]] },
+  "read": { "id": 0, "params": [["attrIds", "read"]] },
   "readRsp": {
     "id": 1,
-    "params": [["attrId", "attrId"], ["status", "uint8"], ["extra", "readRsp"]]
+    "params": [["attrs", "readRsp"]]
   },
   "write": {
     "id": 2,
-    "params": [
-      ["attrId", "attrId"],
-      ["dataType", "uint8"],
-      ["attrData", "variable"]
-    ]
+    "params": [["attrs", "write"]]
   },
   "writeUndiv": {
     "id": 3,
-    "params": [
-      ["attrId", "attrId"],
-      ["dataType", "uint8"],
-      ["attrData", "variable"]
-    ]
+    "params": [["attrs", "write"]]
   },
-  "writeRsp": { "id": 4, "params": [["extra", "writeRsp"]] },
+  "writeRsp": { "id": 4, "params": [["attrs", "writeRsp"]] },
   "writeNoRsp": {
     "id": 5,
-    "params": [
-      ["attrId", "attrId"],
-      ["dataType", "uint8"],
-      ["attrData", "variable"]
-    ]
+    "params": [["attrs", "write"]]
   },
   "configReport": {
     "id": 6,
-    "params": [
-      ["direction", "uint8"],
-      ["attrId", "attrId"],
-      ["extra", "configReport"]
-    ]
+    "params": [["attrs", "configReport"]]
   },
-  "configReportRsp": { "id": 7, "params": [["extra", "configReportRsp"]] },
+  "configReportRsp": { "id": 7, "params": [["attrs", "configReportRsp"]] },
   "readReportConfig": {
     "id": 8,
-    "params": [["direction", "uint8"], ["attrId", "attrId"]]
+    "params": [["attrs", "readReportConfig"]]
   },
   "readReportConfigRsp": {
     "id": 9,
-    "params": [
-      ["status", "uint8"],
-      ["direction", "uint8"],
-      ["attrId", "attrId"],
-      ["extra", "readReportConfigRsp"]
-    ]
+    "params": [["attrs", "readReportConfigRsp"]]
   },
   "report": {
     "id": 10,
-    "params": [
-      ["attrId", "attrId"],
-      ["dataType", "uint8"],
-      ["attrData", "variable"]
-    ]
+    "params": [["attrs", "report"]]
   },
   "defaultRsp": {
     "id": 11,
@@ -69,28 +44,19 @@
   },
   "discoverRsp": {
     "id": 13,
-    "params": [["discComplete","boolean"],["attrInfos", "discoverRsp"]]
+    "params": [["discComplete", "boolean"], ["attrInfos", "discoverRsp"]]
   },
   "readStruct": {
     "id": 14,
-    "params": [["attrId", "attrId"], ["selector", "selector"]]
+    "params": [["attrs", "readStruct"]]
   },
   "writeStruct": {
     "id": 15,
-    "params": [
-      ["attrId", "attrId"],
-      ["selector", "selector"],
-      ["dataType", "uint8"],
-      ["attrData", "multi"]
-    ]
+    "params": [["attrs", "writeStruct"]]
   },
   "writeStructRsp": {
     "id": 16,
-    "params": [
-      ["status", "uint8"],
-      ["attrId", "attrId"],
-      ["selector", "selector"]
-    ]
+    "params": [["attrs", "writeStructRsp"]]
   },
   "discoverCmdsRec": { "id": 17, "TODO": 1 },
   "discoverCmdsRecRsp": { "id": 18, "TODO": 1 },
