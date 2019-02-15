@@ -51,11 +51,11 @@ export const stdTypeMapping = {
   octstr16: "strPreLenUint16",
   string16: "strPreLenUint16",
 
-  array: undefined,
-  struct: "attrValStruct",
+  array: "arraySetBag",
+  struct: "struct",
 
-  set: undefined,
-  bag: undefined,
+  set: "arraySetBag",
+  bag: "arraySetBag",
 
   ToD: "uint32",
   date: "uint32",
