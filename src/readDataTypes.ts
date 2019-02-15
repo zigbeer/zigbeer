@@ -22,6 +22,7 @@ export const readDataTable = {
   doublele: (r: BufferWithPointer) => r.doublele(),
   strPreLenUint8: (r: BufferWithPointer) => {
     const len = r.uint8()
+    if (len === 0xff) return
     // This needs to encode all possible bytes, not only ASCII
     // because some manufacturers, eg. Xiaomi send binary data
     // under a string datatype.
@@ -31,6 +32,7 @@ export const readDataTable = {
   },
   strPreLenUint16: (r: BufferWithPointer) => {
     const len = r.uint16le()
+    if (len === 0xffff) return
     return r.string(len, "utf8")
   }
 }

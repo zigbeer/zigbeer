@@ -1,6 +1,6 @@
 import { ZclID } from "zcl-id"
 
-import { Callback, Values } from "./typeUtils"
+import { Values } from "./typeUtils"
 import { BufferWithPointer, BufferBuilder } from "./buffer"
 import {
   stdTypeMapping,

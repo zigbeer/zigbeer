@@ -45,10 +45,14 @@ export const writeDataTable = {
     assertUInt64(value) && c.buffer(value),
   int64: (c: BufferBuilder, value: Buffer) =>
     assertInt64(value) && c.buffer(value),
-  strPreLenUint8: (c: BufferBuilder, value: string) =>
-    assertStrPreLenUint8(value) &&
-    c.uint8(Buffer.byteLength(value, ENCODING)).string(value, ENCODING),
-  strPreLenUint16: (c: BufferBuilder, value: string) =>
-    assertStrPreLenUint16(value) &&
-    c.uint16le(Buffer.byteLength(value, ENCODING)).string(value, ENCODING)
+  strPreLenUint8: (c: BufferBuilder, value: string | undefined) =>
+    typeof value === "undefined"
+      ? c.uint8(0xff)
+      : assertStrPreLenUint8(value) &&
+        c.uint8(Buffer.byteLength(value, ENCODING)).string(value, ENCODING),
+  strPreLenUint16: (c: BufferBuilder, value: string | undefined) =>
+    typeof value === "undefined"
+      ? c.uint8(0xffff)
+      : assertStrPreLenUint16(value) &&
+        c.uint16le(Buffer.byteLength(value, ENCODING)).string(value, ENCODING)
 }
