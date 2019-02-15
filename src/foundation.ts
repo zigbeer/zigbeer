@@ -483,17 +483,24 @@ const writeSelector = (
   c: BufferBuilder,
   { indicator, indexes }: Selector
 ): void => {
+  const depth = indicator & 0x0f
+  const operation = indicator >> 4
+  if (operation < 0b00 || operation > 0b10)
+    throw new Error(`Invalid indicator high bits, got ${operation}`)
   c.uint8(indicator)
-  for (let i = 0; i < indicator; i += 1) {
+  for (let i = 0; i < depth; i += 1) {
     c.uint16le(indexes[i])
   }
 }
 const readSelector = (r: BufferWithPointer) => {
   const indicator = r.uint8()
-  if (indicator === 0) return { indicator } // TODO: Get rid of this hack, always just return array, with no indicator
-  if (indicator > 15) throw new Error(`indicator exceeds 15, got ${indicator}`)
-  const indexes = new Array(indicator)
-  for (let i = 0; i < indicator; i++) {
+  const depth = indicator & 0x0f
+  const operation = indicator >> 4
+  if (operation < 0b00 || operation > 0b10)
+    throw new Error(`Invalid indicator high bits, got ${operation}`)
+  if (depth === 0) return { indicator } // TODO: Get rid of this hack, always just return array and operation, with no indicator
+  const indexes: Selector["indexes"] = new Array(depth)
+  for (let i = 0; i < depth; i++) {
     indexes[i] = r.uint16le()
   }
   return { indicator, indexes }
