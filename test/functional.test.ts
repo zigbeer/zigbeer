@@ -115,7 +115,7 @@ function tryRandomArg(type) {
       return testArr
     }
     case "neighborsInfo":
-      const testBuf = new Buffer(16)
+      const testBuf = Buffer.allocUnsafe(16)
       for (let k = 0; k < 16; k += 1) {
         testBuf[k] = chance.integer({ min: 0, max: 0xff })
       }

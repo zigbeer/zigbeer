@@ -176,7 +176,7 @@ describe("APIs Arguments Check for Throwing Error", function() {
   })
 
   describe("#.parse", function() {
-    const buf = new Buffer([0x11, 0x00, 0x02])
+    const buf = Buffer.from([0x11, 0x00, 0x02])
 
     const rethrow = err => {
       if (err) throw err

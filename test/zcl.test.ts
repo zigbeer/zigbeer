@@ -197,7 +197,7 @@ describe("Module Methods Check", function() {
   describe("zcl #.header Check", function() {
     const headers = [
       {
-        buf: new Buffer([0x00, 0x00, 0x00]),
+        buf: Buffer.from([0x00, 0x00, 0x00]),
         obj: {
           frameCntl: {
             frameType: 0,
@@ -211,7 +211,7 @@ describe("Module Methods Check", function() {
         }
       },
       {
-        buf: new Buffer([0x1d, 0x34, 0x12, 0xff, 0x01]),
+        buf: Buffer.from([0x1d, 0x34, 0x12, 0xff, 0x01]),
         obj: {
           frameCntl: {
             frameType: 1,
@@ -238,10 +238,10 @@ describe("Module Methods Check", function() {
   describe("zcl #.header Check - Bad command", function() {
     var headers = [
       {
-        buf: new Buffer([0x1e, 0x34, 0x12, 0xff, 0x01])
+        buf: Buffer.from([0x1e, 0x34, 0x12, 0xff, 0x01])
       },
       {
-        buf: new Buffer([0x1f, 0x34, 0x12, 0xff, 0x01])
+        buf: Buffer.from([0x1f, 0x34, 0x12, 0xff, 0x01])
       }
     ]
 
