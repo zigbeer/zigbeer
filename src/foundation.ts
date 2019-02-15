@@ -8,8 +8,8 @@ import {
   statusCodes,
   FailureStatus
 } from "./definition"
-import { readDataTable, readByType } from "./readDataTypes"
-import { writeDataTable, writeByType } from "./writeDataTypes"
+import { readDataTable, readByType } from "./dataTypeRead"
+import { writeDataTable, writeByType } from "./dataTypeWrite"
 import { readUntilEnd, fixedLength, collapseSuccess } from "./readUtils"
 
 type ZCLType = keyof typeof stdTypeMapping
