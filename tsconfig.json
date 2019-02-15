@@ -1,5 +1,5 @@
 {
-  "compilerOptions": { 
+  "compilerOptions": {
     "strict": true,
     "noImplicitAny": false,
     "target": "es6",
