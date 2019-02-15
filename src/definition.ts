@@ -174,3 +174,41 @@ export const zclTypeName = <T extends Values<typeof zclTypes> | number>(
       " 0x" + id.toString(16)} (${id})`
   )
 }
+
+export const statusCodes = {
+  success: 0x00,
+  failure: 0x01,
+  notAuthorized: 0x7e,
+  reservedFieldNotZero: 0x7e,
+  malformedCmd: 0x80,
+  unsupClusterCmd: 0x81,
+  unsupGeneralCmd: 0x82,
+  unsupManuClusterCmd: 0x83,
+  unsupManuGeneralCmd: 0x84,
+  invalidField: 0x85,
+  unsupAttribute: 0x86,
+  invalidValue: 0x87,
+  readOnly: 0x88,
+  insufficientSpace: 0x89,
+  duplicateExists: 0x8a,
+  notFound: 0x8b,
+  unreportableAttribute: 0x8c,
+  invalidDataType: 0x8d,
+  invalidSelector: 0x8e,
+  writeOnly: 0x8f,
+  inconsistentStartupState: 0x90,
+  definedOutOfBand: 0x91,
+  inconsistent: 0x92,
+  actionDenied: 0x93,
+  timeout: 0x94,
+  abort: 0x95,
+  invalidImage: 0x96,
+  waitForData: 0x97,
+  noImageAvailable: 0x98,
+  requireMoreImage: 0x99,
+  notificationPending: 0x9a,
+  hardwareFailure: 0xc0,
+  softwareFailure: 0xc1,
+  calibrationError: 0xc2,
+  unsupportedCluster: 0xc3
+} as const
