@@ -14,6 +14,8 @@ import { readUntilEnd, fixedLength } from "./readUtils"
 
 type ZCLType = keyof typeof stdTypeMapping
 type StdType = typeof stdTypeMapping[ZCLType]
+type Status = Values<typeof statusCodes>
+type FailureStatus = Exclude<Status, 0>
 
 const isAnalogType = (type: number) => {
   // GENERAL_DATA, LOGICAL, BITMAP
@@ -98,20 +100,20 @@ const innerConfigReport = (r: BufferWithPointer) => {
   } as const
 }
 
-const explode = () => {
-  throw new Error("Bad payload: successful status not omitted")
+const collapseSuccess = <R>(fn: (r: BufferWithPointer) => R) => (
+  r: BufferWithPointer
+) => {
+  let i = 0
+  const arr: ({ status: FailureStatus } & R)[] = []
+  while (r.remaining() !== 0) {
+    const status = r.uint8() as Status // TODO: Validate that it's a known status?
+    if (status === 0x00)
+      if (i === 0 && r.remaining() === 0) return [{ status }] as const
+      else throw new Error("Bad payload: successful status not alone")
+    arr.push({ status, ...fn(r) } as const)
+  }
+  return arr
 }
-const writeRspInner = readUntilEnd(
-  fixedLength(3, r => ({
-    status: r.uint8() || explode(),
-    attrId: r.uint16le()
-  }))
-)
-const writeStructRspInner = readUntilEnd(r => ({
-  status: r.uint8() || explode(),
-  attrId: r.uint16le(),
-  selector: readSelector(r)
-}))
 const specialReads = {
   read: readUntilEnd(fixedLength(2, r => r.uint16le())),
   readRsp: readUntilEnd(r => {
@@ -128,20 +130,26 @@ const specialReads = {
     const attrData = innerMulti(r, dataType)
     return { attrId, dataType, attrData }
   }),
-  writeRsp: (r: BufferWithPointer) => {
-    const status = r.uint8()
-    if (status === 0x00)
-      if (!r.remaining()) return [{ status: 0x00 }]
-      else throw new Error("Bad payload: successful status not omitted")
-    r.fwd(-1)
-    return writeRspInner(r)
-  },
+  writeRsp: collapseSuccess(
+    fixedLength(
+      3,
+      r =>
+        ({
+          attrId: r.uint16le()
+        } as const)
+    )
+  ),
   configReport: readUntilEnd(innerConfigReport),
-  configReportRsp: readUntilEnd(r => {
-    const status = r.uint8()
-    if (status === 0) return { status } as const
-    return { status, direction: r.uint8(), attrId: r.uint16le() } as const
-  }),
+  configReportRsp: collapseSuccess(
+    fixedLength(
+      4,
+      r =>
+        ({
+          direction: r.uint8(),
+          attrId: r.uint16le()
+        } as const)
+    )
+  ),
   readReportConfig: readUntilEnd(
     fixedLength(
       3,
@@ -150,7 +158,7 @@ const specialReads = {
   ),
   readReportConfigRsp: readUntilEnd((r: BufferWithPointer) => {
     const status = r.uint8()
-    if (status !== 0) {
+    if (status !== 0x00) {
       // TODO: assert and type that only "unsupAttribute" | "unreportableAttribute" | "notFound" get returned
       return { status, direction: r.uint8(), attrId: r.uint16le() } as const
     }
@@ -175,14 +183,13 @@ const specialReads = {
       attrData: innerMulti(r, dataType)
     } as const
   }),
-  writeStructRsp: (r: BufferWithPointer) => {
-    const status = r.uint8()
-    if (status === 0x00)
-      if (!r.remaining()) return [{ status: 0x00 }]
-      else throw new Error("Bad payload: successful status not omitted")
-    r.fwd(-1)
-    return writeStructRspInner(r)
-  },
+  writeStructRsp: collapseSuccess(
+    r =>
+      ({
+        attrId: r.uint16le(),
+        selector: readSelector(r)
+      } as const)
+  ),
   discoverRsp: readUntilEnd(
     fixedLength(
       3,
@@ -284,6 +291,29 @@ const writeReportConfigRecord = (
     writeDataTypeByTypeID(dataType, c, record.repChange)
 }
 
+const writeWithStatus = <R, T>(fn: (c: BufferBuilder, record: T) => R) => (
+  c: BufferBuilder,
+  arg:
+    | [
+        {
+          status: 0x00
+        }
+      ]
+    | ({
+        status: FailureStatus
+      } & T)[]
+) => {
+  const { length } = arg
+  for (let i = 0; i < length; i++) {
+    const record = arg[i]
+    c.uint8(record.status)
+    if (record.status === 0x00)
+      if (length === 1) return
+      else throw new Error("Bad payload: successful status not alone")
+    fn(c, record)
+  }
+}
+
 const specialWrites = {
   read: (c: BufferBuilder, attrIds: number[]) => {
     for (const attrId of attrIds) {
@@ -317,51 +347,19 @@ const specialWrites = {
       writeMulti(c, dataType, attrData)
     }
   },
-  writeRsp: (
-    c: BufferBuilder,
-    arg:
-      | { status: 0 }[]
-      | { status: Exclude<Values<typeof statusCodes>, 0x00>; attrId: number }[]
-  ) => {
-    const { length } = arg
-    for (let i = 0; i < length; i++) {
-      const record = arg[i]
-      c.uint8(record.status)
-      if (record.status === 0x00)
-        if (length === 1) return
-        else throw new Error("Bad payload: successful status not omitted")
-      c.uint16le(record.attrId)
-    }
-  },
+  writeRsp: writeWithStatus((c, rec: { attrId: number }) => {
+    c.uint16le(rec.attrId)
+  }),
   configReport: (c: BufferBuilder, arg: ConfigReportRecord[]) => {
     for (const record of arg) {
       writeReportConfigRecord(c, record)
     }
   },
-  configReportRsp: (
-    c: BufferBuilder,
-    arg:
-      | [
-          {
-            status: 0x00
-          }
-        ]
-      | {
-          status: Exclude<Values<typeof statusCodes>, 0x00>
-          direction: 0x00 | 0x01
-          attrId: number
-        }[]
-  ) => {
-    const { length } = arg
-    for (let i = 0; i < length; i++) {
-      const record = arg[i]
-      c.uint8(record.status)
-      if (record.status === 0x00)
-        if (length === 1) return
-        else throw new Error("Bad payload: successful status not omitted")
-      c.uint8(record.direction).uint16le(record.attrId)
+  configReportRsp: writeWithStatus(
+    (c, rec: { direction: 0x00 | 0x01; attrId: number }) => {
+      c.uint8(rec.direction).uint16le(rec.attrId)
     }
-  },
+  ),
   readReportConfig: (
     c: BufferBuilder,
     arg: { direction: 0x00 | 0x01; attrId: number }[]
@@ -424,27 +422,12 @@ const specialWrites = {
       writeMulti(c, dataType, attrData)
     }
   },
-  writeStructRsp: (
-    c: BufferBuilder,
-    arg:
-      | [{ status: 0x00 }]
-      | {
-          status: Exclude<Values<typeof statusCodes>, 0x00>
-          attrId: number
-          selector: Selector
-        }[]
-  ) => {
-    const { length } = arg
-    for (let i = 0; i < length; i++) {
-      const record = arg[i]
-      c.uint8(record.status)
-      if (record.status === 0x00)
-        if (length === 1) return
-        else throw new Error("Bad payload: successful status not omitted")
-      c.uint16le(record.attrId)
-      writeSelector(c, record.selector)
+  writeStructRsp: writeWithStatus(
+    (c, rec: { attrId: number; selector: Selector }) => {
+      c.uint16le(rec.attrId)
+      writeSelector(c, rec.selector)
     }
-  },
+  ),
   discoverRsp: (
     c: BufferBuilder,
     attrInfos: { attrId: number; dataType: number }[]
