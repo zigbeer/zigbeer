@@ -6,16 +6,15 @@ import {
   stdTypeMapping,
   zclTypeName,
   getStdType,
-  statusCodes
+  statusCodes,
+  FailureStatus
 } from "./definition"
 import { readDataTable } from "./readDataTypes"
 import { writeDataTable } from "./writeDataTypes"
-import { readUntilEnd, fixedLength } from "./readUtils"
+import { readUntilEnd, fixedLength, collapseSuccess } from "./readUtils"
 
 type ZCLType = keyof typeof stdTypeMapping
 type StdType = typeof stdTypeMapping[ZCLType]
-type Status = Values<typeof statusCodes>
-type FailureStatus = Exclude<Status, 0>
 
 const isAnalogType = (type: number) => {
   // GENERAL_DATA, LOGICAL, BITMAP
@@ -100,20 +99,6 @@ const innerConfigReport = (r: BufferWithPointer) => {
   } as const
 }
 
-const collapseSuccess = <R>(fn: (r: BufferWithPointer) => R) => (
-  r: BufferWithPointer
-) => {
-  let i = 0
-  const arr: ({ status: FailureStatus } & R)[] = []
-  while (r.remaining() !== 0) {
-    const status = r.uint8() as Status // TODO: Validate that it's a known status?
-    if (status === 0x00)
-      if (i === 0 && r.remaining() === 0) return [{ status }] as const
-      else throw new Error("Bad payload: successful status not alone")
-    arr.push({ status, ...fn(r) } as const)
-  }
-  return arr
-}
 const specialReads = {
   read: readUntilEnd(fixedLength(2, r => r.uint16le())),
   readRsp: readUntilEnd(r => {
