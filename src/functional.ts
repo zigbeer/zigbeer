@@ -2,8 +2,8 @@ import { ZclID } from "zcl-id"
 import { SecondArgument } from "./typeUtils"
 
 import { BufferWithPointer, BufferBuilder } from "./buffer"
-import { writeDataTable } from "./writeDataTypes"
-import { readDataTable } from "./readDataTypes"
+import { writeDataTable } from "./dataTypeWrite"
+import { readDataTable } from "./dataTypeRead"
 import { getStdType } from "./definition"
 
 type ParamTypes = keyof (typeof specialWrites & typeof writeDataTable)
