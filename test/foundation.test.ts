@@ -49,7 +49,7 @@ const valObjs = {
     { attrId: 0x1234, dataType: 0x08, attrData: 60 }
   ],
   writeRsp: [
-    { status: 0 },
+    // TODO: Add success (status 0) case
     { status: 1, attrId: 0xbbbb },
     { status: 1, attrId: 0xcccc }
   ],
@@ -77,7 +77,7 @@ const valObjs = {
     }
   ],
   configReportRsp: [
-    { status: 0 },
+    // TODO: Add success (status 0) case
     { status: 1, direction: 1, attrId: 0x0022 },
     { status: 3, direction: 0, attrId: 0x0222 }
   ],
@@ -153,12 +153,12 @@ const valObjs = {
   ],
   writeStructRsp: [
     {
-      status: 0,
+      status: 1,
       attrId: 0x0001,
       selector: { indicator: 3, indexes: [0x0101, 0x0202, 0x0303] }
     },
     {
-      status: 0,
+      status: 1,
       attrId: 0x0002,
       selector: { indicator: 2, indexes: [0x0101, 0x0202] }
     },
