@@ -1,4 +1,5 @@
 import { BufferBuilder } from "./buffer"
+import { zclTypeName, getStdType } from "./definition"
 const assertBufferLength = (name: string, len: number) => (buf: Buffer) => {
   if (buf.length !== len)
     throw new TypeError(
@@ -54,5 +55,57 @@ export const writeDataTable = {
     typeof value === "undefined"
       ? c.uint8(0xffff)
       : assertStrPreLenUint16(value) &&
-        c.uint16le(Buffer.byteLength(value, ENCODING)).string(value, ENCODING)
+        c.uint16le(Buffer.byteLength(value, ENCODING)).string(value, ENCODING),
+  arraySetBag: (
+    c: BufferBuilder,
+    {
+      elmType,
+      numElms,
+      elmVals
+    }: {
+      elmType: number
+      numElms: number
+      elmVals: any[]
+    }
+  ) => {
+    c.uint8(elmType).uint16le(numElms)
+    for (let i = 0; i < numElms; i += 1) {
+      writeByType(c, elmType, elmVals[i])
+    }
+  },
+  struct: (
+    c: BufferBuilder,
+    {
+      numElms,
+      structElms
+    }: {
+      numElms: number
+      structElms: {
+        elmType: number
+        elmVal: unknown
+      }[]
+    }
+  ): void => {
+    c.uint16le(numElms)
+    for (let i = 0; i < numElms; i++) {
+      const { elmType, elmVal } = structElms[i]
+      c.uint8(elmType)
+      writeByType(c, elmType, elmVal)
+    }
+  }
+}
+
+export const writeByType = (
+  c: BufferBuilder,
+  dataType: number,
+  attrData: any
+): void => {
+  const type = zclTypeName(dataType)
+  const stdType = getStdType(type)
+  if (!stdType) throw new Error(`Unknown dataType ${dataType}`)
+
+  const fn = writeDataTable[stdType]
+  if (!fn) throw new Error(`Writing dataType ${stdType} not implemented`)
+
+  return fn(c, attrData)
 }

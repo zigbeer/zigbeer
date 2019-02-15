@@ -1,4 +1,5 @@
 import { BufferWithPointer } from "./buffer"
+import { zclTypeName, getStdType } from "./definition"
 export const readDataTable = {
   noData: (r: BufferWithPointer) => {},
   uint8: (r: BufferWithPointer) => r.uint8(),
@@ -34,5 +35,35 @@ export const readDataTable = {
     const len = r.uint16le()
     if (len === 0xffff) return
     return r.string(len, "utf8")
+  },
+  arraySetBag: (r: BufferWithPointer) => {
+    const elmType = r.uint8()
+    const numElms = r.uint16le()
+    const elmVals = new Array(numElms)
+    for (let count = 0; count < numElms; count++) {
+      elmVals[count] = readByType(r, elmType)
+    }
+    return { elmType, numElms, elmVals }
+  },
+  struct: (r: BufferWithPointer) => {
+    const numElms = r.uint16le()
+    const structElms = new Array(numElms)
+    for (let count = 0; count < numElms; count++) {
+      const elmType = r.uint8()
+      const elmVal = readByType(r, elmType)
+      structElms[count] = { elmType, elmVal }
+    }
+    return { numElms, structElms }
   }
+}
+
+export const readByType = (r: BufferWithPointer, dataType: number) => {
+  const type = zclTypeName(dataType)
+  const stdType = getStdType(type)
+  if (!stdType) throw new Error(`Unknown dataType ${dataType}`)
+
+  const fn = readDataTable[stdType]
+  if (!fn) throw new Error(`Writing dataType ${stdType} not implemented`)
+
+  return fn(r)
 }

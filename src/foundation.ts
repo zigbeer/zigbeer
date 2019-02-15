@@ -4,13 +4,12 @@ import { Values } from "./typeUtils"
 import { BufferWithPointer, BufferBuilder } from "./buffer"
 import {
   stdTypeMapping,
-  zclTypeName,
   getStdType,
   statusCodes,
   FailureStatus
 } from "./definition"
-import { readDataTable } from "./readDataTypes"
-import { writeDataTable } from "./writeDataTypes"
+import { readDataTable, readByType } from "./readDataTypes"
+import { writeDataTable, writeByType } from "./writeDataTypes"
 import { readUntilEnd, fixedLength, collapseSuccess } from "./readUtils"
 
 type ZCLType = keyof typeof stdTypeMapping
@@ -44,41 +43,7 @@ const isAnalogType = (type: number) => {
   )
 }
 
-const readAttrVal = (r: BufferWithPointer) => {
-  const elmType = r.uint8()
-  const numElms = r.uint16le()
-  const elmVals = new Array(numElms)
-  for (let count = 0; count < numElms; count++) {
-    elmVals[count] = innerMulti(r, elmType)
-  }
-  return { elmType, numElms, elmVals }
-}
-const readAttrValStruct = (r: BufferWithPointer) => {
-  const numElms = r.uint16le()
-  const structElms = new Array(numElms)
-  for (let count = 0; count < numElms; count++) {
-    const elmType = r.uint8()
-    const elmVal = innerMulti(r, elmType)
-    structElms[count] = { elmType, elmVal }
-  }
-  return { numElms, structElms }
-}
-const readTypedValue = (r: BufferWithPointer, dataType: number) => {
-  const typeName = zclTypeName(dataType)
-  const stdType = getStdType(typeName)
-  return readDataTable[stdType](r)
-}
-const innerMulti = (r: BufferWithPointer, dataType: number) => {
-  const typeName = zclTypeName(dataType)
-  if (typeName === "array" || typeName === "set" || typeName === "bag") {
-    return readAttrVal(r)
-  }
-  if (typeName === "struct") {
-    return readAttrValStruct(r)
-  }
-  return readTypedValue(r, dataType)
-}
-const innerConfigReport = (r: BufferWithPointer) => {
+const readReportConfigRecord = (r: BufferWithPointer) => {
   const direction = r.uint8()
   const attrId = r.uint16le()
   if (direction === 0x01)
@@ -95,7 +60,7 @@ const innerConfigReport = (r: BufferWithPointer) => {
     dataType,
     minRepIntval,
     maxRepIntval,
-    repChange: innerMulti(r, dataType) // TODO: Won't this always be an unstructured scalar value?
+    repChange: readByType(r, dataType) // TODO: Won't this always be an unstructured scalar value?
   } as const
 }
 
@@ -104,16 +69,16 @@ const specialReads = {
   readRsp: readUntilEnd(r => {
     const attrId = r.uint16le()
     const status = r.uint8()
-    if (status !== 0) return { attrId, status }
+    if (status !== 0) return { attrId, status } as const
     const dataType = r.uint8()
-    const attrData = innerMulti(r, dataType)
-    return { attrId, status, dataType, attrData }
+    const attrData = readByType(r, dataType)
+    return { attrId, status, dataType, attrData } as const
   }),
   write: readUntilEnd(r => {
     const attrId = r.uint16le()
     const dataType = r.uint8()
-    const attrData = innerMulti(r, dataType)
-    return { attrId, dataType, attrData }
+    const attrData = readByType(r, dataType)
+    return { attrId, dataType, attrData } as const
   }),
   writeRsp: collapseSuccess(
     fixedLength(
@@ -124,7 +89,7 @@ const specialReads = {
         } as const)
     )
   ),
-  configReport: readUntilEnd(innerConfigReport),
+  configReport: readUntilEnd(readReportConfigRecord),
   configReportRsp: collapseSuccess(
     fixedLength(
       4,
@@ -147,12 +112,12 @@ const specialReads = {
       // TODO: assert and type that only "unsupAttribute" | "unreportableAttribute" | "notFound" get returned
       return { status, direction: r.uint8(), attrId: r.uint16le() } as const
     }
-    return { status, ...innerConfigReport(r) } as const
+    return { status, ...readReportConfigRecord(r) } as const
   }),
   report: readUntilEnd(r => {
     const attrId = r.uint16le()
     const dataType = r.uint8()
-    return { attrId, dataType, attrData: innerMulti(r, dataType) } as const
+    return { attrId, dataType, attrData: readByType(r, dataType) } as const
   }),
   readStruct: readUntilEnd(r => {
     return { attrId: r.uint16le(), selector: readSelector(r) } as const
@@ -165,7 +130,7 @@ const specialReads = {
       attrId,
       selector,
       dataType,
-      attrData: innerMulti(r, dataType)
+      attrData: readByType(r, dataType)
     } as const
   }),
   writeStructRsp: collapseSuccess(
@@ -187,44 +152,47 @@ const specialReads = {
   )
 } as const
 
-const writeDataTypeByTypeID = (typeID: number, c: BufferBuilder, value) => {
-  const dataType = zclTypeName(typeID)
-  const stdType = getStdType(dataType)
-  if (!stdType) throw new Error(`Unknown dataType ${dataType}`)
-
-  const fn = writeDataTable[stdType]
-  if (!fn) throw new Error(`Writing dataType ${stdType} not implemented`)
-
-  return fn(c, value)
+interface AttrsArray<T> {
+  write: (
+    args: ReadonlyArray<T>
+  ) => {
+    readonly attrs: ReadonlyArray<T>
+  }
+  read: (data: { readonly attrs: ReadonlyArray<T> }) => ReadonlyArray<T>
 }
-const attrsArray = {
-  write: <T>(args: T[]) => ({
-    attrs: args
-  }),
-  read: <T>({ attrs }: { attrs: T[] }) => attrs
-}
+type SpecAA<
+  K extends keyof (typeof specialReads & typeof specialWrites)
+> = AttrsArray<ReturnType<typeof specialReads[K]>>
+const attrsArray: AttrsArray<unknown> = {
+  write: <T>(args: ReadonlyArray<T>) =>
+    ({
+      attrs: args
+    } as const),
+  read: <T>({ attrs }: { readonly attrs: ReadonlyArray<T> }) => attrs
+} as const
 const compatabilityTable = {
   read: {
-    write: (args: { attrId: number }[]) => ({
-      attrIds: args.map(x => x.attrId)
-    }),
+    write: (args: { attrId: number }[]) =>
+      ({
+        attrIds: args.map(x => x.attrId)
+      } as const),
     read: (data: { attrIds: number[] }) =>
-      data.attrIds.map(x => ({ attrId: x }))
-  },
-  readRsp: attrsArray,
-  write: attrsArray,
-  writeUndiv: attrsArray,
-  writeRsp: attrsArray,
-  writeNoRsp: attrsArray,
-  configReport: attrsArray,
-  configReportRsp: attrsArray,
-  readReportConfig: attrsArray,
-  readReportConfigRsp: attrsArray,
-  report: attrsArray,
-  readStruct: attrsArray,
-  writeStruct: attrsArray,
-  writeStructRsp: attrsArray
-}
+      data.attrIds.map(x => ({ attrId: x } as const))
+  } as const,
+  readRsp: attrsArray as SpecAA<"readRsp">,
+  write: attrsArray as SpecAA<"write">,
+  writeUndiv: attrsArray as SpecAA<"write">,
+  writeRsp: attrsArray as SpecAA<"writeRsp">,
+  writeNoRsp: attrsArray as SpecAA<"write">,
+  configReport: attrsArray as SpecAA<"configReport">,
+  configReportRsp: attrsArray as SpecAA<"configReportRsp">,
+  readReportConfig: attrsArray as SpecAA<"readReportConfig">,
+  readReportConfigRsp: attrsArray as SpecAA<"readReportConfigRsp">,
+  report: attrsArray as SpecAA<"report">,
+  readStruct: attrsArray as SpecAA<"readStruct">,
+  writeStruct: attrsArray as SpecAA<"writeStruct">,
+  writeStructRsp: attrsArray as SpecAA<"writeStructRsp">
+} as const
 type Inverse<F extends (arg: any) => any> = F extends (arg: infer A) => infer R
   ? (arg: R) => A
   : never
@@ -236,18 +204,30 @@ type Check = {
 }
 const compatabilityTableTypeCheck: Check = compatabilityTable
 
-const writeCompatabilityLayer = (cmd, args) => {
-  const type = compatabilityTable[cmd]
+type Compat<K extends "read" | "write"> = <
+  C extends string,
+  A extends C extends keyof typeof compatabilityTable
+    ? ArgsType<typeof compatabilityTable[C][K]>[0]
+    : any
+>(
+  cmd: C,
+  args: A
+) => C extends keyof typeof compatabilityTable
+  ? ReturnType<typeof compatabilityTable[C][K]>
+  : A
+
+const writeCompatabilityLayer: Compat<"write"> = (cmd, args) => {
+  const type = compatabilityTable[cmd as string]
   if (type) return type.write(args)
   return args
 }
-const readCompatabilityLayer = (cmd, args) => {
-  const type = compatabilityTable[cmd]
+const readCompatabilityLayer: Compat<"read"> = (cmd, args) => {
+  const type = compatabilityTable[cmd as string]
   if (type) return type.read(args)
   return args
 }
 
-type ConfigReportRecord =
+type ReportConfigRecord =
   | { direction: 0x01; attrId: number; timeout: number }
   | {
       direction: 0x00
@@ -259,7 +239,7 @@ type ConfigReportRecord =
     }
 const writeReportConfigRecord = (
   c: BufferBuilder,
-  record: ConfigReportRecord
+  record: ReportConfigRecord
 ) => {
   c.uint8(record.direction).uint16le(record.attrId)
   if (record.direction === 0x01) {
@@ -272,8 +252,7 @@ const writeReportConfigRecord = (
   c.uint8(dataType)
     .uint16le(minRepIntval)
     .uint16le(maxRepIntval)
-  if (isAnalogType(dataType))
-    writeDataTypeByTypeID(dataType, c, record.repChange)
+  if (isAnalogType(dataType)) writeByType(c, dataType, record.repChange)
 }
 
 const writeWithStatus = <R, T>(fn: (c: BufferBuilder, record: T) => R) => (
@@ -319,7 +298,7 @@ const specialWrites = {
 
       if (record.status === 0) {
         c.uint8(record.dataType)
-        writeMulti(c, record.dataType, record.attrData)
+        writeByType(c, record.dataType, record.attrData)
       }
     }
   },
@@ -329,13 +308,13 @@ const specialWrites = {
   ) => {
     for (const { attrId, dataType, attrData } of arg) {
       c.uint16le(attrId).uint8(dataType)
-      writeMulti(c, dataType, attrData)
+      writeByType(c, dataType, attrData)
     }
   },
   writeRsp: writeWithStatus((c, rec: { attrId: number }) => {
     c.uint16le(rec.attrId)
   }),
-  configReport: (c: BufferBuilder, arg: ConfigReportRecord[]) => {
+  configReport: (c: BufferBuilder, arg: ReportConfigRecord[]) => {
     for (const record of arg) {
       writeReportConfigRecord(c, record)
     }
@@ -354,7 +333,7 @@ const specialWrites = {
   readReportConfigRsp: (
     c: BufferBuilder,
     arg: (
-      | { status: 0x00 } & ConfigReportRecord
+      | { status: 0x00 } & ReportConfigRecord
       | {
           status: Values<
             Pick<
@@ -362,7 +341,7 @@ const specialWrites = {
               "unsupAttribute" | "unreportableAttribute" | "notFound"
             >
           >
-        } & Pick<ConfigReportRecord, "direction" | "attrId">)[]
+        } & Pick<ReportConfigRecord, "direction" | "attrId">)[]
   ) => {
     for (const record of arg) {
       c.uint8(record.status)
@@ -379,7 +358,7 @@ const specialWrites = {
   ) => {
     for (const { attrId, dataType, attrData } of arg) {
       c.uint16le(attrId).uint8(dataType)
-      writeMulti(c, dataType, attrData)
+      writeByType(c, dataType, attrData)
     }
   },
   readStruct: (
@@ -404,7 +383,7 @@ const specialWrites = {
       c.uint16le(attrId)
       writeSelector(c, selector)
       c.uint8(dataType)
-      writeMulti(c, dataType, attrData)
+      writeByType(c, dataType, attrData)
     }
   },
   writeStructRsp: writeWithStatus(
@@ -422,58 +401,6 @@ const specialWrites = {
     }
   }
 } as const
-
-const writeMulti = (
-  c: BufferBuilder,
-  dataType: number,
-  attrData: any
-): void => {
-  const type = zclTypeName(dataType)
-  if (type === "array" || type === "set" || type === "bag") {
-    writeAttrVal(c, attrData)
-  } else if (type === "struct") {
-    writeAttrValStruct(c, attrData)
-  } else {
-    writeDataTypeByTypeID(dataType, c, attrData)
-  }
-}
-const writeAttrVal = (
-  c: BufferBuilder,
-  {
-    elmType,
-    numElms,
-    elmVals
-  }: {
-    elmType: number
-    numElms: number
-    elmVals: any[]
-  }
-): void => {
-  c.uint8(elmType).uint16le(numElms)
-  for (let i = 0; i < numElms; i += 1) {
-    writeDataTypeByTypeID(elmType, c, elmVals[i])
-  }
-}
-const writeAttrValStruct = (
-  c: BufferBuilder,
-  {
-    numElms,
-    structElms
-  }: {
-    numElms: number
-    structElms: {
-      elmType: number
-      elmVal: unknown
-    }[]
-  }
-): void => {
-  c.uint16le(numElms)
-  for (let i = 0; i < numElms; i++) {
-    const { elmType, elmVal } = structElms[i]
-    c.uint8(elmType)
-    writeDataTypeByTypeID(elmType, c, elmVal)
-  }
-}
 
 interface Selector {
   indicator: number
@@ -525,10 +452,6 @@ export class FoundPayload {
   }
 
   parse(r: BufferWithPointer) {
-    return readCompatabilityLayer(this.cmd, this.readObj(r))
-  }
-
-  private readObj(r: BufferWithPointer) {
     const data: Record<string, any> = {}
     for (const [name, type] of this.params) {
       const fn = specialReads[type] || readDataTable[getStdType(type)]
@@ -537,34 +460,30 @@ export class FoundPayload {
 
       data[name] = fn(r)
     }
-    return data
+    return readCompatabilityLayer(this.cmd, data)
   }
 
   frame(c: BufferBuilder, payload: any) {
-    payload = writeCompatabilityLayer(this.cmd, payload)
-    if (typeof payload !== "object" || Array.isArray(payload))
+    const compPayload = writeCompatabilityLayer(this.cmd, payload)
+    if (typeof compPayload !== "object" || Array.isArray(compPayload))
       throw new TypeError(
         "Payload arguments of " + this.cmd + " command should be an object"
       )
-    return this.writeBuf(payload, c)
-  }
-
-  private writeBuf(args, c: BufferBuilder) {
     for (const [name, type] of this.params) {
-      if (args[name] === undefined)
+      if (compPayload[name] === undefined)
         throw new Error(
           `Payload of command: ${this.cmd} must have property ${name}`
         )
 
       const sfn = specialWrites[type]
       if (sfn) {
-        sfn(c, args[name])
+        sfn(c, compPayload[name])
         return
       }
       const stdType = getStdType(type)
       const fn = writeDataTable[stdType]
-      if (!fn) throw new Error(`No builder method for ${stdType}`)
-      fn(c, args[name])
+      if (!fn) throw new Error(`No write function for ${stdType}`)
+      fn(c, compPayload[name])
     }
   }
 }
