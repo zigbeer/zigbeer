@@ -91,7 +91,7 @@
     "cmd": {
       "add": {
         "id": 0,
-        "params": [["groupid", "uint16"], ["groupname", "strPreLenUint8"]]
+        "params": [["groupid", "uint16"], ["groupname", "string"]]
       },
       "view": { "id": 1, "params": [["groupid", "uint16"]] },
       "getMembership": {
@@ -102,7 +102,7 @@
       "removeAll": { "id": 4, "params": [] },
       "addIfIdentifying": {
         "id": 5,
-        "params": [["groupid", "uint16"], ["groupname", "strPreLenUint8"]]
+        "params": [["groupid", "uint16"], ["groupname", "string"]]
       }
     },
     "cmdRsp": {
@@ -115,7 +115,7 @@
         "params": [
           ["status", "uint8"],
           ["groupid", "uint16"],
-          ["groupname", "strPreLenUint8"]
+          ["groupname", "string"]
         ]
       },
       "getMembershipRsp": {
@@ -149,7 +149,7 @@
           ["groupid", "uint16"],
           ["sceneid", "uint8"],
           ["transtime", "uint16"],
-          ["scenename", "strPreLenUint8"],
+          ["scenename", "string"],
           ["extensionfieldsets", "extfieldsets"]
         ]
       },
@@ -177,7 +177,7 @@
           ["groupid", "uint16"],
           ["sceneid", "uint8"],
           ["transtime", "uint16"],
-          ["scenename", "strPreLenUint8"],
+          ["scenename", "string"],
           ["extensionfieldsets", "extfieldsets"]
         ]
       },
@@ -212,7 +212,7 @@
           ["groupid", "uint16"],
           ["sceneid", "uint8"],
           ["transtime", "uint16"],
-          ["scenename", "strPreLenUint8"],
+          ["scenename", "string"],
           ["extensionfieldsets", "extfieldsets"]
         ]
       },
@@ -254,7 +254,7 @@
           ["groupid", "uint16"],
           ["sceneid", "uint8"],
           ["transtime", "uint16"],
-          ["scenename", "strPreLenUint8"],
+          ["scenename", "string"],
           ["extensionfieldsets", "extfieldsets"]
         ]
       },
@@ -923,12 +923,12 @@
       "rfidProgrammingEventMask": { "id": 71, "type": "map16" }
     },
     "cmd": {
-      "lockDoor": { "id": 0, "params": [["pincodevalue", "strPreLenUint8"]] },
-      "unlockDoor": { "id": 1, "params": [["pincodevalue", "strPreLenUint8"]] },
-      "toggleDoor": { "id": 2, "params": [["pincodevalue", "strPreLenUint8"]] },
+      "lockDoor": { "id": 0, "params": [["pincodevalue", "string"]] },
+      "unlockDoor": { "id": 1, "params": [["pincodevalue", "string"]] },
+      "toggleDoor": { "id": 2, "params": [["pincodevalue", "string"]] },
       "unlockWithTimeout": {
         "id": 3,
-        "params": [["timeout", "uint16"], ["pincodevalue", "strPreLenUint8"]]
+        "params": [["timeout", "uint16"], ["pincodevalue", "string"]]
       },
       "getLogRecord": { "id": 4, "params": [["logindex", "uint16"]] },
       "setPinCode": {
@@ -937,7 +937,7 @@
           ["userid", "uint16"],
           ["userstatus", "uint8"],
           ["usertype", "uint8"],
-          ["pincodevalue", "strPreLenUint8"]
+          ["pincodevalue", "string"]
         ]
       },
       "getPinCode": { "id": 6, "params": [["userid", "uint16"]] },
@@ -1013,7 +1013,7 @@
           ["userid", "uint16"],
           ["userstatus", "uint8"],
           ["usertype", "uint8"],
-          ["pincodevalue", "strPreLenUint8"]
+          ["pincodevalue", "string"]
         ]
       },
       "getRfidCode": { "id": 23, "params": [["userid", "uint16"]] },
@@ -1034,7 +1034,7 @@
           ["source", "uint8"],
           ["eventidalarmcode", "uint8"],
           ["userid", "uint16"],
-          ["pincodevalue", "strPreLenUint8"]
+          ["pincodevalue", "string"]
         ]
       },
       "setPinCodeRsp": { "id": 5, "params": [["status", "uint8"]] },
@@ -1044,7 +1044,7 @@
           ["userid", "uint16"],
           ["userstatus", "uint8"],
           ["usertype", "uint8"],
-          ["pincodevalue", "strPreLenUint8"]
+          ["pincodevalue", "string"]
         ]
       },
       "clearPinCodeRsp": { "id": 7, "params": [["status", "uint8"]] },
@@ -1105,7 +1105,7 @@
           ["userid", "uint16"],
           ["userstatus", "uint8"],
           ["usertype", "uint8"],
-          ["pincodevalue", "strPreLenUint8"]
+          ["pincodevalue", "string"]
         ]
       },
       "clearRfidCodeRsp": { "id": 24, "params": [["status", "uint8"]] },
@@ -1692,7 +1692,7 @@
           ["zonestatus", "uint16"],
           ["audiblenotif", "uint8"],
           ["strlen", "uint8"],
-          ["string", "strPreLenUint8"]
+          ["string", "string"]
         ]
       },
       "panelStatusChanged": {
@@ -1752,7 +1752,7 @@
     "cmd": {
       "matchProtocolAddr": {
         "id": 0,
-        "params": [["protocoladdr", "strPreLenUint8"]]
+        "params": [["protocoladdr", "string"]]
       }
     },
     "cmdRsp": {
@@ -1760,12 +1760,12 @@
         "id": 0,
         "params": [
           ["devieeeaddr", "ieeeAddr"],
-          ["protocoladdr", "strPreLenUint8"]
+          ["protocoladdr", "string"]
         ]
       },
       "advertiseProtocolAddr": {
         "id": 1,
-        "params": [["protocoladdr", "strPreLenUint8"]]
+        "params": [["protocoladdr", "string"]]
       }
     }
   },
