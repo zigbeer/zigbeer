@@ -1,0 +1,23 @@
+{
+  // Use IntelliSense to learn about possible attributes.
+  // Hover to view descriptions of existing attributes.
+  // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "zigbee2mqtt",
+      "program": "${workspaceFolder}/zigbee2mqtt/index.js",
+      "console": "integratedTerminal"
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "zcl-packet",
+      "program": "${workspaceFolder}/zcl-packet/node_modules/jest/bin/jest",
+      "cwd": "${workspaceFolder}/zcl-packet/",
+      "console": "integratedTerminal"
+    }
+  ]
+}
