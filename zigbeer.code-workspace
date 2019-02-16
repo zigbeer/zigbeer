@@ -1,0 +1,23 @@
+{
+	"folders": [
+		{
+			"path": "zigbee-shepherd"
+		},
+		{
+			"path": "zcl-packet"
+		},
+		{
+			"path": "zcl-id"
+		},
+		{
+			"path": "cc-znp"
+		},
+		{
+			"path": "."
+		}
+	],
+	"settings": {
+		"typescript.tsdk": "zcl-packet/node_modules/typescript/lib",
+		"editor.formatOnSave": true
+	}
+}
