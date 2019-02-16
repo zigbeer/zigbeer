@@ -1,0 +1,60 @@
+{
+  "name": "zigbee-shepherd",
+  "version": "0.3.1-0",
+  "description": "An open source ZigBee gateway solution with node.js.",
+  "main": "index.js",
+  "files": [
+    "/index.js",
+    "/lib"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "test": "mocha -u bdd --reporter spec"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zigbeer/zigbee-shepherd.git"
+  },
+  "keywords": [
+    "zigbee",
+    "cc253x"
+  ],
+  "author": "Jack Wu <jackchased@gmail.com>",
+  "contributors": [
+    {
+      "name": "Hedy Wang",
+      "email": "hedywings@gmail.com"
+    },
+    {
+      "name": "Simen Li",
+      "email": "simenkid@gmail.com"
+    }
+  ],
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/zigbeer/zigbee-shepherd/issues"
+  },
+  "homepage": "https://github.com/zigbeer/zigbee-shepherd#readme",
+  "dependencies": {
+    "cc-znp": "^0.5.2-2",
+    "zcl-packet": "^0.2.5-1",
+    "areq": "^0.2.0",
+    "busyman": "^0.3.0",
+    "debug": "^4.1.1",
+    "objectbox": "^0.3.0",
+    "proving": "^0.1.0",
+    "q": "^1.5.1",
+    "ziee": "^0.3.0",
+    "zstack-constants": "^0.2.0"
+  },
+  "devDependencies": {
+    "chai": "^3.5.0",
+    "mocha": "^3.2.0",
+    "sinon": "^1.17.4",
+    "sinon-chai": "^2.8.0",
+    "zcl-id": "^0.5.0-6",
+    "zive": "^0.2.2"
+  }
+}
