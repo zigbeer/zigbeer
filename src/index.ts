@@ -1,8 +1,7 @@
 import { ZclID } from "zcl-id"
+import { BufferBuilder, BufferWithPointer } from "./buffer"
 import { FoundPayload } from "./foundation"
 import { FuncPayload } from "./functional"
-import { Callback } from "./typeUtils"
-import { BufferBuilder, BufferWithPointer } from "./buffer"
 
 interface FrameControl {
   frameType: number
