@@ -1,3 +1,5 @@
+const zclId = require('zcl-id/dist/legacy');
+
 const ZShepherd = require('zigbee-shepherd');
 const logger = require('./util/logger');
 const settings = require('./util/settings');
@@ -16,6 +18,7 @@ const shepherdSettings = {
         baudRate: advancedSettings.baudrate,
         rtscts: advancedSettings.rtscts,
     },
+    zclId
 };
 
 logger.debug(`Using zigbee-shepherd with settings: '${JSON.stringify(shepherdSettings)}'`);
@@ -36,6 +39,9 @@ class Zigbee {
         this.shepherd.start((error) => {
             if (error) {
                 logger.info('Error while starting zigbee-shepherd, attemping to fix... (takes 60 seconds)');
+                if (!this.shepherd.controller._znp)
+                    logger.info("OOPS, no _znp")
+                else
                 this.shepherd.controller._znp.close((() => null));
 
                 setTimeout(() => {
