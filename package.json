@@ -1,0 +1,57 @@
+{
+  "name": "zcl-packet",
+  "version": "0.2.5-1",
+  "description": "zcl-packet is a framer and parser for ZigBee Cluster Library (ZCL) packet on node.js.",
+  "main": "dist/index.js",
+  "files": [
+    "/dist"
+  ],
+  "types": "dist/index.d.ts",
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "test": "jest",
+    "prepare": "tsc -p ./tsconfig.release.json",
+    "prettier": "prettier '{src,test}/**' --check",
+    "prettier:fix": "prettier '{src,test}/**' --write"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zigbeer/zcl-packet.git"
+  },
+  "keywords": [
+    "zcl",
+    "zigbee"
+  ],
+  "author": "Jack Wu <jackchased@gmail.com>",
+  "contributors": [
+    {
+      "name": "Hedy Wang",
+      "email": "hedywings@gmail.com"
+    },
+    {
+      "name": "Simen Li",
+      "email": "simenkid@gmail.com"
+    }
+  ],
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/zigbeer/zcl-packet/issues"
+  },
+  "homepage": "https://github.com/zigbeer/zcl-packet#readme",
+  "dependencies": {
+  },
+  "devDependencies": {
+    "@types/jest": "^23.3.14",
+    "@types/node": "^10.12.24",
+    "busyman": "^0.3.0",
+    "chance": "^1.0.4",
+    "jest": "^23.6.0",
+    "prettier": "^1.16.4",
+    "ts-jest": "^23.10.5",
+    "ts-node": "^8.0.2",
+    "typescript": "^3.4.0-dev.20190209",
+    "zcl-id": "^0.5.0-6"
+  }
+}

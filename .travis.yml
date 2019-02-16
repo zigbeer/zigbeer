@@ -1,0 +1,18 @@
+language: node_js
+node_js:
+- '6'
+- '10'
+jobs:
+  include:
+  - stage: deploy
+    script: skip
+    node_js:
+    - '10'
+    deploy:
+      provider: npm
+      email: qm3ster@gmail.com
+      api_key:
+        secure: WivGfyKyv1WJKFPFaDgxMWBF38IxoRa5rjDNmiJrLrlumVkcbcsJpjiXugv8dxDi6acJ4OdtKQOLdUag2Nb18RH5QEXjoFdFcUuwhZ6FJiRIvSJ5mN2B22eK4Hl3CFOLgnmXHG0r43V+QW5GNl2s+P0xM1HOQ2vCWvo94C4+TNuq4JmE3QZMiy122jVuPNdI2zshgkjapbUsobjNIucecYfhhvlHtseQRuVbv+3lzrHidtrG0QrXmsxDKm0WXFh5tmq/3V0UGQqBijSEdLGUs5gUMRKS+t+HQ2Tyt1TzQKniaQ6zZmPuiUsBZxGUL82eccAnJ4fkIxp88/bOWV9BX9OcfT3fQOvOG57W5MExzwS+i770B93f8lfWVOsQnsixt3Fwhqg7pRLD/qDeaOGo1fK+tjq3II8iK1lcGnZp+oDdUoJYKHYvQQ8Hc3lRWfghdA3qaZJcVcrYIyS0Khprg6KnQUP5u5yJ2ZaoQHeXMBdk3JkbsCqTBtLk9aJwfjewtrWyTFnajMDPd5tFeITY24E1GU3E88Q74KZ1yEQb3UrDHutSAGe1ImQX6mQK4KyPEdvmWkeQ/T9DDsQ2ngQOQNC37Qb1DAuZCSLFbgWEe15qc8AtXJouC0qTJ3zb8cHmXYyRmpoVoIUulQT37eI/JOTHmGNIjcavwh4FGfYezII=
+      on:
+        tags: true
+        repo: ZigBeans/zcl-packet

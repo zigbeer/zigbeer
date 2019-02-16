@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    "strict": true,
+    "noImplicitAny": false,
+    "target": "es6",
+    "module": "commonjs",
+    "lib": ["es2017"],
+    "resolveJsonModule": true,
+    "noFallthroughCasesInSwitch": true,
+    "noEmit": true
+  },
+  "exclude": ["dist"]
+}
