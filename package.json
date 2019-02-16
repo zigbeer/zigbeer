@@ -1,0 +1,63 @@
+{
+  "name": "zigbee2mqtt",
+  "version": "1.0.1",
+  "description": "Zigbee to MQTT bridge using zigbee-shepherd",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Koenkk/zigbee2mqtt.git"
+  },
+  "engines": {
+    "node": "8.11 - 10"
+  },
+  "keywords": [
+    "xiaomi",
+    "tradfri",
+    "hue",
+    "bridge",
+    "zigbee",
+    "mqtt",
+    "cc2531"
+  ],
+  "scripts": {
+    "coverage": "nyc --all report --reporter=text mocha --recursive --timeout=3000",
+    "docgen": "node docgen/docgen.js",
+    "eslint": "node_modules/.bin/eslint .",
+    "start": "node index.js",
+    "test": "mocha --recursive"
+  },
+  "author": "Koen Kanters",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/Koenkk/zigbee2mqtt/issues"
+  },
+  "homepage": "https://koenkk.github.io/zigbee2mqtt",
+  "dependencies": {
+    "git-last-commit": "*",
+    "js-yaml": "*",
+    "json2yaml": "*",
+    "mkdir-recursive": "*",
+    "moment": "*",
+    "mqtt": "*",
+    "object-assign-deep": "*",
+    "queue": "*",
+    "rimraf": "*",
+    "winston": "2.4.2",
+    "zigbee-shepherd": "git+https://github.com/Koenkk/zigbee-shepherd.git#ce52ac4131e2a505af6197b4a26d2b5360e4eb80",
+    "zigbee-shepherd-converters": "7.0.2",
+    "ziee": "*",
+    "zive": "*"
+  },
+  "devDependencies": {
+    "chai": "*",
+    "chai-spies": "*",
+    "eslint": "*",
+    "eslint-config-google": "*",
+    "eslint-plugin-mocha": "*",
+    "image-size": "*",
+    "mocha": "*",
+    "nyc": "*",
+    "proxyquire": "*",
+    "sinon": "*"
+  }
+}
