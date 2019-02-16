@@ -1,0 +1,55 @@
+{
+  "name": "zcl-id",
+  "version": "0.5.0-6",
+  "description": "An utility for getting ZCL identifiers defined by ZigBee Cluster Library.",
+  "main": "dist/index.js",
+  "files": [
+    "/dist"
+  ],
+  "types": "dist/index.d.ts",
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "test": "jest",
+    "prepare": "tsc",
+    "prettier": "prettier '{src,test}/**' --check",
+    "prettier:fix": "prettier '{src,test}/**' --write"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zigbeer/zcl-id.git"
+  },
+  "author": "Simen Li",
+  "contributors": [
+    {
+      "name": "Hedy Wang",
+      "email": "hedywings@gmail.com"
+    },
+    {
+      "name": "Peter Yi",
+      "email": "peter.eb9@gmail.com"
+    },
+    {
+      "name": "Jack Wu",
+      "email": "jackchased@gmail.com"
+    },
+    {
+      "name": "Eason Chang",
+      "email": "onepiece5478@gmail.com"
+    }
+  ],
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/zigbeer/zcl-id/issues"
+  },
+  "homepage": "https://github.com/zigbeer/zcl-id#readme",
+  "devDependencies": {
+    "@types/jest": "^23.3.13",
+    "@types/node": "^10.12.18",
+    "jest": "^23.6.0",
+    "prettier": "^1.16.1",
+    "ts-jest": "^23.10.5",
+    "typescript": "^3.2.4"
+  }
+}
