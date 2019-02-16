@@ -1,4 +1,4 @@
-export const stdTypeMapping = {
+const stdTypeMapping = {
   noData: "noData",
 
   data8: "uint8",
@@ -85,7 +85,7 @@ export const getStdType = <T extends string>(
   return stdType as any
 }
 
-export const zclTypes = {
+const zclTypes = {
   noData: 0x00,
 
   data8: 0x08,
