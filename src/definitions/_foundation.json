@@ -1,0 +1,67 @@
+{
+  "read": { "id": 0, "params": [["attrIds", "read"]] },
+  "readRsp": {
+    "id": 1,
+    "params": [["attrs", "readRsp"]]
+  },
+  "write": {
+    "id": 2,
+    "params": [["attrs", "write"]]
+  },
+  "writeUndiv": {
+    "id": 3,
+    "params": [["attrs", "write"]]
+  },
+  "writeRsp": { "id": 4, "params": [["attrs", "writeRsp"]] },
+  "writeNoRsp": {
+    "id": 5,
+    "params": [["attrs", "write"]]
+  },
+  "configReport": {
+    "id": 6,
+    "params": [["attrs", "configReport"]]
+  },
+  "configReportRsp": { "id": 7, "params": [["attrs", "configReportRsp"]] },
+  "readReportConfig": {
+    "id": 8,
+    "params": [["attrs", "readReportConfig"]]
+  },
+  "readReportConfigRsp": {
+    "id": 9,
+    "params": [["attrs", "readReportConfigRsp"]]
+  },
+  "report": {
+    "id": 10,
+    "params": [["attrs", "report"]]
+  },
+  "defaultRsp": {
+    "id": 11,
+    "params": [["cmdId", "uint8"], ["statusCode", "uint8"]]
+  },
+  "discover": {
+    "id": 12,
+    "params": [["startAttrId", "uint16"], ["maxAttrIds", "uint8"]]
+  },
+  "discoverRsp": {
+    "id": 13,
+    "params": [["discComplete", "boolean"], ["attrInfos", "discoverRsp"]]
+  },
+  "readStruct": {
+    "id": 14,
+    "params": [["attrs", "readStruct"]]
+  },
+  "writeStruct": {
+    "id": 15,
+    "params": [["attrs", "writeStruct"]]
+  },
+  "writeStructRsp": {
+    "id": 16,
+    "params": [["attrs", "writeStructRsp"]]
+  },
+  "discoverCmdsRec": { "id": 17, "TODO": 1 },
+  "discoverCmdsRecRsp": { "id": 18, "TODO": 1 },
+  "discoverCmdsGen": { "id": 19, "TODO": 1 },
+  "discoverCmdsGenRsp": { "id": 20, "TODO": 1 },
+  "discoverAttrsExt": { "id": 21, "TODO": 1 },
+  "discoverAttrsExtRsp": { "id": 22, "TODO": 1 }
+}
