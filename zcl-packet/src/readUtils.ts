@@ -64,7 +64,7 @@ export const collapseSuccess = <R>(
 ) =>
   | readonly[{ readonly status: 0x00 }]
   | ({ readonly status: FailureStatus } & R)[]) => {
-  type Items = ({ status: FailureStatus } & R)[]
+  type Items = ({ readonly status: FailureStatus } & R)[]
   const len = byteLengths.get(fn)
   return len
     ? (r: BufferWithPointer) => {
@@ -77,9 +77,9 @@ export const collapseSuccess = <R>(
         for (let i = 0; i < repeats; i++) {
           const status = r.uint8() as Status // TODO: Validate that it's a known status?
           if (status === 0x00)
-            if (i === 0 && r.remaining() === 0) return [{ status }] as const
+            if (i === 0 && r.remaining() === 0) return [{ status }]
             else throw new Error("Bad payload: successful status not alone")
-          arr[i] = { status, ...fn(r) } as const
+          arr[i] = { status, ...fn(r) }
         }
         return arr
       }
@@ -90,9 +90,9 @@ export const collapseSuccess = <R>(
         while (r.remaining() !== 0) {
           const status = r.uint8() as Status // TODO: Validate that it's a known status?
           if (status === 0x00)
-            if (i === 0 && r.remaining() === 0) return [{ status }] as const
+            if (i === 0 && r.remaining() === 0) return [{ status }]
             else throw new Error("Bad payload: successful status not alone")
-          arr.push({ status, ...fn(r) } as const)
+          arr.push({ status, ...fn(r) })
           const remaining = r.remaining()
           if (remaining >= last)
             throw new Error(`Infinite loop: repeat unit isn't consuming buffer`)
