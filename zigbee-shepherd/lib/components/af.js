@@ -265,7 +265,7 @@ function afFactory(zclId) {
         try {
             zclBuffer = zcl.frame(frameCntl, manufCode, seqNum, cmd, zclData);
         } catch (e) {
-            if (e.message === 'Unrecognized command') {
+            if (e.message.startsWith('Unrecognized command')) {
                 deferred.reject(e);
                 return deferred.promise.nodeify(callback);
             } else {
