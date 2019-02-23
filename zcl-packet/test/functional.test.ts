@@ -5,6 +5,7 @@ const zclId: ZclID = require("zcl-id/dist/legacy")
 import { getStdType } from "../src/definition"
 import { FuncPayload } from "../src/functional"
 import { BufferWithPointer, BufferBuilder } from "../src/buffer"
+import { findFunctional } from "../src/findCommand"
 
 const clusterIds = Object.keys(
   require("zcl-id/src/definitions/common.json").clusterId
@@ -29,7 +30,14 @@ describe("Functional Cmd framer and parser Check", function() {
       }
 
       it(`${cmd} frame() and parse()`, () => {
-        const funcObj = new FuncPayload(cluster, 0, cmd, zclId)
+        const {
+          directionString: dir,
+          cmdId,
+          cmdName,
+          params,
+          cluster: cl
+        } = findFunctional(cluster, 0, cmd, zclId)
+        const funcObj = new FuncPayload(dir, cmdId, cmdName, params, cl)
         const c = new BufferBuilder()
         funcObj.frame(c, args)
         const result = funcObj.parse(new BufferWithPointer(c.result()))
@@ -60,7 +68,20 @@ describe("Functional CmdRsp framer and parser Check", function() {
       }
 
       it(`${cmdRsp} frame() and parse()`, () => {
-        const funcObj = new FuncPayload(cluster, 1, cmdRsp, zclId)
+        const {
+          directionString,
+          cmdId,
+          cmdName,
+          params,
+          cluster: cl
+        } = findFunctional(cluster, 1, cmdRsp, zclId)
+        const funcObj = new FuncPayload(
+          directionString,
+          cmdId,
+          cmdName,
+          params,
+          cl
+        )
         const c = new BufferBuilder()
         funcObj.frame(c, args)
 

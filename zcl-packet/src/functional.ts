@@ -1,4 +1,3 @@
-import { ZclID } from "zcl-id"
 import { BufferBuilder, BufferWithPointer } from "./buffer"
 import { readDataTable } from "./dataTypeRead"
 import { writeDataTable } from "./dataTypeWrite"
@@ -7,53 +6,17 @@ import { specialReads } from "./functionalReads"
 import { specialWrites } from "./functionalWrites"
 import { SecondArgument } from "./typeUtils"
 
-type ParamTypes = keyof (typeof specialWrites & typeof writeDataTable)
+export type FunctionalParamTypes = keyof (typeof specialWrites &
+  typeof writeDataTable)
 
 export class FuncPayload {
-  direction: string
-  cluster: string
-  cmd: string
-  cmdId: number
-  params: [string, ParamTypes][]
   constructor(
-    clusterId: string | number,
-    direction: 0 | 1,
-    cmd: string | number,
-    zclId: ZclID
-  ) {
-    const cluster = zclId.cluster(clusterId)
-
-    if (!cluster) {
-      throw new Error(`Unknown cluster ${clusterId}`)
-    }
-
-    this.cluster = cluster.key
-
-    const cmdEntry = direction
-      ? zclId.getCmdRsp(this.cluster, cmd)
-      : zclId.functional(this.cluster, cmd)
-    if (!cmdEntry) throw new Error(`Unknown command ${this.cluster}/${cmd}`)
-
-    this.cmd = cmdEntry.key
-
-    const wholeCommand = zclId.zclmeta.functional.get(this.cluster, this.cmd)
-    if (!wholeCommand)
-      throw new Error(`Unknown command ${this.cluster}/${this.cmd}`)
-    this.cmdId = wholeCommand.id
-    this.params = wholeCommand.params as [string, ParamTypes][]
-
-    const _direction = zclId.zclmeta.functional.getDirection(
-      this.cluster,
-      this.cmd
-    )
-    if (!_direction) {
-      throw new Error("Unrecognized direction")
-    }
-    if (_direction !== (direction ? "serverToClient" : "clientToServer")) {
-      throw new Error("Wrong direction")
-    }
-    this.direction = _direction
-  }
+    public readonly direction: "clientToServer" | "serverToClient",
+    public readonly cmdId: number,
+    public readonly cmdName: string,
+    public readonly params: [string, FunctionalParamTypes][],
+    public readonly cluster: string
+  ) {}
 
   parse(r: BufferWithPointer) {
     const data: Record<string, any> = {}
@@ -151,7 +114,7 @@ export class FuncPayload {
   }
 }
 
-const frameArg = <T extends ParamTypes>(
+const frameArg = <T extends FunctionalParamTypes>(
   type: T,
   c: BufferBuilder,
   value: SecondArgument<
@@ -169,7 +132,7 @@ const frameArg = <T extends ParamTypes>(
 }
 const frameArgs = (
   c: BufferBuilder,
-  args: { type: ParamTypes; value: any }[]
+  args: { type: FunctionalParamTypes; value: any }[]
 ) => {
   for (const { type, value } of args) {
     frameArg(type, c, value)
