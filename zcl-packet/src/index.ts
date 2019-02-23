@@ -2,6 +2,7 @@ import { ZclID } from "zcl-id"
 import { BufferBuilder, BufferWithPointer } from "./buffer"
 import { FoundPayload } from "./foundation"
 import { FuncPayload } from "./functional"
+import { findFoundation, findFunctional } from "./findCommand"
 
 interface FrameControl {
   frameType: number
@@ -111,7 +112,7 @@ const zclFactory = (zclId: ZclID) => {
       manufCode,
       seqNum,
       // to make sure data.cmdId will be string
-      cmdId: zclObj.cmd,
+      cmdId: zclObj.cmdName,
       payload
     }
   }
@@ -168,14 +169,30 @@ const zclFactory = (zclId: ZclID) => {
     clusterId?: string | number
   ) {
     switch (frameType) {
-      case 0:
-        return new FoundPayload(cmd, zclId)
+      case 0: {
+        const { cmdId, cmdName, params } = findFoundation(cmd, zclId)
+        return new FoundPayload(params, cmdName, cmdId)
+      }
       case 1:
         switch (direction) {
           case 0:
-          case 1:
+          case 1: {
             assertNumberOrString("clusterId", clusterId)
-            return new FuncPayload(clusterId!, direction, cmd, zclId)
+            const {
+              directionString,
+              cmdId,
+              cmdName,
+              params,
+              cluster
+            } = findFunctional(clusterId!, direction, cmd, zclId)
+            return new FuncPayload(
+              directionString,
+              cmdId,
+              cmdName,
+              params,
+              cluster
+            )
+          }
           default:
             throw new TypeError(`Reserved direction: ${direction}`)
         }

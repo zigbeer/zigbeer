@@ -1,4 +1,3 @@
-import { ZclID } from "zcl-id"
 import { BufferBuilder, BufferWithPointer } from "./buffer"
 import { readDataTable } from "./dataTypeRead"
 import { writeDataTable } from "./dataTypeWrite"
@@ -82,22 +81,11 @@ const readCompatabilityLayer: Compat<"read"> = (cmd, args) => {
 }
 
 export class FoundPayload {
-  readonly cmd: string
-  readonly cmdId: number
-  readonly params: [string, string][]
-  constructor(cmd: string | number, zclId: ZclID) {
-    const command = zclId.foundation(cmd)
-
-    if (!command) throw new Error("Unrecognized command: " + cmd)
-
-    this.cmd = command.key
-    this.cmdId = command.value
-
-    const wholeCommand = zclId.zclmeta.foundation.get(this.cmd)
-    if (!wholeCommand) throw new Error(`Unknown command foundation/${this.cmd}`)
-    this.cmdId = wholeCommand.id
-    this.params = wholeCommand.params
-  }
+  constructor(
+    private readonly params: [string, string][],
+    public readonly cmdName: string,
+    public readonly cmdId: number
+  ) {}
 
   parse(r: BufferWithPointer) {
     const data: Record<string, any> = {}
@@ -108,19 +96,19 @@ export class FoundPayload {
 
       data[name] = fn(r)
     }
-    return readCompatabilityLayer(this.cmd, data)
+    return readCompatabilityLayer(this.cmdName, data)
   }
 
   frame(c: BufferBuilder, payload: any) {
-    const compPayload = writeCompatabilityLayer(this.cmd, payload)
+    const compPayload = writeCompatabilityLayer(this.cmdName, payload)
     if (typeof compPayload !== "object" || Array.isArray(compPayload))
       throw new TypeError(
-        "Payload arguments of " + this.cmd + " command should be an object"
+        "Payload arguments of " + this.cmdName + " command should be an object"
       )
     for (const [name, type] of this.params) {
       if (compPayload[name] === undefined)
         throw new Error(
-          `Payload of command: ${this.cmd} must have property ${name}`
+          `Payload of command: ${this.cmdName} must have property ${name}`
         )
       const fn = specialWrites[type] || writeDataTable[getStdType(type)]
 
