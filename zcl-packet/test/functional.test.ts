@@ -90,7 +90,7 @@ function tryRandomArg(type) {
     case "ieeeAddr":
       return Buffer.from("00124b00019c2ee9", "hex")
     case "strPreLenUint8":
-      const length = chance.integer({ min: 0, max: 0xff })
+      const length = chance.integer({ min: 0, max: 0xfe })
       return chance.string({ length })
     case "preLenUint8":
     case "preLenUint16":
