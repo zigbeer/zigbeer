@@ -13,8 +13,8 @@
   "scripts": {
     "test": "jest",
     "prepare": "tsc -p ./tsconfig.release.json",
-    "prettier": "prettier '{src,test}/**' --check",
-    "prettier:fix": "prettier '{src,test}/**' --write"
+    "prettier": "prettier \"{src,test}/**\" --check",
+    "prettier:fix": "prettier \"{src,test}/**\" --write"
   },
   "repository": {
     "type": "git",
@@ -40,8 +40,7 @@
     "url": "https://github.com/zigbeer/zcl-packet/issues"
   },
   "homepage": "https://github.com/zigbeer/zcl-packet#readme",
-  "dependencies": {
-  },
+  "dependencies": {},
   "devDependencies": {
     "@types/jest": "^23.3.14",
     "@types/node": "^10.12.24",
