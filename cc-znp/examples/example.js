@@ -1,4 +1,4 @@
-var ccznp = require('../index.js');
+const ccznp = require('../index.js');
 
 var spCfg = {
     path: "/dev/ttyACM0",
@@ -8,19 +8,15 @@ var spCfg = {
     }
 };
 
-ccznp.on('ready', function () {
-    ccznp.sysRequest('ping', {}, function (err, result) {
-        if (err)
-            console.log(err);
-        else
-            console.log(result);
+ccznp.on('ready', function() {
+    ccznp.sysRequest('ping', {}, function(err, result) {
+        if (err) console.log(err);
+        else console.log(result);
     });
 
-    ccznp.sysRequest('version', {}, function (err, result) {
-        if (err)
-            console.log(err);
-        else
-            console.log(result);
+    ccznp.sysRequest('version', {}, function(err, result) {
+        if (err) console.log(err);
+        else console.log(result);
     });
 });
 
@@ -28,7 +24,6 @@ ccznp.on('AREQ', function(result) {
     console.log(result);
 });
 
-ccznp.init(spCfg, function (err) {
-    if (err)
-        console.log(err);
+ccznp.init(spCfg, function(err) {
+    if (err) console.log(err);
 });
