@@ -430,12 +430,13 @@ ZShepherd.prototype.lqiScan = function (ieeeAddr) {
                 let dev = self._findDevByAddr(ieeeAddr);
                 devinfo.parent = parent;
                 devinfo.status = dev ? dev.status : "offline";
-                if (dev && dev.type == "Router" && !noDuplicate[ieeeAddr]) {
+                const dedupKey = parent + '|' + ieeeAddr;
+                if (dev && dev.type == "Router" && !noDuplicate[dedupKey]) {
                     chain = chain.then(function () {
                         return self.lqi(ieeeAddr).then(processResponse(ieeeAddr));
                     });
                 }
-                noDuplicate[ieeeAddr] = devinfo;
+                noDuplicate[dedupKey] = devinfo;
             });
             return chain;
         }
