@@ -40,6 +40,7 @@ function Controller(shepherd, cfg) {
     /***************************************************/
     this._shepherd = shepherd;
     this._coord = null;
+    this._znp = znp; // required sometimes
     this._cfg = cfg;
     this._zdo = new Zdo(this);
     this._resetting = false;
@@ -453,7 +454,7 @@ Controller.prototype.findEndpoint = function (addr, epId) {
 };
 
 Controller.prototype.setNvParams = function (net) {
-    // net: { panId, channelList, precfgkey, precfgkeysEnable, startoptClearState }
+    // net: { panId, extPanId, channelList, precfgkey, precfgkeysEnable, startoptClearState }
     net = net || {};
     proving.object(net, 'opts.net should be an object.');
 
@@ -462,6 +463,13 @@ Controller.prototype.setNvParams = function (net) {
             case 'panId':
                 proving.number(val, 'net.panId should be a number.');
                 nvParams.panId.value = [ val & 0xFF, (val >> 8) & 0xFF ];
+                break;
+            case 'extPanId':
+                if (val && (!_.isArray(val) || val.length !== 8))
+                    throw new TypeError('net.extPanId should be an array with 8 uint8 integers.');
+                if (val) {
+                    nvParams.extPanId.value = val;
+                }
                 break;
             case 'precfgkey':
                 if (!_.isArray(val) || val.length !== 16)
@@ -513,6 +521,9 @@ Controller.prototype.checkNvParams = function (callback) {
         }); },
         function () { return self.request('SAPI', 'readConfiguration', nvParams.panId).delay(10).then(function (rsp) {
             if (!_.isEqual(bufToArray(rsp.value), nvParams.panId.value)) return Q.reject('reset');
+        }); },
+        function () { return self.request('SAPI', 'readConfiguration', nvParams.extPanId).delay(10).then(function (rsp) {
+            if (!_.isEqual(bufToArray(rsp.value), nvParams.extPanId.value)) return Q.reject('reset');
         }); },
         function () { return self.request('SAPI', 'readConfiguration', nvParams.channelList).delay(10).then(function (rsp) {
             if (!_.isEqual(bufToArray(rsp.value), nvParams.channelList.value)) return Q.reject('reset');
