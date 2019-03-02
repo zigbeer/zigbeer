@@ -1,5 +1,4 @@
 'use strict';
-const expect = require('chai').expect;
 const Chance = require('chance');
 const chance = new Chance();
 
@@ -107,8 +106,8 @@ describe('#.parse', () => {
             payload = argObj.framer();
 
             argObj.parse(argObj.type, payload.length, payload, (err, result) => {
-                it(`${argObj.cmd} parser check`, () => {
-                    expect(result).to.eql(args);
+                test(`${argObj.cmd} parser check`, () => {
+                    expect(result).toEqual(args);
                 });
             });
         });

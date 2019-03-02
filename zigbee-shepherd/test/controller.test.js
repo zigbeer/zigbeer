@@ -1,7 +1,5 @@
 'use strict';
 const Q = require('q');
-const sinon = require('sinon');
-const expect = require('chai').expect;
 const EventEmitter = require('events');
 const znp = require('cc-znp');
 const Device  = require('../lib/model/device');
@@ -67,17 +65,17 @@ const loEp8 = new Coordpoint(coordDev, {
 });
 
 describe('Constructor Check', () => {
-    it('should has all correct members after new', () => {
+    test('should has all correct members after new', () => {
         const controller = new Controller({zclId}, { path: '/dev/ttyUSB0' });
 
-        expect(controller._shepherd).to.be.an('object');
-        expect(controller._coord).to.be.null;
-        expect(controller._zdo).to.be.an('object');
-        expect(controller._cfg).to.be.deep.equal({ path: '/dev/ttyUSB0' });
-        expect(controller._resetting).to.be.false;
-        expect(controller.query).to.be.an('object');
+        expect(typeof controller._shepherd).toBe('object');
+        expect(controller._coord).toBeNull();
+        expect(typeof controller._zdo).toBe('object');
+        expect(controller._cfg).toEqual({ path: '/dev/ttyUSB0' });
+        expect(controller._resetting).toBe(false);
+        expect(typeof controller.query).toBe('object');
 
-        expect(controller._net).to.be.deep.equal({
+        expect(controller._net).toEqual({
             state: null,
             channel: null,
             panId: null,
@@ -87,23 +85,23 @@ describe('Constructor Check', () => {
             joinTimeLeft: 0,
         });
 
-        expect(controller.nextTransId).to.be.a('function');
-        expect(controller.permitJoinCountdown).to.be.a('function');
-        expect(controller.isResetting).to.be.a('function');
+        expect(typeof controller.nextTransId).toBe('function');
+        expect(typeof controller.permitJoinCountdown).toBe('function');
+        expect(typeof controller.isResetting).toBe('function');
     });
 
-    it('should throw if cfg is not an object', () => {
-        expect(() => new Controller({}, 'x')).to.throw(TypeError);
-        expect(() => new Controller({}, 1)).to.throw(TypeError);
-        expect(() => new Controller({}, [])).to.throw(TypeError);
-        expect(() => new Controller({}, undefined)).to.throw(TypeError);
-        expect(() => new Controller({}, null)).to.throw(TypeError);
-        expect(() => new Controller({}, NaN)).to.throw(TypeError);
-        expect(() => new Controller({}, true)).to.throw(TypeError);
-        expect(() => new Controller({}, new Date())).to.throw(TypeError);
-        expect(() => new Controller({}, () => {})).to.throw(TypeError);
+    test('should throw if cfg is not an object', () => {
+        expect(() => new Controller({}, 'x')).toThrowError(TypeError);
+        expect(() => new Controller({}, 1)).toThrowError(TypeError);
+        expect(() => new Controller({}, [])).toThrowError(TypeError);
+        expect(() => new Controller({}, undefined)).toThrowError(TypeError);
+        expect(() => new Controller({}, null)).toThrowError(TypeError);
+        expect(() => new Controller({}, NaN)).toThrowError(TypeError);
+        expect(() => new Controller({}, true)).toThrowError(TypeError);
+        expect(() => new Controller({}, new Date())).toThrowError(TypeError);
+        expect(() => new Controller({}, () => {})).toThrowError(TypeError);
 
-        expect(() => new Controller({}, {})).not.to.throw(TypeError);
+        expect(() => new Controller({}, {})).not.toThrowError(TypeError);
     });
 });
 
@@ -113,351 +111,351 @@ describe('Signature Check', () => {
     controller._coord = coordDev;
 
     describe('#.reset', () => {
-        it('should be a function', () => {
-            expect(controller.reset).to.be.a('function');
+        test('should be a function', () => {
+            expect(typeof controller.reset).toBe('function');
         });
 
-        it('should throw if mode is not a number and not a string', () => {
-            expect(() => controller.reset([], () => {})).to.throw(TypeError);
-            expect(() => controller.reset({}, () => {})).to.throw(TypeError);
-            expect(() => controller.reset(undefined, () => {})).to.throw(TypeError);
-            expect(() => controller.reset(null, () => {})).to.throw(TypeError);
-            expect(() => controller.reset(NaN, () => {})).to.throw(TypeError);
-            expect(() => controller.reset(true, () => {})).to.throw(TypeError);
-            expect(() => controller.reset(new Date(), () => {})).to.throw(TypeError);
-            expect(() => controller.reset(() => {}, () => {})).to.throw(TypeError);
+        test('should throw if mode is not a number and not a string', () => {
+            expect(() => controller.reset([], () => {})).toThrowError(TypeError);
+            expect(() => controller.reset({}, () => {})).toThrowError(TypeError);
+            expect(() => controller.reset(undefined, () => {})).toThrowError(TypeError);
+            expect(() => controller.reset(null, () => {})).toThrowError(TypeError);
+            expect(() => controller.reset(NaN, () => {})).toThrowError(TypeError);
+            expect(() => controller.reset(true, () => {})).toThrowError(TypeError);
+            expect(() => controller.reset(new Date(), () => {})).toThrowError(TypeError);
+            expect(() => controller.reset(() => {}, () => {})).toThrowError(TypeError);
 
-            expect(() => controller.reset(1, () => {})).not.to.throw(TypeError);
-            expect(() => controller.reset('soft', () => {})).not.to.throw(TypeError);
+            expect(() => controller.reset(1, () => {})).not.toThrowError(TypeError);
+            expect(() => controller.reset('soft', () => {})).not.toThrowError(TypeError);
         });
     });
 
     describe('#.request', () => {
-        it('should be a function', () => {
-            expect(controller.request).to.be.a('function');
+        test('should be a function', () => {
+            expect(typeof controller.request).toBe('function');
         });
 
-        it('should throw if subsys is not a number and not a string', () => {
-            expect(() => controller.request([], 'ping', {}, () => {})).to.throw(TypeError);
-            expect(() => controller.request({}, 'ping', {}, () => {})).to.throw(TypeError);
-            expect(() => controller.request(undefined, 'ping', {}, () => {})).to.throw(TypeError);
-            expect(() => controller.request(null, 'ping', {}, () => {})).to.throw(TypeError);
-            expect(() => controller.request(NaN, 'ping', {}, () => {})).to.throw(TypeError);
-            expect(() => controller.request(true, 'ping', {}, () => {})).to.throw(TypeError);
-            expect(() => controller.request(new Date(), 'ping', {}, () => {})).to.throw(TypeError);
-            expect(() => controller.request(() => {}, 'ping', {}, () => {})).to.throw(TypeError);
+        test('should throw if subsys is not a number and not a string', () => {
+            expect(() => controller.request([], 'ping', {}, () => {})).toThrowError(TypeError);
+            expect(() => controller.request({}, 'ping', {}, () => {})).toThrowError(TypeError);
+            expect(() => controller.request(undefined, 'ping', {}, () => {})).toThrowError(TypeError);
+            expect(() => controller.request(null, 'ping', {}, () => {})).toThrowError(TypeError);
+            expect(() => controller.request(NaN, 'ping', {}, () => {})).toThrowError(TypeError);
+            expect(() => controller.request(true, 'ping', {}, () => {})).toThrowError(TypeError);
+            expect(() => controller.request(new Date(), 'ping', {}, () => {})).toThrowError(TypeError);
+            expect(() => controller.request(() => {}, 'ping', {}, () => {})).toThrowError(TypeError);
 
-            expect(() => controller.request(5, 'ping', {}, () => {})).not.to.throw(TypeError);
-            expect(() => controller.request('ZDO', 'ping', {}, () => {})).not.to.throw(TypeError);
+            expect(() => controller.request(5, 'ping', {}, () => {})).not.toThrowError(TypeError);
+            expect(() => controller.request('ZDO', 'ping', {}, () => {})).not.toThrowError(TypeError);
         });
 
-        it('should throw if cmdId is not a number and not a string', () => {
-            expect(() => controller.request('ZDO', [], {}, () => {})).to.throw(TypeError);
-            expect(() => controller.request('ZDO', {}, {}, () => {})).to.throw(TypeError);
-            expect(() => controller.request('ZDO', undefined, {}, () => {})).to.throw(TypeError);
-            expect(() => controller.request('ZDO', null, {}, () => {})).to.throw(TypeError);
-            expect(() => controller.request('ZDO', NaN, {}, () => {})).to.throw(TypeError);
-            expect(() => controller.request('ZDO', true, {}, () => {})).to.throw(TypeError);
-            expect(() => controller.request('ZDO', new Date(), {}, () => {})).to.throw(TypeError);
-            expect(() => controller.request('ZDO', () => {}, {}, () => {})).to.throw(TypeError);
+        test('should throw if cmdId is not a number and not a string', () => {
+            expect(() => controller.request('ZDO', [], {}, () => {})).toThrowError(TypeError);
+            expect(() => controller.request('ZDO', {}, {}, () => {})).toThrowError(TypeError);
+            expect(() => controller.request('ZDO', undefined, {}, () => {})).toThrowError(TypeError);
+            expect(() => controller.request('ZDO', null, {}, () => {})).toThrowError(TypeError);
+            expect(() => controller.request('ZDO', NaN, {}, () => {})).toThrowError(TypeError);
+            expect(() => controller.request('ZDO', true, {}, () => {})).toThrowError(TypeError);
+            expect(() => controller.request('ZDO', new Date(), {}, () => {})).toThrowError(TypeError);
+            expect(() => controller.request('ZDO', () => {}, {}, () => {})).toThrowError(TypeError);
 
-            expect(() => controller.request('ZDO', 10, {}, () => {})).not.to.throw(TypeError);
-            expect(() => controller.request('ZDO', 'ping', {}, () => {})).not.to.throw(TypeError);
+            expect(() => controller.request('ZDO', 10, {}, () => {})).not.toThrowError(TypeError);
+            expect(() => controller.request('ZDO', 'ping', {}, () => {})).not.toThrowError(TypeError);
         });
 
-        it('should throw if valObj is not an object and not an array', () => {
-            expect(() => controller.request('ZDO', 'ping', 'x', () => {})).to.throw(TypeError);
-            expect(() => controller.request('ZDO', 'ping', 1, () => {})).to.throw(TypeError);
-            expect(() => controller.request('ZDO', 'ping', undefined, () => {})).to.throw(TypeError);
-            expect(() => controller.request('ZDO', 'ping', null, () => {})).to.throw(TypeError);
-            expect(() => controller.request('ZDO', 'ping', NaN, () => {})).to.throw(TypeError);
-            expect(() => controller.request('ZDO', 'ping', true, () => {})).to.throw(TypeError);
-            expect(() => controller.request('ZDO', 'ping', new Date(), () => {})).to.throw(TypeError);
-            expect(() => controller.request('ZDO', 'ping', () => {}, () => {})).to.throw(TypeError);
+        test('should throw if valObj is not an object and not an array', () => {
+            expect(() => controller.request('ZDO', 'ping', 'x', () => {})).toThrowError(TypeError);
+            expect(() => controller.request('ZDO', 'ping', 1, () => {})).toThrowError(TypeError);
+            expect(() => controller.request('ZDO', 'ping', undefined, () => {})).toThrowError(TypeError);
+            expect(() => controller.request('ZDO', 'ping', null, () => {})).toThrowError(TypeError);
+            expect(() => controller.request('ZDO', 'ping', NaN, () => {})).toThrowError(TypeError);
+            expect(() => controller.request('ZDO', 'ping', true, () => {})).toThrowError(TypeError);
+            expect(() => controller.request('ZDO', 'ping', new Date(), () => {})).toThrowError(TypeError);
+            expect(() => controller.request('ZDO', 'ping', () => {}, () => {})).toThrowError(TypeError);
 
-            expect(() => controller.request('ZDO', 'ping', {}, () => {})).not.to.throw(TypeError);
-            expect(() => controller.request('ZDO', 'ping', [], () => {})).not.to.throw(TypeError);
+            expect(() => controller.request('ZDO', 'ping', {}, () => {})).not.toThrowError(TypeError);
+            expect(() => controller.request('ZDO', 'ping', [], () => {})).not.toThrowError(TypeError);
         });
     });
 
     describe('#.permitJoin', () => {
-        it('should be a function', () => {
-            expect(controller.permitJoin).to.be.a('function');
+        test('should be a function', () => {
+            expect(typeof controller.permitJoin).toBe('function');
         });
 
-        it('should throw if joinTime is not a number', () => {
-            expect(() => controller.permitJoin('x', 'coord', () => {})).to.throw(TypeError);
-            expect(() => controller.permitJoin([], 'coord', () => {})).to.throw(TypeError);
-            expect(() => controller.permitJoin({}, 'coord', () => {})).to.throw(TypeError);
-            expect(() => controller.permitJoin(undefined, 'coord', () => {})).to.throw(TypeError);
-            expect(() => controller.permitJoin(null, 'coord', () => {})).to.throw(TypeError);
-            expect(() => controller.permitJoin(NaN, 'coord', () => {})).to.throw(TypeError);
-            expect(() => controller.permitJoin(true, 'coord', () => {})).to.throw(TypeError);
-            expect(() => controller.permitJoin(new Date(), 'coord', () => {})).to.throw(TypeError);
-            expect(() => controller.permitJoin(() => {}, 'coord', () => {})).to.throw(TypeError);
+        test('should throw if joinTime is not a number', () => {
+            expect(() => controller.permitJoin('x', 'coord', () => {})).toThrowError(TypeError);
+            expect(() => controller.permitJoin([], 'coord', () => {})).toThrowError(TypeError);
+            expect(() => controller.permitJoin({}, 'coord', () => {})).toThrowError(TypeError);
+            expect(() => controller.permitJoin(undefined, 'coord', () => {})).toThrowError(TypeError);
+            expect(() => controller.permitJoin(null, 'coord', () => {})).toThrowError(TypeError);
+            expect(() => controller.permitJoin(NaN, 'coord', () => {})).toThrowError(TypeError);
+            expect(() => controller.permitJoin(true, 'coord', () => {})).toThrowError(TypeError);
+            expect(() => controller.permitJoin(new Date(), 'coord', () => {})).toThrowError(TypeError);
+            expect(() => controller.permitJoin(() => {}, 'coord', () => {})).toThrowError(TypeError);
 
-            expect(() => controller.permitJoin(10, 'coord', () => {})).not.to.throw(TypeError);
+            expect(() => controller.permitJoin(10, 'coord', () => {})).not.toThrowError(TypeError);
         });
 
-        it('should throw if joinType is not a number and not a string', () => {
-            expect(() => controller.permitJoin(10, [], () => {})).to.throw(TypeError);
-            expect(() => controller.permitJoin(10, {}, () => {})).to.throw(TypeError);
-            expect(() => controller.permitJoin(10, undefined, () => {})).to.throw(TypeError);
-            expect(() => controller.permitJoin(10, null, () => {})).to.throw(TypeError);
-            expect(() => controller.permitJoin(10, NaN, () => {})).to.throw(TypeError);
-            expect(() => controller.permitJoin(10, true, () => {})).to.throw(TypeError);
-            expect(() => controller.permitJoin(10, new Date(), () => {})).to.throw(TypeError);
-            expect(() => controller.permitJoin(10, () => {}, () => {})).to.throw(TypeError);
+        test('should throw if joinType is not a number and not a string', () => {
+            expect(() => controller.permitJoin(10, [], () => {})).toThrowError(TypeError);
+            expect(() => controller.permitJoin(10, {}, () => {})).toThrowError(TypeError);
+            expect(() => controller.permitJoin(10, undefined, () => {})).toThrowError(TypeError);
+            expect(() => controller.permitJoin(10, null, () => {})).toThrowError(TypeError);
+            expect(() => controller.permitJoin(10, NaN, () => {})).toThrowError(TypeError);
+            expect(() => controller.permitJoin(10, true, () => {})).toThrowError(TypeError);
+            expect(() => controller.permitJoin(10, new Date(), () => {})).toThrowError(TypeError);
+            expect(() => controller.permitJoin(10, () => {}, () => {})).toThrowError(TypeError);
 
-            expect(() => controller.permitJoin(10, 1, () => {})).not.to.throw(TypeError);
-            expect(() => controller.permitJoin(10, 'coord', () => {})).not.to.throw(TypeError);
+            expect(() => controller.permitJoin(10, 1, () => {})).not.toThrowError(TypeError);
+            expect(() => controller.permitJoin(10, 'coord', () => {})).not.toThrowError(TypeError);
         });
     });
 
     describe('#.simpleDescReq', () => {
-        it('should be a function', () => {
-            expect(controller.simpleDescReq).to.be.a('function');
+        test('should be a function', () => {
+            expect(typeof controller.simpleDescReq).toBe('function');
         });
 
-        it('should throw if nwkAddr is not a number', () => {
-            expect(() => controller.simpleDescReq('x', '0x0123456789abcdef', () => {})).to.throw(TypeError);
-            expect(() => controller.simpleDescReq([], '0x0123456789abcdef', () => {})).to.throw(TypeError);
-            expect(() => controller.simpleDescReq({}, '0x0123456789abcdef', () => {})).to.throw(TypeError);
-            expect(() => controller.simpleDescReq(undefined, '0x0123456789abcdef', () => {})).to.throw(TypeError);
-            expect(() => controller.simpleDescReq(null, '0x0123456789abcdef', () => {})).to.throw(TypeError);
-            expect(() => controller.simpleDescReq(NaN, '0x0123456789abcdef', () => {})).to.throw(TypeError);
-            expect(() => controller.simpleDescReq(true, '0x0123456789abcdef', () => {})).to.throw(TypeError);
-            expect(() => controller.simpleDescReq(new Date(), '0x0123456789abcdef', () => {})).to.throw(TypeError);
-            expect(() => controller.simpleDescReq(() => {}, '0x0123456789abcdef', () => {})).to.throw(TypeError);
+        test('should throw if nwkAddr is not a number', () => {
+            expect(() => controller.simpleDescReq('x', '0x0123456789abcdef', () => {})).toThrowError(TypeError);
+            expect(() => controller.simpleDescReq([], '0x0123456789abcdef', () => {})).toThrowError(TypeError);
+            expect(() => controller.simpleDescReq({}, '0x0123456789abcdef', () => {})).toThrowError(TypeError);
+            expect(() => controller.simpleDescReq(undefined, '0x0123456789abcdef', () => {})).toThrowError(TypeError);
+            expect(() => controller.simpleDescReq(null, '0x0123456789abcdef', () => {})).toThrowError(TypeError);
+            expect(() => controller.simpleDescReq(NaN, '0x0123456789abcdef', () => {})).toThrowError(TypeError);
+            expect(() => controller.simpleDescReq(true, '0x0123456789abcdef', () => {})).toThrowError(TypeError);
+            expect(() => controller.simpleDescReq(new Date(), '0x0123456789abcdef', () => {})).toThrowError(TypeError);
+            expect(() => controller.simpleDescReq(() => {}, '0x0123456789abcdef', () => {})).toThrowError(TypeError);
 
-            expect(() => controller.simpleDescReq(12345, '0x0123456789abcdef', () => {})).not.to.throw(TypeError);
+            expect(() => controller.simpleDescReq(12345, '0x0123456789abcdef', () => {})).not.toThrowError(TypeError);
         });
 
-        it('should throw if ieeeAddr is not a string', () => {
-            expect(() => controller.simpleDescReq(12345, 1, () => {})).to.throw(TypeError);
-            expect(() => controller.simpleDescReq(12345, [], () => {})).to.throw(TypeError);
-            expect(() => controller.simpleDescReq(12345, {}, () => {})).to.throw(TypeError);
-            expect(() => controller.simpleDescReq(12345, undefined, () => {})).to.throw(TypeError);
-            expect(() => controller.simpleDescReq(12345, null, () => {})).to.throw(TypeError);
-            expect(() => controller.simpleDescReq(12345, NaN, () => {})).to.throw(TypeError);
-            expect(() => controller.simpleDescReq(12345, true, () => {})).to.throw(TypeError);
-            expect(() => controller.simpleDescReq(12345, new Date(), () => {})).to.throw(TypeError);
-            expect(() => controller.simpleDescReq(12345, () => {}, () => {})).to.throw(TypeError);
+        test('should throw if ieeeAddr is not a string', () => {
+            expect(() => controller.simpleDescReq(12345, 1, () => {})).toThrowError(TypeError);
+            expect(() => controller.simpleDescReq(12345, [], () => {})).toThrowError(TypeError);
+            expect(() => controller.simpleDescReq(12345, {}, () => {})).toThrowError(TypeError);
+            expect(() => controller.simpleDescReq(12345, undefined, () => {})).toThrowError(TypeError);
+            expect(() => controller.simpleDescReq(12345, null, () => {})).toThrowError(TypeError);
+            expect(() => controller.simpleDescReq(12345, NaN, () => {})).toThrowError(TypeError);
+            expect(() => controller.simpleDescReq(12345, true, () => {})).toThrowError(TypeError);
+            expect(() => controller.simpleDescReq(12345, new Date(), () => {})).toThrowError(TypeError);
+            expect(() => controller.simpleDescReq(12345, () => {}, () => {})).toThrowError(TypeError);
 
-            expect(() => controller.simpleDescReq(12345, '0x0123456789abcdef', () => {})).not.to.throw(TypeError);
+            expect(() => controller.simpleDescReq(12345, '0x0123456789abcdef', () => {})).not.toThrowError(TypeError);
         });
     });
 
     describe('#.registerEp', () => {
-        it('should be a function', () => {
-            expect(controller.registerEp).to.be.a('function');
+        test('should be a function', () => {
+            expect(typeof controller.registerEp).toBe('function');
         });
 
-        it('should throw if loEp is not a Coorpoint', () => {
-            expect(() => controller.registerEp('x', () => {})).to.throw(TypeError);
-            expect(() => controller.registerEp(1, () => {})).to.throw(TypeError);
-            expect(() => controller.registerEp([], () => {})).to.throw(TypeError);
-            expect(() => controller.registerEp({}, () => {})).to.throw(TypeError);
-            expect(() => controller.registerEp(undefined, () => {})).to.throw(TypeError);
-            expect(() => controller.registerEp(null, () => {})).to.throw(TypeError);
-            expect(() => controller.registerEp(NaN, () => {})).to.throw(TypeError);
-            expect(() => controller.registerEp(true, () => {})).to.throw(TypeError);
-            expect(() => controller.registerEp(new Date(), () => {})).to.throw(TypeError);
-            expect(() => controller.registerEp(() => {}, () => {})).to.throw(TypeError);
-            expect(() => controller.registerEp(rmEp1, () => {})).to.throw(TypeError);
-            expect(() => controller.registerEp(rmEp2, () => {})).to.throw(TypeError);
+        test('should throw if loEp is not a Coorpoint', () => {
+            expect(() => controller.registerEp('x', () => {})).toThrowError(TypeError);
+            expect(() => controller.registerEp(1, () => {})).toThrowError(TypeError);
+            expect(() => controller.registerEp([], () => {})).toThrowError(TypeError);
+            expect(() => controller.registerEp({}, () => {})).toThrowError(TypeError);
+            expect(() => controller.registerEp(undefined, () => {})).toThrowError(TypeError);
+            expect(() => controller.registerEp(null, () => {})).toThrowError(TypeError);
+            expect(() => controller.registerEp(NaN, () => {})).toThrowError(TypeError);
+            expect(() => controller.registerEp(true, () => {})).toThrowError(TypeError);
+            expect(() => controller.registerEp(new Date(), () => {})).toThrowError(TypeError);
+            expect(() => controller.registerEp(() => {}, () => {})).toThrowError(TypeError);
+            expect(() => controller.registerEp(rmEp1, () => {})).toThrowError(TypeError);
+            expect(() => controller.registerEp(rmEp2, () => {})).toThrowError(TypeError);
 
-            expect(() => controller.registerEp(loEp1, () => {})).not.to.throw(TypeError);
-            expect(() => controller.registerEp(loEp8, () => {})).not.to.throw(TypeError);
+            expect(() => controller.registerEp(loEp1, () => {})).not.toThrowError(TypeError);
+            expect(() => controller.registerEp(loEp8, () => {})).not.toThrowError(TypeError);
         });
     });
 
     describe('#.deregisterEp', () => {
-        it('should be a function', () => {
-            expect(controller.deregisterEp).to.be.a('function');
+        test('should be a function', () => {
+            expect(typeof controller.deregisterEp).toBe('function');
         });
 
-        it('should throw if loEp is not a Coorpoint', () => {
-            expect(() => controller.deregisterEp('x', () => {})).to.throw(TypeError);
-            expect(() => controller.deregisterEp(1, () => {})).to.throw(TypeError);
-            expect(() => controller.deregisterEp([], () => {})).to.throw(TypeError);
-            expect(() => controller.deregisterEp({}, () => {})).to.throw(TypeError);
-            expect(() => controller.deregisterEp(undefined, () => {})).to.throw(TypeError);
-            expect(() => controller.deregisterEp(null, () => {})).to.throw(TypeError);
-            expect(() => controller.deregisterEp(NaN, () => {})).to.throw(TypeError);
-            expect(() => controller.deregisterEp(true, () => {})).to.throw(TypeError);
-            expect(() => controller.deregisterEp(new Date(), () => {})).to.throw(TypeError);
-            expect(() => controller.deregisterEp(() => {}, () => {})).to.throw(TypeError);
-            expect(() => controller.deregisterEp(rmEp1, () => {})).to.throw(TypeError);
-            expect(() => controller.deregisterEp(rmEp2, () => {})).to.throw(TypeError);
+        test('should throw if loEp is not a Coorpoint', () => {
+            expect(() => controller.deregisterEp('x', () => {})).toThrowError(TypeError);
+            expect(() => controller.deregisterEp(1, () => {})).toThrowError(TypeError);
+            expect(() => controller.deregisterEp([], () => {})).toThrowError(TypeError);
+            expect(() => controller.deregisterEp({}, () => {})).toThrowError(TypeError);
+            expect(() => controller.deregisterEp(undefined, () => {})).toThrowError(TypeError);
+            expect(() => controller.deregisterEp(null, () => {})).toThrowError(TypeError);
+            expect(() => controller.deregisterEp(NaN, () => {})).toThrowError(TypeError);
+            expect(() => controller.deregisterEp(true, () => {})).toThrowError(TypeError);
+            expect(() => controller.deregisterEp(new Date(), () => {})).toThrowError(TypeError);
+            expect(() => controller.deregisterEp(() => {}, () => {})).toThrowError(TypeError);
+            expect(() => controller.deregisterEp(rmEp1, () => {})).toThrowError(TypeError);
+            expect(() => controller.deregisterEp(rmEp2, () => {})).toThrowError(TypeError);
 
-            expect(() => controller.deregisterEp(loEp1, () => {})).not.to.throw(TypeError);
-            expect(() => controller.deregisterEp(loEp8, () => {})).not.to.throw(TypeError);
+            expect(() => controller.deregisterEp(loEp1, () => {})).not.toThrowError(TypeError);
+            expect(() => controller.deregisterEp(loEp8, () => {})).not.toThrowError(TypeError);
         });
     });
 
     describe('#.reRegisterEp', () => {
-        it('should be a function', () => {
-            expect(controller.reRegisterEp).to.be.a('function');
+        test('should be a function', () => {
+            expect(typeof controller.reRegisterEp).toBe('function');
         });
 
-        it('should throw if loEp is not a Coorpoint', () => {
-            expect(() => controller.reRegisterEp('x', () => {})).to.throw(TypeError);
-            expect(() => controller.reRegisterEp(1, () => {})).to.throw(TypeError);
-            expect(() => controller.reRegisterEp([], () => {})).to.throw(TypeError);
-            expect(() => controller.reRegisterEp({}, () => {})).to.throw(TypeError);
-            expect(() => controller.reRegisterEp(undefined, () => {})).to.throw(TypeError);
-            expect(() => controller.reRegisterEp(null, () => {})).to.throw(TypeError);
-            expect(() => controller.reRegisterEp(NaN, () => {})).to.throw(TypeError);
-            expect(() => controller.reRegisterEp(true, () => {})).to.throw(TypeError);
-            expect(() => controller.reRegisterEp(new Date(), () => {})).to.throw(TypeError);
-            expect(() => controller.reRegisterEp(() => {}, () => {})).to.throw(TypeError);
-            expect(() => controller.reRegisterEp(rmEp1, () => {})).to.throw(TypeError);
-            expect(() => controller.reRegisterEp(rmEp2, () => {})).to.throw(TypeError);
+        test('should throw if loEp is not a Coorpoint', () => {
+            expect(() => controller.reRegisterEp('x', () => {})).toThrowError(TypeError);
+            expect(() => controller.reRegisterEp(1, () => {})).toThrowError(TypeError);
+            expect(() => controller.reRegisterEp([], () => {})).toThrowError(TypeError);
+            expect(() => controller.reRegisterEp({}, () => {})).toThrowError(TypeError);
+            expect(() => controller.reRegisterEp(undefined, () => {})).toThrowError(TypeError);
+            expect(() => controller.reRegisterEp(null, () => {})).toThrowError(TypeError);
+            expect(() => controller.reRegisterEp(NaN, () => {})).toThrowError(TypeError);
+            expect(() => controller.reRegisterEp(true, () => {})).toThrowError(TypeError);
+            expect(() => controller.reRegisterEp(new Date(), () => {})).toThrowError(TypeError);
+            expect(() => controller.reRegisterEp(() => {}, () => {})).toThrowError(TypeError);
+            expect(() => controller.reRegisterEp(rmEp1, () => {})).toThrowError(TypeError);
+            expect(() => controller.reRegisterEp(rmEp2, () => {})).toThrowError(TypeError);
 
-            expect(() => controller.reRegisterEp(loEp1, () => {})).not.to.throw(TypeError);
-            expect(() => controller.reRegisterEp(loEp8, () => {})).not.to.throw(TypeError);
+            expect(() => controller.reRegisterEp(loEp1, () => {})).not.toThrowError(TypeError);
+            expect(() => controller.reRegisterEp(loEp8, () => {})).not.toThrowError(TypeError);
         });
     });
 
     describe('#.bind', () => {
-        it('should be a function', () => {
-            expect(controller.bind).to.be.a('function');
+        test('should be a function', () => {
+            expect(typeof controller.bind).toBe('function');
         });
 
-        it('should throw if srcEp is not an Endpoint or a Coorpoint', () => {
-            expect(() => controller.bind('x', rmEp1, 'genOnOff', null, () => {})).to.throw(TypeError);
-            expect(() => controller.bind(1, rmEp1, 'genOnOff', null, () => {})).to.throw(TypeError);
-            expect(() => controller.bind([], rmEp1, 'genOnOff', null, () => {})).to.throw(TypeError);
-            expect(() => controller.bind({}, rmEp1, 'genOnOff', null, () => {})).to.throw(TypeError);
-            expect(() => controller.bind(undefined, rmEp1, 'genOnOff', null, () => {})).to.throw(TypeError);
-            expect(() => controller.bind(null, rmEp1, 'genOnOff', null, () => {})).to.throw(TypeError);
-            expect(() => controller.bind(NaN, rmEp1, 'genOnOff', null, () => {})).to.throw(TypeError);
-            expect(() => controller.bind(true, rmEp1, 'genOnOff', null, () => {})).to.throw(TypeError);
-            expect(() => controller.bind(new Date(), rmEp1, 'genOnOff', null, () => {})).to.throw(TypeError);
-            expect(() => controller.bind(() => {}, rmEp1, 'genOnOff', null, () => {})).to.throw(TypeError);
+        test('should throw if srcEp is not an Endpoint or a Coorpoint', () => {
+            expect(() => controller.bind('x', rmEp1, 'genOnOff', null, () => {})).toThrowError(TypeError);
+            expect(() => controller.bind(1, rmEp1, 'genOnOff', null, () => {})).toThrowError(TypeError);
+            expect(() => controller.bind([], rmEp1, 'genOnOff', null, () => {})).toThrowError(TypeError);
+            expect(() => controller.bind({}, rmEp1, 'genOnOff', null, () => {})).toThrowError(TypeError);
+            expect(() => controller.bind(undefined, rmEp1, 'genOnOff', null, () => {})).toThrowError(TypeError);
+            expect(() => controller.bind(null, rmEp1, 'genOnOff', null, () => {})).toThrowError(TypeError);
+            expect(() => controller.bind(NaN, rmEp1, 'genOnOff', null, () => {})).toThrowError(TypeError);
+            expect(() => controller.bind(true, rmEp1, 'genOnOff', null, () => {})).toThrowError(TypeError);
+            expect(() => controller.bind(new Date(), rmEp1, 'genOnOff', null, () => {})).toThrowError(TypeError);
+            expect(() => controller.bind(() => {}, rmEp1, 'genOnOff', null, () => {})).toThrowError(TypeError);
         });
 
-        it('should throw if dstEp is not an Endpoint or a Coorpoint', () => {
-            expect(() => controller.bind(loEp1, 'x', 'genOnOff', null, () => {})).to.throw(TypeError);
-            expect(() => controller.bind(loEp1, 1, 'genOnOff', null, () => {})).to.throw(TypeError);
-            expect(() => controller.bind(loEp1, [], 'genOnOff', null, () => {})).to.throw(TypeError);
-            expect(() => controller.bind(loEp1, {}, 'genOnOff', null, () => {})).to.throw(TypeError);
-            expect(() => controller.bind(loEp1, undefined, 'genOnOff', null, () => {})).to.throw(TypeError);
-            expect(() => controller.bind(loEp1, null, 'genOnOff', null, () => {})).to.throw(TypeError);
-            expect(() => controller.bind(loEp1, NaN, 'genOnOff', null, () => {})).to.throw(TypeError);
-            expect(() => controller.bind(loEp1, true, 'genOnOff', null, () => {})).to.throw(TypeError);
-            expect(() => controller.bind(loEp1, new Date(), 'genOnOff', null, () => {})).to.throw(TypeError);
-            expect(() => controller.bind(loEp1, () => {}, 'genOnOff', null, () => {})).to.throw(TypeError);
+        test('should throw if dstEp is not an Endpoint or a Coorpoint', () => {
+            expect(() => controller.bind(loEp1, 'x', 'genOnOff', null, () => {})).toThrowError(TypeError);
+            expect(() => controller.bind(loEp1, 1, 'genOnOff', null, () => {})).toThrowError(TypeError);
+            expect(() => controller.bind(loEp1, [], 'genOnOff', null, () => {})).toThrowError(TypeError);
+            expect(() => controller.bind(loEp1, {}, 'genOnOff', null, () => {})).toThrowError(TypeError);
+            expect(() => controller.bind(loEp1, undefined, 'genOnOff', null, () => {})).toThrowError(TypeError);
+            expect(() => controller.bind(loEp1, null, 'genOnOff', null, () => {})).toThrowError(TypeError);
+            expect(() => controller.bind(loEp1, NaN, 'genOnOff', null, () => {})).toThrowError(TypeError);
+            expect(() => controller.bind(loEp1, true, 'genOnOff', null, () => {})).toThrowError(TypeError);
+            expect(() => controller.bind(loEp1, new Date(), 'genOnOff', null, () => {})).toThrowError(TypeError);
+            expect(() => controller.bind(loEp1, () => {}, 'genOnOff', null, () => {})).toThrowError(TypeError);
         });
 
-        it('should throw if cId is not a number and not a string', () => {
-            expect(() => controller.bind(loEp1, rmEp1, [], null, () => {})).to.throw(TypeError);
-            expect(() => controller.bind(loEp1, rmEp1, {}, null, () => {})).to.throw(TypeError);
-            expect(() => controller.bind(loEp1, rmEp1, undefined, null, () => {})).to.throw(TypeError);
-            expect(() => controller.bind(loEp1, rmEp1, null, null, () => {})).to.throw(TypeError);
-            expect(() => controller.bind(loEp1, rmEp1, NaN, null, () => {})).to.throw(TypeError);
-            expect(() => controller.bind(loEp1, rmEp1, true, null, () => {})).to.throw(TypeError);
-            expect(() => controller.bind(loEp1, rmEp1, new Date(), null, () => {})).to.throw(TypeError);
-            expect(() => controller.bind(loEp1, rmEp1, () => {}, null, () => {})).to.throw(TypeError);
+        test('should throw if cId is not a number and not a string', () => {
+            expect(() => controller.bind(loEp1, rmEp1, [], null, () => {})).toThrowError(TypeError);
+            expect(() => controller.bind(loEp1, rmEp1, {}, null, () => {})).toThrowError(TypeError);
+            expect(() => controller.bind(loEp1, rmEp1, undefined, null, () => {})).toThrowError(TypeError);
+            expect(() => controller.bind(loEp1, rmEp1, null, null, () => {})).toThrowError(TypeError);
+            expect(() => controller.bind(loEp1, rmEp1, NaN, null, () => {})).toThrowError(TypeError);
+            expect(() => controller.bind(loEp1, rmEp1, true, null, () => {})).toThrowError(TypeError);
+            expect(() => controller.bind(loEp1, rmEp1, new Date(), null, () => {})).toThrowError(TypeError);
+            expect(() => controller.bind(loEp1, rmEp1, () => {}, null, () => {})).toThrowError(TypeError);
         });
 
-        it('should throw if grpId is not a number', () => {
-            expect(() => controller.bind(loEp1, rmEp1, 'genOnOff', 'x', () => {})).to.throw(TypeError);
-            expect(() => controller.bind(loEp1, rmEp1, 'genOnOff', [], () => {})).to.throw(TypeError);
-            expect(() => controller.bind(loEp1, rmEp1, 'genOnOff', {}, () => {})).to.throw(TypeError);
-            expect(() => controller.bind(loEp1, rmEp1, 'genOnOff', undefined, () => {})).to.throw(TypeError);
-            expect(() => controller.bind(loEp1, rmEp1, 'genOnOff', null, () => {})).to.throw(TypeError);
-            expect(() => controller.bind(loEp1, rmEp1, 'genOnOff', NaN, () => {})).to.throw(TypeError);
-            expect(() => controller.bind(loEp1, rmEp1, 'genOnOff', true, () => {})).to.throw(TypeError);
-            expect(() => controller.bind(loEp1, rmEp1, 'genOnOff', new Date(), () => {})).to.throw(TypeError);
-            expect(() => controller.bind(loEp1, rmEp1, 'genOnOff', () => {}, () => {})).to.throw(TypeError);
+        test('should throw if grpId is not a number', () => {
+            expect(() => controller.bind(loEp1, rmEp1, 'genOnOff', 'x', () => {})).toThrowError(TypeError);
+            expect(() => controller.bind(loEp1, rmEp1, 'genOnOff', [], () => {})).toThrowError(TypeError);
+            expect(() => controller.bind(loEp1, rmEp1, 'genOnOff', {}, () => {})).toThrowError(TypeError);
+            expect(() => controller.bind(loEp1, rmEp1, 'genOnOff', undefined, () => {})).toThrowError(TypeError);
+            expect(() => controller.bind(loEp1, rmEp1, 'genOnOff', null, () => {})).toThrowError(TypeError);
+            expect(() => controller.bind(loEp1, rmEp1, 'genOnOff', NaN, () => {})).toThrowError(TypeError);
+            expect(() => controller.bind(loEp1, rmEp1, 'genOnOff', true, () => {})).toThrowError(TypeError);
+            expect(() => controller.bind(loEp1, rmEp1, 'genOnOff', new Date(), () => {})).toThrowError(TypeError);
+            expect(() => controller.bind(loEp1, rmEp1, 'genOnOff', () => {}, () => {})).toThrowError(TypeError);
         });
     });
 
     describe('#.unbind', () => {
-        it('should be a function', () => {
-            expect(controller.unbind).to.be.a('function');
+        test('should be a function', () => {
+            expect(typeof controller.unbind).toBe('function');
         });
 
-        it('should throw if srcEp is not an Endpoint or a Coorpoint', () => {
-            expect(() => controller.unbind('x', rmEp1, 'genOnOff', null, () => {})).to.throw(TypeError);
-            expect(() => controller.unbind(1, rmEp1, 'genOnOff', null, () => {})).to.throw(TypeError);
-            expect(() => controller.unbind([], rmEp1, 'genOnOff', null, () => {})).to.throw(TypeError);
-            expect(() => controller.unbind({}, rmEp1, 'genOnOff', null, () => {})).to.throw(TypeError);
-            expect(() => controller.unbind(undefined, rmEp1, 'genOnOff', null, () => {})).to.throw(TypeError);
-            expect(() => controller.unbind(null, rmEp1, 'genOnOff', null, () => {})).to.throw(TypeError);
-            expect(() => controller.unbind(NaN, rmEp1, 'genOnOff', null, () => {})).to.throw(TypeError);
-            expect(() => controller.unbind(true, rmEp1, 'genOnOff', null, () => {})).to.throw(TypeError);
-            expect(() => controller.unbind(new Date(), rmEp1, 'genOnOff', null, () => {})).to.throw(TypeError);
-            expect(() => controller.unbind(() => {}, rmEp1, 'genOnOff', null, () => {})).to.throw(TypeError);
+        test('should throw if srcEp is not an Endpoint or a Coorpoint', () => {
+            expect(() => controller.unbind('x', rmEp1, 'genOnOff', null, () => {})).toThrowError(TypeError);
+            expect(() => controller.unbind(1, rmEp1, 'genOnOff', null, () => {})).toThrowError(TypeError);
+            expect(() => controller.unbind([], rmEp1, 'genOnOff', null, () => {})).toThrowError(TypeError);
+            expect(() => controller.unbind({}, rmEp1, 'genOnOff', null, () => {})).toThrowError(TypeError);
+            expect(() => controller.unbind(undefined, rmEp1, 'genOnOff', null, () => {})).toThrowError(TypeError);
+            expect(() => controller.unbind(null, rmEp1, 'genOnOff', null, () => {})).toThrowError(TypeError);
+            expect(() => controller.unbind(NaN, rmEp1, 'genOnOff', null, () => {})).toThrowError(TypeError);
+            expect(() => controller.unbind(true, rmEp1, 'genOnOff', null, () => {})).toThrowError(TypeError);
+            expect(() => controller.unbind(new Date(), rmEp1, 'genOnOff', null, () => {})).toThrowError(TypeError);
+            expect(() => controller.unbind(() => {}, rmEp1, 'genOnOff', null, () => {})).toThrowError(TypeError);
         });
 
-        it('should throw if dstEp is not an Endpoint or a Coorpoint', () => {
-            expect(() => controller.unbind(loEp1, 'x', 'genOnOff', null, () => {})).to.throw(TypeError);
-            expect(() => controller.unbind(loEp1, 1, 'genOnOff', null, () => {})).to.throw(TypeError);
-            expect(() => controller.unbind(loEp1, [], 'genOnOff', null, () => {})).to.throw(TypeError);
-            expect(() => controller.unbind(loEp1, {}, 'genOnOff', null, () => {})).to.throw(TypeError);
-            expect(() => controller.unbind(loEp1, undefined, 'genOnOff', null, () => {})).to.throw(TypeError);
-            expect(() => controller.unbind(loEp1, null, 'genOnOff', null, () => {})).to.throw(TypeError);
-            expect(() => controller.unbind(loEp1, NaN, 'genOnOff', null, () => {})).to.throw(TypeError);
-            expect(() => controller.unbind(loEp1, true, 'genOnOff', null, () => {})).to.throw(TypeError);
-            expect(() => controller.unbind(loEp1, new Date(), 'genOnOff', null, () => {})).to.throw(TypeError);
-            expect(() => controller.unbind(loEp1, () => {}, 'genOnOff', null, () => {})).to.throw(TypeError);
+        test('should throw if dstEp is not an Endpoint or a Coorpoint', () => {
+            expect(() => controller.unbind(loEp1, 'x', 'genOnOff', null, () => {})).toThrowError(TypeError);
+            expect(() => controller.unbind(loEp1, 1, 'genOnOff', null, () => {})).toThrowError(TypeError);
+            expect(() => controller.unbind(loEp1, [], 'genOnOff', null, () => {})).toThrowError(TypeError);
+            expect(() => controller.unbind(loEp1, {}, 'genOnOff', null, () => {})).toThrowError(TypeError);
+            expect(() => controller.unbind(loEp1, undefined, 'genOnOff', null, () => {})).toThrowError(TypeError);
+            expect(() => controller.unbind(loEp1, null, 'genOnOff', null, () => {})).toThrowError(TypeError);
+            expect(() => controller.unbind(loEp1, NaN, 'genOnOff', null, () => {})).toThrowError(TypeError);
+            expect(() => controller.unbind(loEp1, true, 'genOnOff', null, () => {})).toThrowError(TypeError);
+            expect(() => controller.unbind(loEp1, new Date(), 'genOnOff', null, () => {})).toThrowError(TypeError);
+            expect(() => controller.unbind(loEp1, () => {}, 'genOnOff', null, () => {})).toThrowError(TypeError);
         });
 
-        it('should throw if cId is not a number and not a string', () => {
-            expect(() => controller.unbind(loEp1, rmEp1, [], null, () => {})).to.throw(TypeError);
-            expect(() => controller.unbind(loEp1, rmEp1, {}, null, () => {})).to.throw(TypeError);
-            expect(() => controller.unbind(loEp1, rmEp1, undefined, null, () => {})).to.throw(TypeError);
-            expect(() => controller.unbind(loEp1, rmEp1, null, null, () => {})).to.throw(TypeError);
-            expect(() => controller.unbind(loEp1, rmEp1, NaN, null, () => {})).to.throw(TypeError);
-            expect(() => controller.unbind(loEp1, rmEp1, true, null, () => {})).to.throw(TypeError);
-            expect(() => controller.unbind(loEp1, rmEp1, new Date(), null, () => {})).to.throw(TypeError);
-            expect(() => controller.unbind(loEp1, rmEp1, () => {}, null, () => {})).to.throw(TypeError);
+        test('should throw if cId is not a number and not a string', () => {
+            expect(() => controller.unbind(loEp1, rmEp1, [], null, () => {})).toThrowError(TypeError);
+            expect(() => controller.unbind(loEp1, rmEp1, {}, null, () => {})).toThrowError(TypeError);
+            expect(() => controller.unbind(loEp1, rmEp1, undefined, null, () => {})).toThrowError(TypeError);
+            expect(() => controller.unbind(loEp1, rmEp1, null, null, () => {})).toThrowError(TypeError);
+            expect(() => controller.unbind(loEp1, rmEp1, NaN, null, () => {})).toThrowError(TypeError);
+            expect(() => controller.unbind(loEp1, rmEp1, true, null, () => {})).toThrowError(TypeError);
+            expect(() => controller.unbind(loEp1, rmEp1, new Date(), null, () => {})).toThrowError(TypeError);
+            expect(() => controller.unbind(loEp1, rmEp1, () => {}, null, () => {})).toThrowError(TypeError);
         });
 
-        it('should throw if grpId is not a number', () => {
-            expect(() => controller.unbind(loEp1, rmEp1, 'genOnOff', 'x', () => {})).to.throw(TypeError);
-            expect(() => controller.unbind(loEp1, rmEp1, 'genOnOff', [], () => {})).to.throw(TypeError);
-            expect(() => controller.unbind(loEp1, rmEp1, 'genOnOff', {}, () => {})).to.throw(TypeError);
-            expect(() => controller.unbind(loEp1, rmEp1, 'genOnOff', undefined, () => {})).to.throw(TypeError);
-            expect(() => controller.unbind(loEp1, rmEp1, 'genOnOff', null, () => {})).to.throw(TypeError);
-            expect(() => controller.unbind(loEp1, rmEp1, 'genOnOff', NaN, () => {})).to.throw(TypeError);
-            expect(() => controller.unbind(loEp1, rmEp1, 'genOnOff', true, () => {})).to.throw(TypeError);
-            expect(() => controller.unbind(loEp1, rmEp1, 'genOnOff', new Date(), () => {})).to.throw(TypeError);
-            expect(() => controller.unbind(loEp1, rmEp1, 'genOnOff', () => {}, () => {})).to.throw(TypeError);
+        test('should throw if grpId is not a number', () => {
+            expect(() => controller.unbind(loEp1, rmEp1, 'genOnOff', 'x', () => {})).toThrowError(TypeError);
+            expect(() => controller.unbind(loEp1, rmEp1, 'genOnOff', [], () => {})).toThrowError(TypeError);
+            expect(() => controller.unbind(loEp1, rmEp1, 'genOnOff', {}, () => {})).toThrowError(TypeError);
+            expect(() => controller.unbind(loEp1, rmEp1, 'genOnOff', undefined, () => {})).toThrowError(TypeError);
+            expect(() => controller.unbind(loEp1, rmEp1, 'genOnOff', null, () => {})).toThrowError(TypeError);
+            expect(() => controller.unbind(loEp1, rmEp1, 'genOnOff', NaN, () => {})).toThrowError(TypeError);
+            expect(() => controller.unbind(loEp1, rmEp1, 'genOnOff', true, () => {})).toThrowError(TypeError);
+            expect(() => controller.unbind(loEp1, rmEp1, 'genOnOff', new Date(), () => {})).toThrowError(TypeError);
+            expect(() => controller.unbind(loEp1, rmEp1, 'genOnOff', () => {}, () => {})).toThrowError(TypeError);
         });
     });
 
     describe('#.remove', () => {
-        it('should be a function', () => {
-            expect(controller.remove).to.be.a('function');
+        test('should be a function', () => {
+            expect(typeof controller.remove).toBe('function');
         });
 
-        it('should throw if dev is not a Device', () => {
-            expect(() => controller.remove('x', {}, () => {})).to.throw(TypeError);
-            expect(() => controller.remove(1, {}, () => {})).to.throw(TypeError);
-            expect(() => controller.remove([], {}, () => {})).to.throw(TypeError);
-            expect(() => controller.remove({}, {}, () => {})).to.throw(TypeError);
-            expect(() => controller.remove(undefined, {}, () => {})).to.throw(TypeError);
-            expect(() => controller.remove(null, {}, () => {})).to.throw(TypeError);
-            expect(() => controller.remove(NaN, {}, () => {})).to.throw(TypeError);
-            expect(() => controller.remove(true, {}, () => {})).to.throw(TypeError);
-            expect(() => controller.remove(new Date(), {}, () => {})).to.throw(TypeError);
-            expect(() => controller.remove(() => {}, {}, () => {})).to.throw(TypeError);
+        test('should throw if dev is not a Device', () => {
+            expect(() => controller.remove('x', {}, () => {})).toThrowError(TypeError);
+            expect(() => controller.remove(1, {}, () => {})).toThrowError(TypeError);
+            expect(() => controller.remove([], {}, () => {})).toThrowError(TypeError);
+            expect(() => controller.remove({}, {}, () => {})).toThrowError(TypeError);
+            expect(() => controller.remove(undefined, {}, () => {})).toThrowError(TypeError);
+            expect(() => controller.remove(null, {}, () => {})).toThrowError(TypeError);
+            expect(() => controller.remove(NaN, {}, () => {})).toThrowError(TypeError);
+            expect(() => controller.remove(true, {}, () => {})).toThrowError(TypeError);
+            expect(() => controller.remove(new Date(), {}, () => {})).toThrowError(TypeError);
+            expect(() => controller.remove(() => {}, {}, () => {})).toThrowError(TypeError);
         });
 
-        it('should throw if cfg is not an object', () => {
-            expect(() => controller.remove(remoteDev, 'x', () => {})).to.throw(TypeError);
-            expect(() => controller.remove(remoteDev, 1, () => {})).to.throw(TypeError);
-            expect(() => controller.remove(remoteDev, [], () => {})).to.throw(TypeError);
-            expect(() => controller.remove(remoteDev, undefined, () => {})).to.throw(TypeError);
-            expect(() => controller.remove(remoteDev, null, () => {})).to.throw(TypeError);
-            expect(() => controller.remove(remoteDev, NaN, () => {})).to.throw(TypeError);
-            expect(() => controller.remove(remoteDev, true, () => {})).to.throw(TypeError);
-            expect(() => controller.remove(remoteDev, new Date(), () => {})).to.throw(TypeError);
-            expect(() => controller.remove(remoteDev, () => {}, () => {})).to.throw(TypeError);
+        test('should throw if cfg is not an object', () => {
+            expect(() => controller.remove(remoteDev, 'x', () => {})).toThrowError(TypeError);
+            expect(() => controller.remove(remoteDev, 1, () => {})).toThrowError(TypeError);
+            expect(() => controller.remove(remoteDev, [], () => {})).toThrowError(TypeError);
+            expect(() => controller.remove(remoteDev, undefined, () => {})).toThrowError(TypeError);
+            expect(() => controller.remove(remoteDev, null, () => {})).toThrowError(TypeError);
+            expect(() => controller.remove(remoteDev, NaN, () => {})).toThrowError(TypeError);
+            expect(() => controller.remove(remoteDev, true, () => {})).toThrowError(TypeError);
+            expect(() => controller.remove(remoteDev, new Date(), () => {})).toThrowError(TypeError);
+            expect(() => controller.remove(remoteDev, () => {}, () => {})).toThrowError(TypeError);
         });
     });
 });
@@ -465,7 +463,7 @@ describe('Signature Check', () => {
 describe('Functional Check', () => {
     let controller;
 
-    before(() => {
+    beforeAll(() => {
         const shepherd = new EventEmitter();
 
         shepherd._findDevByAddr = function () {
@@ -479,8 +477,8 @@ describe('Functional Check', () => {
     });
 
     describe('#.start', () => {
-        it('should init znp', done => {
-            const initStub = sinon.stub(znp, 'init').callsFake((spCfg, callback) => {
+        test('should init znp', done => {
+            const initStub = jest.spyOn(znp, 'init').mockImplementation((spCfg, callback) => {
                 setImmediate(() => {
                     callback(null);
                     controller.emit('ZNP:INIT');
@@ -489,7 +487,7 @@ describe('Functional Check', () => {
 
             controller.start(err => {
                 if (!err) {
-                    initStub.restore();
+                    initStub.mockRestore();
                     done();
                 }
             });
@@ -497,8 +495,8 @@ describe('Functional Check', () => {
     });
 
     describe('#.close', () => {
-        it('should close znp', done => {
-            const closeStub = sinon.stub(znp, 'close').callsFake(callback => {
+        test('should close znp', done => {
+            const closeStub = jest.spyOn(znp, 'close').mockImplementation(callback => {
                 setImmediate(() => {
                     callback(null);
                     controller.emit('ZNP:CLOSE');
@@ -507,7 +505,7 @@ describe('Functional Check', () => {
 
             controller.close(err => {
                 if (!err) {
-                    closeStub.restore();
+                    closeStub.mockRestore();
                     done();
                 }
             });
@@ -515,8 +513,8 @@ describe('Functional Check', () => {
     });
 
     describe('#.reset', () => {
-        it('soft reset', done => {
-            const requestStub = sinon.stub(controller, 'request').callsFake((subsys, cmdId, valObj, callback) => {
+        test('soft reset', done => {
+            const requestStub = jest.spyOn(controller, 'request').mockImplementation((subsys, cmdId, valObj, callback) => {
                 const deferred = Q.defer();
 
                 setImmediate(() => {
@@ -533,14 +531,14 @@ describe('Functional Check', () => {
 
             controller.reset('soft', err => {
                 if (!err) {
-                    requestStub.restore();
+                    requestStub.mockRestore();
                     done();
                 }
             });
         });
 
-        it('hard reset', done => {
-            const requestStub = sinon.stub(controller, 'request').callsFake((subsys, cmdId, valObj, callback) => {
+        test('hard reset', done => {
+            const requestStub = jest.spyOn(controller, 'request').mockImplementation((subsys, cmdId, valObj, callback) => {
                 const deferred = Q.defer();
 
                 setImmediate(() => {
@@ -557,7 +555,7 @@ describe('Functional Check', () => {
 
             controller.reset('hard', err => {
                 if (!err) {
-                    requestStub.restore();
+                    requestStub.mockRestore();
                     done();
                 }
             });
@@ -565,9 +563,9 @@ describe('Functional Check', () => {
     });
 
     describe('#.request', () => {
-        it('request ZDO command', done => {
-            const _zdoRequestStub = sinon.stub(controller._zdo, 'request').callsFake((cmdId, valObj, callback) => {
-                expect(cmdId).to.be.equal('nodeDescReq');
+        test('request ZDO command', done => {
+            const _zdoRequestStub = jest.spyOn(controller._zdo, 'request').mockImplementation((cmdId, valObj, callback) => {
+                expect(cmdId).toBe('nodeDescReq');
 
                 setImmediate(() => {
                     callback(null, { status: 0 });
@@ -576,16 +574,16 @@ describe('Functional Check', () => {
 
             controller.request('ZDO', 'nodeDescReq', { dstaddr: 100, nwkaddrofinterest: 100 }, err => {
                 if (!err) {
-                    _zdoRequestStub.restore();
+                    _zdoRequestStub.mockRestore();
                     done();
                 }
             });
         });
 
-        it('request SYS command', done => {
-            const _znpRequestStub = sinon.stub(znp, 'request').callsFake((subsys, cmdId, valObj, callback) => {
-                expect(subsys).to.be.equal('SYS');
-                expect(cmdId).to.be.equal('resetReq');
+        test('request SYS command', done => {
+            const _znpRequestStub = jest.spyOn(znp, 'request').mockImplementation((subsys, cmdId, valObj, callback) => {
+                expect(subsys).toBe('SYS');
+                expect(cmdId).toBe('resetReq');
 
                 setImmediate(() => {
                     callback(null, { status: 0 });
@@ -594,7 +592,7 @@ describe('Functional Check', () => {
 
             controller.request('SYS', 'resetReq', { type: 0x01 }, err => {
                 if (!err) {
-                    _znpRequestStub.restore();
+                    _znpRequestStub.mockRestore();
                     done();
                 }
             });
@@ -602,12 +600,12 @@ describe('Functional Check', () => {
     });
 
     describe('#.permitJoin', () => {
-        it('only permit devices join the network through the coordinator', done => {
-            const requestStub = sinon.stub(controller, 'request').callsFake((subsys, cmdId, valObj, callback) => {
+        test('only permit devices join the network through the coordinator', done => {
+            const requestStub = jest.spyOn(controller, 'request').mockImplementation((subsys, cmdId, valObj, callback) => {
                 const deferred = Q.defer();
 
-                expect(valObj.addrmode).to.be.equal(0x02);
-                expect(valObj.dstaddr).to.be.equal(0x0000);
+                expect(valObj.addrmode).toBe(0x02);
+                expect(valObj.dstaddr).toBe(0x0000);
 
                 setImmediate(() => {
                     deferred.resolve({ status: 0 });
@@ -617,50 +615,53 @@ describe('Functional Check', () => {
             });
 
             controller.once('permitJoining', permitJoinTime => {
-                expect(permitJoinTime).to.be.equal(60);
+                expect(permitJoinTime).toBe(60);
             });
 
             controller.permitJoin(60, 'coord', err => {
                 if (!err) {
-                    requestStub.restore();
+                    requestStub.mockRestore();
                     done();
                 }
             });
         });
 
-        it('permit devices join the network through the coordinator or routers', done => {
-            const requestStub = sinon.stub(controller, 'request').callsFake((subsys, cmdId, valObj, callback) => {
-                const deferred = Q.defer();
+        test(
+            'permit devices join the network through the coordinator or routers',
+            done => {
+                const requestStub = jest.spyOn(controller, 'request').mockImplementation((subsys, cmdId, valObj, callback) => {
+                    const deferred = Q.defer();
 
-                expect(valObj.addrmode).to.be.equal(0x0F);
-                expect(valObj.dstaddr).to.be.equal(0xFFFC);
+                    expect(valObj.addrmode).toBe(0x0F);
+                    expect(valObj.dstaddr).toBe(0xFFFC);
 
-                setImmediate(() => {
-                    deferred.resolve({ status: 0 });
+                    setImmediate(() => {
+                        deferred.resolve({ status: 0 });
+                    });
+
+                    return deferred.promise.nodeify(callback);
                 });
 
-                return deferred.promise.nodeify(callback);
-            });
+                controller.once('permitJoining', permitJoinTime => {
+                    expect(permitJoinTime).toBe(60);
+                });
 
-            controller.once('permitJoining', permitJoinTime => {
-                expect(permitJoinTime).to.be.equal(60);
-            });
-
-            controller.permitJoin(60, 'all', err => {
-                if (!err) {
-                    requestStub.restore();
-                    done();
-                }
-            });
-        });
+                controller.permitJoin(60, 'all', err => {
+                    if (!err) {
+                        requestStub.mockRestore();
+                        done();
+                    }
+                });
+            }
+        );
     });
 
     describe('#.remove', () => {
-        it('remove device', done => {
-            const requestStub = sinon.stub(controller, 'request').callsFake((subsys, cmdId, valObj, callback) => {
+        test('remove device', done => {
+            const requestStub = jest.spyOn(controller, 'request').mockImplementation((subsys, cmdId, valObj, callback) => {
                 const deferred = Q.defer();
 
-                expect(valObj.deviceaddress).to.be.equal('0x123456789abcdef');
+                expect(valObj.deviceaddress).toBe('0x123456789abcdef');
 
                 setImmediate(() => {
                     deferred.resolve({ status: 0 });
@@ -671,7 +672,7 @@ describe('Functional Check', () => {
 
             controller.remove(remoteDev, {}, err => {
                 if (!err) {
-                    requestStub.restore();
+                    requestStub.mockRestore();
                     done();
                 }
             });
@@ -679,11 +680,11 @@ describe('Functional Check', () => {
     });
 
     describe('#.registerEp', () => {
-        it('register loEp1', done => {
-            const requestStub = sinon.stub(controller, 'request').callsFake((subsys, cmdId, valObj, callback) => {
+        test('register loEp1', done => {
+            const requestStub = jest.spyOn(controller, 'request').mockImplementation((subsys, cmdId, valObj, callback) => {
                 const deferred = Q.defer();
 
-                expect(cmdId).to.be.equal('register');
+                expect(cmdId).toBe('register');
 
                 setImmediate(() => {
                     deferred.resolve({ status: 0 });
@@ -694,7 +695,7 @@ describe('Functional Check', () => {
 
             controller.registerEp(loEp1, err => {
                 if (!err){
-                    requestStub.restore();
+                    requestStub.mockRestore();
                     done();
                 }
             });
@@ -702,11 +703,11 @@ describe('Functional Check', () => {
     });
 
     describe('#.deregisterEp', () => {
-        it('delete loEp1', done => {
-            const requestStub = sinon.stub(controller, 'request').callsFake((subsys, cmdId, valObj, callback) => {
+        test('delete loEp1', done => {
+            const requestStub = jest.spyOn(controller, 'request').mockImplementation((subsys, cmdId, valObj, callback) => {
                 const deferred = Q.defer();
 
-                expect(cmdId).to.be.equal('delete');
+                expect(cmdId).toBe('delete');
 
                 setImmediate(() => {
                     deferred.resolve({ status: 0 });
@@ -719,7 +720,7 @@ describe('Functional Check', () => {
 
             controller.deregisterEp(loEp1, err => {
                 if (!err){
-                    requestStub.restore();
+                    requestStub.mockRestore();
                     done();
                 }
             });
@@ -727,8 +728,8 @@ describe('Functional Check', () => {
     });
 
     describe('#.reRegisterEp', () => {
-        it('reRegister loEp1', done => {
-            const requestStub = sinon.stub(controller, 'request').callsFake((subsys, cmdId, valObj, callback) => {
+        test('reRegister loEp1', done => {
+            const requestStub = jest.spyOn(controller, 'request').mockImplementation((subsys, cmdId, valObj, callback) => {
                 const deferred = Q.defer();
 
                 setImmediate(() => {
@@ -738,7 +739,7 @@ describe('Functional Check', () => {
                 return deferred.promise.nodeify(callback);
             });
 
-            const deregisterEpStub = sinon.stub(controller, 'deregisterEp').callsFake((loEp, callback) => {
+            const deregisterEpStub = jest.spyOn(controller, 'deregisterEp').mockImplementation((loEp, callback) => {
                 const deferred = Q.defer();
 
                 setImmediate(() => {
@@ -750,8 +751,8 @@ describe('Functional Check', () => {
 
             controller.reRegisterEp(loEp1, err => {
                 if (!err){
-                    requestStub.restore();
-                    deregisterEpStub.restore();
+                    requestStub.mockRestore();
+                    deregisterEpStub.mockRestore();
                     done();
                 }
             });
@@ -759,8 +760,8 @@ describe('Functional Check', () => {
     });
 
     describe('#.simpleDescReq', () => {
-        it('get remoteDev simple description', done => {
-            const deviceWithEndpointsStub = sinon.stub(controller.query, 'deviceWithEndpoints').callsFake((nwkAddr, ieeeAddr, callback) => {
+        test('get remoteDev simple description', done => {
+            const deviceWithEndpointsStub = jest.spyOn(controller.query, 'deviceWithEndpoints').mockImplementation((nwkAddr, ieeeAddr, callback) => {
                 const deferred = Q.defer();
 
                 setImmediate(() => {
@@ -777,10 +778,10 @@ describe('Functional Check', () => {
             });
 
             controller.simpleDescReq(10, '0x123456789abcdef', (err, devInfo) => {
-                expect(devInfo.ieeeAddr).to.be.equal('0x123456789abcdef');
+                expect(devInfo.ieeeAddr).toBe('0x123456789abcdef');
 
                 if (!err){
-                    deviceWithEndpointsStub.restore();
+                    deviceWithEndpointsStub.mockRestore();
                     done();
                 }
             });
@@ -788,11 +789,11 @@ describe('Functional Check', () => {
     });
 
     describe('#.bind', () => {
-        it('bind loEp1 and rmEp1', done => {
-            const requestStub = sinon.stub(controller, 'request').callsFake((subsys, cmdId, valObj, callback) => {
+        test('bind loEp1 and rmEp1', done => {
+            const requestStub = jest.spyOn(controller, 'request').mockImplementation((subsys, cmdId, valObj, callback) => {
                 const deferred = Q.defer();
 
-                expect(cmdId).to.be.equal('bindReq');
+                expect(cmdId).toBe('bindReq');
 
                 setImmediate(() => {
                     deferred.resolve({ status: 0 });
@@ -803,7 +804,7 @@ describe('Functional Check', () => {
 
             controller.bind(loEp1, 'genOnOff', rmEp1, err => {
                 if (!err){
-                    requestStub.restore();
+                    requestStub.mockRestore();
                     done();
                 }
             });
@@ -811,11 +812,11 @@ describe('Functional Check', () => {
     });
 
     describe('#.unbind', () => {
-        it('unbind loEp1 and rmEp1', done => {
-            const requestStub = sinon.stub(controller, 'request').callsFake((subsys, cmdId, valObj, callback) => {
+        test('unbind loEp1 and rmEp1', done => {
+            const requestStub = jest.spyOn(controller, 'request').mockImplementation((subsys, cmdId, valObj, callback) => {
                 const deferred = Q.defer();
 
-                expect(cmdId).to.be.equal('unbindReq');
+                expect(cmdId).toBe('unbindReq');
 
                 setImmediate(() => {
                     deferred.resolve({ status: 0 });
@@ -826,7 +827,7 @@ describe('Functional Check', () => {
 
             controller.unbind(loEp1, 'genOnOff', rmEp1, err => {
                 if (!err){
-                    requestStub.restore();
+                    requestStub.mockRestore();
                     done();
                 }
             });
@@ -834,8 +835,8 @@ describe('Functional Check', () => {
     });
 
     describe('#.endDeviceAnnceHdlr', () => {
-        it('unbind loEp1 and rmEp1', done => {
-            const simpleDescReqStub = sinon.stub(controller, 'simpleDescReq').callsFake((nwkAddr, ieeeAddr, callback) => {
+        test('unbind loEp1 and rmEp1', done => {
+            const simpleDescReqStub = jest.spyOn(controller, 'simpleDescReq').mockImplementation((nwkAddr, ieeeAddr, callback) => {
                 const deferred = Q.defer();
 
                 setImmediate(() => {

@@ -1,92 +1,91 @@
 'use strict';
-const expect = require('chai').expect;
 
 const ccznp = require('../');
 
 describe('Signature Check', () => {
-    it('ccznp.init(spCfg[, callback])', () => {
+    test('ccznp.init(spCfg[, callback])', () => {
         expect(() => ccznp.init({
             path: 'xxx',
-        })).to.not.throw();
+        })).not.toThrowError();
 
         ccznp._sp = null;
-        expect(() => ccznp.init({})).to.throw();
+        expect(() => ccznp.init({})).toThrowError();
         ccznp._sp = null;
-        expect(() => ccznp.init([])).to.throw();
+        expect(() => ccznp.init([])).toThrowError();
         ccznp._sp = null;
-        expect(() => ccznp.init('xxx')).to.throw();
+        expect(() => ccznp.init('xxx')).toThrowError();
         ccznp._sp = null;
-        expect(() => ccznp.init(123)).to.throw();
+        expect(() => ccznp.init(123)).toThrowError();
         ccznp._sp = null;
-        expect(() => ccznp.init(false)).to.throw();
+        expect(() => ccznp.init(false)).toThrowError();
         ccznp._sp = null;
-        expect(() => ccznp.init(undefined)).to.throw();
+        expect(() => ccznp.init(undefined)).toThrowError();
         ccznp._sp = null;
-        expect(() => ccznp.init(null)).to.throw();
+        expect(() => ccznp.init(null)).toThrowError();
     });
 
-    it('ccznp.request(subsys, cmdId, valObj, callback)', () => {
+    test('ccznp.request(subsys, cmdId, valObj, callback)', () => {
         ccznp._init = true;
 
         ccznp._spinLock = false;
-        expect(() => ccznp.request({}, 'ping', [], () => {})).to.throw('Unrecognized subsystem');
+        expect(() => ccznp.request({}, 'ping', [], () => {})).toThrowError('Unrecognized subsystem');
         ccznp._spinLock = false;
-        expect(() => ccznp.request([], 'ping', [], () => {})).to.throw('Unrecognized subsystem');
+        expect(() => ccznp.request([], 'ping', [], () => {})).toThrowError('Unrecognized subsystem');
         ccznp._spinLock = false;
-        expect(() => ccznp.request('xxx', 'ping', [], () => {})).to.throw('Unrecognized subsystem');
+        expect(() => ccznp.request('xxx', 'ping', [], () => {})).toThrowError('Unrecognized subsystem');
         ccznp._spinLock = false;
-        expect(() => ccznp.request(123, 'ping', [], () => {})).to.throw('Unrecognized subsystem');
+        expect(() => ccznp.request(123, 'ping', [], () => {})).toThrowError('Unrecognized subsystem');
         ccznp._spinLock = false;
-        expect(() => ccznp.request(false, 'ping', [], () => {})).to.throw('Unrecognized subsystem');
+        expect(() => ccznp.request(false, 'ping', [], () => {})).toThrowError('Unrecognized subsystem');
         ccznp._spinLock = false;
-        expect(() => ccznp.request(undefined, 'ping', [], () => {})).to.throw('Unrecognized subsystem');
+        expect(() => ccznp.request(undefined, 'ping', [], () => {})).toThrowError('Unrecognized subsystem');
         ccznp._spinLock = false;
-        expect(() => ccznp.request(null, 'ping', [], () => {})).to.throw('Unrecognized subsystem');
+        expect(() => ccznp.request(null, 'ping', [], () => {})).toThrowError('Unrecognized subsystem');
 
         ccznp._spinLock = false;
-        expect(() => ccznp.request('SYS', {}, [], () => {})).to.throw('Unrecognized command');
+        expect(() => ccznp.request('SYS', {}, [], () => {})).toThrowError('Unrecognized command');
         ccznp._spinLock = false;
-        expect(() => ccznp.request('SYS', [], [], () => {})).to.throw('Unrecognized command');
+        expect(() => ccznp.request('SYS', [], [], () => {})).toThrowError('Unrecognized command');
         ccznp._spinLock = false;
-        expect(() => ccznp.request('SYS', 'xxx', [], () => {})).to.throw('Unrecognized command');
+        expect(() => ccznp.request('SYS', 'xxx', [], () => {})).toThrowError('Unrecognized command');
         ccznp._spinLock = false;
-        expect(() => ccznp.request('SYS', 123, [], () => {})).to.throw('Unrecognized command');
+        expect(() => ccznp.request('SYS', 123, [], () => {})).toThrowError('Unrecognized command');
         ccznp._spinLock = false;
-        expect(() => ccznp.request('SYS', false, [], () => {})).to.throw('Unrecognized command');
+        expect(() => ccznp.request('SYS', false, [], () => {})).toThrowError('Unrecognized command');
         ccznp._spinLock = false;
-        expect(() => ccznp.request('SYS', undefined, [], () => {})).to.throw('Unrecognized command');
+        expect(() => ccznp.request('SYS', undefined, [], () => {})).toThrowError('Unrecognized command');
         ccznp._spinLock = false;
-        expect(() => ccznp.request('SYS', null, [], () => {})).to.throw('Unrecognized command');
+        expect(() => ccznp.request('SYS', null, [], () => {})).toThrowError('Unrecognized command');
 
         ccznp._spinLock = false;
-        expect(() => ccznp.request('SYS', 'ping', 'xxx', () => {})).to.throw('valObj should be an object');
+        expect(() => ccznp.request('SYS', 'ping', 'xxx', () => {})).toThrowError('valObj should be an object');
         ccznp._spinLock = false;
-        expect(() => ccznp.request('SYS', 'ping', 123, () => {})).to.throw('valObj should be an object');
+        expect(() => ccznp.request('SYS', 'ping', 123, () => {})).toThrowError('valObj should be an object');
         ccznp._spinLock = false;
-        expect(() => ccznp.request('SYS', 'ping', false, () => {})).to.throw('valObj should be an object');
+        expect(() => ccznp.request('SYS', 'ping', false, () => {})).toThrowError('valObj should be an object');
         ccznp._spinLock = false;
-        expect(() => ccznp.request('SYS', 'ping', undefined, () => {})).to.throw('valObj should be an object');
+        expect(() => ccznp.request('SYS', 'ping', undefined, () => {})).toThrowError('valObj should be an object');
         ccznp._spinLock = false;
-        expect(() => ccznp.request('SYS', 'ping', null, () => {})).to.throw('valObj should be an object');
+        expect(() => ccznp.request('SYS', 'ping', null, () => {})).toThrowError('valObj should be an object');
 
         ccznp._spinLock = false;
-        expect(() => ccznp.request('SYS', 'ping', [], {})).to.throw('callback should be a function');
+        expect(() => ccznp.request('SYS', 'ping', [], {})).toThrowError('callback should be a function');
         ccznp._spinLock = false;
-        expect(() => ccznp.request('SYS', 'ping', [], [])).to.throw('callback should be a function');
+        expect(() => ccznp.request('SYS', 'ping', [], [])).toThrowError('callback should be a function');
         ccznp._spinLock = false;
-        expect(() => ccznp.request('SYS', 'ping', [], 'xxx')).to.throw('callback should be a function');
+        expect(() => ccznp.request('SYS', 'ping', [], 'xxx')).toThrowError('callback should be a function');
         ccznp._spinLock = false;
-        expect(() => ccznp.request('SYS', 'ping', [], 123)).to.throw('callback should be a function');
+        expect(() => ccznp.request('SYS', 'ping', [], 123)).toThrowError('callback should be a function');
         ccznp._spinLock = false;
-        expect(() => ccznp.request('SYS', 'ping', [], false)).to.throw('callback should be a function');
+        expect(() => ccznp.request('SYS', 'ping', [], false)).toThrowError('callback should be a function');
         ccznp._spinLock = false;
-        expect(() => ccznp.request('SYS', 'ping', [], null)).to.throw('callback should be a function');
+        expect(() => ccznp.request('SYS', 'ping', [], null)).toThrowError('callback should be a function');
         ccznp._spinLock = false;
     });
 });
 
-describe('Functional Check', function() {
-    it('ccznp.init()', (done) => {
+describe('Functional Check', () => {
+    test('ccznp.init()', (done) => {
         ccznp.on('ready', () => {
             if (ccznp._init === true) {
                 done();
@@ -108,17 +107,16 @@ describe('Functional Check', function() {
         });
     });
 
-    this.timeout(5000);
-    it('ccznp.request() - timeout', (done) => {
+    test('ccznp.request() - timeout', (done) => {
         ccznp._unpi.send = () => {};
         ccznp.request('SYS', 'ping', {}, (err, result) => {
             if (err.message === 'request timeout') {
                 done();
             }
         });
-    });
+    }, 4000);
 
-    it('ccznp.request()', (done) => {
+    test('ccznp.request()', (done) => {
         const rsp = {
             status: 0,
         };
@@ -134,7 +132,7 @@ describe('Functional Check', function() {
         ccznp.emit('SRSP:SYS:ping', rsp);
     });
 
-    it('event: data', (done) => {
+    test('event: data', (done) => {
         const data = {
             sof: 254,
             len: 5,
@@ -176,7 +174,7 @@ describe('Functional Check', function() {
         ccznp._unpi.emit('data', data);
     });
 
-    it('event: AREQ', (done) => {
+    test('event: AREQ', (done) => {
         const data = {
             sof: 254,
             len: 3,
