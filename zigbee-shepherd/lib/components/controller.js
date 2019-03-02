@@ -293,23 +293,23 @@ Controller.prototype.request = function (subsys, cmdId, valObj, callback) {
     rspHdlr = function (err, rsp) {
         if (subsys !== 'ZDO' && subsys !== 5) {
             if (rsp && rsp.hasOwnProperty('status'))
-                debug.request('RSP <-- %s, status: %d', subsys + ':' + cmdId, rsp.status);
+                debug.request('RSP <-- %s, status: %d', `${subsys}:${cmdId}`, rsp.status);
             else
-                debug.request('RSP <-- %s', subsys + ':' + cmdId);
+                debug.request('RSP <-- %s', `${subsys}:${cmdId}`);
         }
 
         if (err)
             deferred.reject(err);
         else if ((subsys !== 'ZDO' && subsys !== 5) && rsp && rsp.hasOwnProperty('status') && rsp.status !== 0)  // unsuccessful
-            deferred.reject(new Error('rsp error: ' + rsp.status));
+            deferred.reject(new Error(`rsp error: ${rsp.status}`));
         else
             deferred.resolve(rsp);
     };
 
     if ((subsys === 'AF' || subsys === 4) && valObj.hasOwnProperty('transid'))
-        debug.request('REQ --> %s, transId: %d', subsys + ':' + cmdId, valObj.transid);
+        debug.request('REQ --> %s, transId: %d', `${subsys}:${cmdId}`, valObj.transid);
     else
-        debug.request('REQ --> %s', subsys + ':' + cmdId);
+        debug.request('REQ --> %s', `${subsys}:${cmdId}`);
 
     if (subsys === 'ZDO' || subsys === 5)
         this._zdo.request(cmdId, valObj, rspHdlr);          // use wrapped zdo as the exported api
@@ -483,13 +483,13 @@ Controller.prototype.setNvParams = function (net) {
 
                 _.forEach(val, ch => {
                     if (ch >= 11 && ch <= 26)
-                        chList = chList | ZSC.ZDO.channelMask['CH' + ch];
+                        chList = chList | ZSC.ZDO.channelMask[`CH${ch}`];
                 });
 
                 nvParams.channelList.value = [ chList & 0xFF, (chList >> 8) & 0xFF, (chList >> 16) & 0xFF, (chList >> 24) & 0xFF ];
                 break;
             default:
-                throw new TypeError('Unkown argument: ' + param + '.');
+                throw new TypeError(`Unkown argument: ${param}.`);
         }
     });
 };
@@ -561,7 +561,7 @@ Controller.prototype.checkOnline = function (dev, callback) {
 Controller.prototype.endDeviceAnnceHdlr = function (data) {
     const self = this;
     let joinTimeout;
-    const joinEvent = 'ind:incoming' + ':' + data.ieeeaddr;
+    const joinEvent = `ind:incoming:${data.ieeeaddr}`;
     const dev = this._shepherd._findDevByAddr(data.ieeeaddr);
 
     if (dev && dev.status === 'online'){  // Device has already joined, do next item in queue
@@ -632,7 +632,7 @@ Controller.prototype.endDeviceAnnceHdlr = function (data) {
     }).then(() => {
         self.emit(joinEvent, '__timeout__');
     }).fail(err => {
-        self._shepherd.emit('error', 'Cannot get the Node Descriptor of the Device: ' + data.ieeeaddr + ' ('+err+')');
+        self._shepherd.emit('error', `Cannot get the Node Descriptor of the Device: ${data.ieeeaddr} (${err})`);
         self._shepherd.emit('joining', { type: 'error', ieeeAddr: data.ieeeaddr });
         self.emit(joinEvent, '__timeout__');
     }).done();

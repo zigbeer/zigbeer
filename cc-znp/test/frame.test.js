@@ -48,7 +48,7 @@ describe('#.frame', () => {
                 payload = argObj.frame();
 
                 argObj.parser(payload, (err, result) => {
-                    it(argObj.cmd + ' framer check', () => {
+                    it(`${argObj.cmd} framer check`, () => {
                         expect(result).to.eql(args);
                     });
                 });
@@ -81,7 +81,7 @@ function randomArgForFrame(type) {
         case 'listbuffer':
             testArr = [];
             for (k = 0; k < 3; k += 1) {
-                testArr[k] = '0x' + chance.integer({min: 0, max: 65535}).toString(16);
+                testArr[k] = `0x${chance.integer({min: 0, max: 65535}).toString(16)}`;
             }
             return testArr;
         default:
@@ -107,7 +107,7 @@ function parser(zBuf, callback) {
                 rule = rule(arg.name, 6);
                 chunkRules.push(rule);
             } else {
-                err = new Error('Parsing rule for ' + arg.type + ' is not found.');
+                err = new Error(`Parsing rule for ${arg.type} is not found.`);
             }
         });
     } else {
@@ -141,7 +141,7 @@ function bufToArray(buf) {
     let i;
 
     for (i = 0; i < buf.length; i += 2) {
-        nipArr.push('0x' + buf.readUInt16LE(i).toString(16));
+        nipArr.push(`0x${buf.readUInt16LE(i).toString(16)}`);
     }
 
     return nipArr;

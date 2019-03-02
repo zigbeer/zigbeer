@@ -109,7 +109,7 @@ controller.findEndpoint = function (srcaddr, srcendpoint) {
 };
 
 function fireFakeCnf(status, epid, transid) {
-    const afEventCnf = 'AF:dataConfirm:' + epid + ':' + transid;
+    const afEventCnf = `AF:dataConfirm:${epid}:${transid}`;
     setTimeout(() => {
         controller.emit(afEventCnf, { status, endpoint: epid, transid  });
     });

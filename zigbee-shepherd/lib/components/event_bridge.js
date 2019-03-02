@@ -11,7 +11,7 @@ const bridge = {};
 
 bridge._areqEventBridge = function (controller, msg) {
     // msg: { subsys: 'ZDO', ind: 'endDeviceAnnceInd', data: { srcaddr: 63536, nwkaddr: 63536, ieeeaddr: '0x00124b0001ce3631', ... }
-    const mandatoryEvent = msg.subsys + ':' + msg.ind;    // 'SYS:resetInd', 'SYS:osalTimerExpired'
+    const mandatoryEvent = `${msg.subsys}:${msg.ind}`;    // 'SYS:resetInd', 'SYS:osalTimerExpired'
 
     controller.emit(mandatoryEvent, msg.data);          // bridge to subsystem events, like 'SYS:resetInd', 'SYS:osalTimerExpired'
 
@@ -30,16 +30,16 @@ bridge._areqEventBridge = function (controller, msg) {
 
 bridge._zdoIndicationEventBridge = function (controller, msg) {
     const payload = msg.data;
-    const zdoEventHead = 'ZDO:' + msg.ind;
+    const zdoEventHead = `ZDO:${msg.ind}`;
     let zdoBridgedEvent;
 
     if (msg.ind === 'stateChangeInd') {    // this is a special event
         if (!payload.hasOwnProperty('nwkaddr'))    // Coord itself
             zdoBridgedEvent = 'coordStateInd';
         else if (payload.state === 0x83 || payload.state === 'NOT_ACTIVE')
-            zdoBridgedEvent = zdoEventHead + ':' + payload.nwkaddr + ':NOT_ACTIVE';
+            zdoBridgedEvent = `${zdoEventHead}:${payload.nwkaddr}:NOT_ACTIVE`;
         else if (payload.state === 0x82 || payload.state === 'INVALID_EP')
-            zdoBridgedEvent = zdoEventHead + ':' + payload.nwkaddr + ':INVALID_EP';
+            zdoBridgedEvent = `${zdoEventHead}:${payload.nwkaddr}:INVALID_EP`;
     } else {
         zdoBridgedEvent = zdoHelper.generateEventOfIndication(msg.ind, payload);
     }
@@ -50,22 +50,22 @@ bridge._zdoIndicationEventBridge = function (controller, msg) {
 
 bridge._sapiIndicationEventBridge = function (controller, msg) {
     const payload = msg.data;
-    const sapiEventHead = 'SAPI:' + msg.ind;
+    const sapiEventHead = `SAPI:${msg.ind}`;
     let sapiBridgedEvent;
 
     switch (msg.ind) {
         case 'bindConfirm':
-            sapiBridgedEvent = sapiEventHead + ':' + payload.commandid;
+            sapiBridgedEvent = `${sapiEventHead}:${payload.commandid}`;
             break;
         case 'sendDataConfirm':
-            sapiBridgedEvent = sapiEventHead + ':' + payload.handle;
+            sapiBridgedEvent = `${sapiEventHead}:${payload.handle}`;
             break;
         case 'receiveDataIndication':
-            sapiBridgedEvent = sapiEventHead + ':' + payload.source + ':' + payload.command;
+            sapiBridgedEvent = `${sapiEventHead}:${payload.source}:${payload.command}`;
             break;
         case 'findDeviceConfirm':
             if (payload.hasOwnProperty('result'))
-                sapiBridgedEvent = sapiEventHead + ':' + payload.result;
+                sapiBridgedEvent = `${sapiEventHead}:${payload.result}`;
             break;
         default:    // startConfirm and allowBindConfirm need no bridging
             break;

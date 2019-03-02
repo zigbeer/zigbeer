@@ -40,7 +40,7 @@ query.firmware = function(){
         .then(rsp => ({
         transportrev: rsp.transportrev,
         product: rsp.product,
-        version: rsp.majorrel + "." + rsp.minorrel + "." + rsp.maintrel,
+        version: `${rsp.majorrel}.${rsp.minorrel}.${rsp.maintrel}`,
         revision: rsp.revision
     })).fail(() => ({
         error: "Unable to get firmware version"
@@ -124,7 +124,7 @@ query.setBindingEntry = function (bindMode, srcEp, cId, dstEpOrGrpId, callback, 
     if (!((srcEp instanceof Endpoint) || (srcEp instanceof Coordpoint)))
         throw new TypeError('srcEp should be an instance of Endpoint class.');
 
-    proving.defined(cIdItem, 'Invalid cluster id: ' + cId + '.');
+    proving.defined(cIdItem, `Invalid cluster id: ${cId}.`);
 
     if (_.isNumber(dstEpOrGrpId) && !_.isNaN(dstEpOrGrpId))
         grpId = dstEpOrGrpId;
@@ -247,7 +247,7 @@ function addrBuf2Str(buf) {
         val = buf.readUInt8(bufLen - i - 1);
 
         if (val <= 15)
-            strChunk += '0' + val.toString(16);
+            strChunk += `0${val.toString(16)}`;
         else
             strChunk += val.toString(16);
     }

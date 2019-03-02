@@ -42,7 +42,7 @@ Zdo.prototype._sendZdoRequestViaZnp = function (apiName, valObj, callback) {
         if (err)
             error = err;
         else if (apiName !== 'startupFromApp' && rsp.status !== 0)
-            error = new Error('request unsuccess: ' + rsp.status);
+            error = new Error(`request unsuccess: ${rsp.status}`);
 
         callback(error, rsp);
     });
@@ -151,7 +151,7 @@ Zdo.prototype._concatAddrRequest = function (apiName, valObj, callback) {
             if (err) {
                 callback(err, finalRsp);
             } else if (rsp.status !== 0) {
-                callback(new Error('request unsuccess: ' + rsp.status), finalRsp);
+                callback(new Error(`request unsuccess: ${rsp.status}`), finalRsp);
             } else {
                 finalRsp.status = rsp.status;
                 finalRsp.ieeeaddr = finalRsp.ieeeaddr || rsp.ieeeaddr;
@@ -212,7 +212,7 @@ Zdo.prototype._concatListRequest = function (apiName, valObj, listKeys, callback
             if (err) {
                 callback(err, finalRsp);
             } else if (rsp.status !== 0) {
-                callback(new Error('request unsuccess: ' + rsp.status), finalRsp);
+                callback(new Error(`request unsuccess: ${rsp.status}`), finalRsp);
             } else {
                 finalRsp.status = rsp.status;
                 finalRsp.srcaddr = finalRsp.srcaddr || rsp.srcaddr;

@@ -76,14 +76,14 @@ function CcZnp() {
 
     this._innerListeners = {
         spOpen() {
-            debug('The serialport ' + self._sp.path + ' is opened.');
+            debug(`The serialport ${self._sp.path} is opened.`);
             self.emit('_ready');
         },
         spErr(err) {
             self._sp.close();
         },
         spClose() {
-            debug('The serialport ' + self._sp.path + ' is closed.');
+            debug(`The serialport ${self._sp.path} is closed.`);
             self._txQueue = null;
             self._txQueue = [];
             self._sp = null;
@@ -206,10 +206,10 @@ CcZnp.prototype.request = function(subsys, cmd, valObj, callback) {
         argObj = new ZpiObject(subsys, cmd, valObj);
 
     if (argObj.type === 'SREQ') {
-        logSreq('--> %s, %o', argObj.subsys + ':' + argObj.cmd, valObj);
+        logSreq('--> %s, %o', `${argObj.subsys}:${argObj.cmd}`, valObj);
         return this._sendSREQ(argObj, callback);
     } else if (argObj.type === 'AREQ') {
-        logAreq('--> %s, %o', argObj.subsys + ':' + argObj.cmd, valObj);
+        logAreq('--> %s, %o', `${argObj.subsys}:${argObj.cmd}`, valObj);
         return this._sendAREQ(argObj, callback);
     }
 };
@@ -236,7 +236,7 @@ const namespaces = [
 ];
 
 namespaces.forEach(function(subsys) {
-    const reqMethod = subsys.toLowerCase() + 'Request';
+    const reqMethod = `${subsys.toLowerCase()}Request`;
     CcZnp.prototype[reqMethod] = function(cmdId, valObj, callback) {
         return this.request(subsys, cmdId, valObj, callback);
     };
@@ -250,7 +250,7 @@ CcZnp.prototype._sendSREQ = function(argObj, callback) {
     const self = this;
     const payload = argObj.frame();
     let sreqTimeout;
-    const srspEvt = 'SRSP:' + argObj.subsys + ':' + argObj.cmd;
+    const srspEvt = `SRSP:${argObj.subsys}:${argObj.cmd}`;
 
     if (!payload) {
         callback(new Error('Fail to build frame'));
@@ -280,7 +280,7 @@ CcZnp.prototype._sendSREQ = function(argObj, callback) {
 
         // check if this event is fired by timeout controller
         if (result === '__timeout__') {
-            logSrsp('<-- %s, __timeout__', argObj.subsys + ':' + argObj.cmd);
+            logSrsp('<-- %s, __timeout__', `${argObj.subsys}:${argObj.cmd}`);
             callback(new Error('request timeout'));
         } else {
             self._resetting = false;
@@ -386,11 +386,11 @@ CcZnp.prototype._mtIncomingDataHdlr = function(err, data) {
     const result = data.payload;
 
     if (data.type === 'SRSP') {
-        logSrsp('<-- %s, %o', subsys + ':' + cmd, result);
-        rxEvt = 'SRSP:' + subsys + ':' + cmd;
+        logSrsp('<-- %s, %o', `${subsys}:${cmd}`, result);
+        rxEvt = `SRSP:${subsys}:${cmd}`;
         this.emit(rxEvt, result);
     } else if (data.type === 'AREQ') {
-        logAreq('<-- %s, %o', subsys + ':' + cmd, result);
+        logAreq('<-- %s, %o', `${subsys}:${cmd}`, result);
         rxEvt = 'AREQ';
         msg = {
             subsys,

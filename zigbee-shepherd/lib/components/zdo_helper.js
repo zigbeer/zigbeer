@@ -115,13 +115,13 @@ zdoHelper.generateEventOfRequest = function (reqName, valObj) {
     if (!zdoHelper.hasAreq(reqName))
         return;
 
-    evtName = 'ZDO:' + meta.ind;
+    evtName = `ZDO:${meta.ind}`;
 
     if (meta.suffix.length === 0)
         return evtName;
 
     meta.suffix.forEach(key => {
-        evtName = evtName + ':' + valObj[key].toString();
+        evtName = `${evtName}:${valObj[key].toString()}`;
     });
 
     return evtName;
@@ -131,13 +131,13 @@ zdoHelper.generateEventOfIndication = function (indName, msgData) {
     const meta = zdoIndSuffix[indName];
     let evtName;
 
-    evtName = 'ZDO:' + indName;
+    evtName = `ZDO:${indName}`;
 
     if (!meta || (meta.length === 0))
         return;
 
     meta.forEach(key => {
-        evtName = evtName + ':' + msgData[key].toString();
+        evtName = `${evtName}:${msgData[key].toString()}`;
     });
 
     return evtName;

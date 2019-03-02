@@ -107,7 +107,7 @@ describe('#.parse', () => {
             payload = argObj.framer();
 
             argObj.parse(argObj.type, payload.length, payload, (err, result) => {
-                it(argObj.cmd + ' parser check', () => {
+                it(`${argObj.cmd} parser check`, () => {
                     expect(result).to.eql(args);
                 });
             });
@@ -452,7 +452,7 @@ function addrBuf2Str(buf) {
     for (let i = 0; i < bufLen; i += 1) {
         val = buf.readUInt8(bufLen - i - 1);
         if (val <= 15) {
-            strChunk += '0' + val.toString(16);
+            strChunk += `0${val.toString(16)}`;
         } else {
             strChunk += val.toString(16);
         }
