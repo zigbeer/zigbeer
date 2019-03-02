@@ -23,14 +23,14 @@ const logger = new (winston.Logger)({
         new (winston.transports.File)({
             filename: path.join(directory, 'log.txt'),
             json: false,
-            level: level,
+            level,
             maxFiles: 3, // Keep last 3 files
             maxsize: 10000000, // 10MB
             timestamp: () => new Date().toLocaleString(),
         }),
         new (winston.transports.Console)({
             timestamp: () => new Date().toLocaleString(),
-            formatter: function(options) {
+            formatter(options) {
                 return winston.config.colorize(options.level, '  zigbee2mqtt:' + options.level.toLowerCase()) + ' ' +
                     options.timestamp() + ' ' + (options.message ? options.message : '') +
                     (options.meta && Object.keys(options.meta).length ? '\n\t'+ JSON.stringify(options.meta) : '' );

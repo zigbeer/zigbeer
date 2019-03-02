@@ -87,11 +87,11 @@ function ZShepherd(path, opts) {
             endpoints.push(dev.getEndpoint(epId));
         });
 
-        self.emit('ind', { type: 'devIncoming', endpoints: endpoints, data: dev.getIeeeAddr() });
+        self.emit('ind', { type: 'devIncoming', endpoints, data: dev.getIeeeAddr() });
     });
 
     this.on('ind:interview', (dev, status) => {
-        self.emit('ind', { type: 'devInterview', status: status, data: dev });
+        self.emit('ind', { type: 'devInterview', status, data: dev });
     });
 
     this.on('ind:leaving', (epList, ieeeAddr) => {
@@ -110,7 +110,7 @@ function ZShepherd(path, opts) {
         notifData.cid = cIdString ? cIdString.key : cId;
         notifData.data = payload;
 
-        self.emit('ind', { type: type, endpoints: [ ep ], data: notifData, linkquality: msg.linkquality });
+        self.emit('ind', { type, endpoints: [ ep ], data: notifData, linkquality: msg.linkquality });
     });
 
     this.on('ind:statusChange', (ep, cId, payload, msg) => {
@@ -158,7 +158,7 @@ function ZShepherd(path, opts) {
             endpoints.push(dev.getEndpoint(epId));
         });
 
-        self.emit('ind', { type: 'devStatus', endpoints: endpoints, data: status });
+        self.emit('ind', { type: 'devStatus', endpoints, data: status });
     });
 }
 
@@ -256,7 +256,7 @@ ZShepherd.prototype.info = function () {
             ieeeAddr: net.ieeeAddr,
             nwkAddr: net.nwkAddr,
         },
-        firmware: firmware,
+        firmware,
         startTime: this._startTime,
         joinTimeLeft: net.joinTimeLeft
     };
@@ -598,7 +598,7 @@ ZShepherd.prototype._attachZclMethods = function (ep) {
                     dataType : self.zclId.attrType(cId, attrId).value,
                     minRepIntval : minInt,
                     maxRepIntval : maxInt,
-                    repChange: repChange
+                    repChange
                 };
             }
 

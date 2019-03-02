@@ -50,8 +50,8 @@ query.firmware = function(){
 query.device = function (ieeeAddr, nwkAddr, callback) {
     const devInfo = {
             type: null,
-            ieeeAddr: ieeeAddr,
-            nwkAddr: nwkAddr,
+            ieeeAddr,
+            nwkAddr,
             manufId: null,
             epList: null
         };
@@ -93,7 +93,7 @@ query.deviceWithEndpoints = function (nwkAddr, ieeeAddr, callback) {
         fullDev = devInfo;
 
         _.forEach(fullDev.epList, epId => {
-            const epQuery = {func: query.endpoint, nwkAddr: nwkAddr, epId: epId};
+            const epQuery = {func: query.endpoint, nwkAddr, epId};
             epQueries.push(epQuery);
         });
 

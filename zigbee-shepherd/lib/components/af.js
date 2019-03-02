@@ -544,7 +544,7 @@ function afFactory(zclId) {
 
         const discAttrs = function (startAttrId, defer) {
             af.zclFoundation(dstEp, dstEp, cId, 'discover', {
-                startAttrId: startAttrId,
+                startAttrId,
                 maxAttrIds: 240
             }).then(discoverRsp => {
                 // discoverRsp.payload: { discComplete, attrInfos: [ { attrId, dataType }, ... ] }
@@ -608,9 +608,9 @@ function afFactory(zclId) {
                     let msgBuffer = rebornDevs[msg.srcaddr];
 
                     if (_.isArray(msgBuffer)) {
-                        msgBuffer.push({ type: type, msg: msg });
+                        msgBuffer.push({ type, msg });
                     } else if (_.isUndefined(msgBuffer)) {
-                        msgBuffer = rebornDevs[msg.srcaddr] = [ { type: type, msg: msg } ];
+                        msgBuffer = rebornDevs[msg.srcaddr] = [ { type, msg } ];
 
                         af.controller.request('ZDO', 'ieeeAddrReq', { shortaddr: msg.srcaddr, reqtype: 0, startindex:0 }).then(rsp => {
                             // rsp: { status, ieeeaddr, nwkaddr, startindex, numassocdev, assocdevlist }

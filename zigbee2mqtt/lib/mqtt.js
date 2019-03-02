@@ -97,7 +97,7 @@ class MQTT {
     }
 
     log(type, message) {
-        const payload = {type: type, message: message};
+        const payload = {type, message};
         this.publish('bridge/log', JSON.stringify(payload), {retain: false});
     }
 }

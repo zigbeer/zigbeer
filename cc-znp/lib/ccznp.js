@@ -75,14 +75,14 @@ function CcZnp() {
     });
 
     this._innerListeners = {
-        spOpen: function() {
+        spOpen() {
             debug('The serialport ' + self._sp.path + ' is opened.');
             self.emit('_ready');
         },
-        spErr: function(err) {
+        spErr(err) {
             self._sp.close();
         },
-        spClose: function() {
+        spClose() {
             debug('The serialport ' + self._sp.path + ' is closed.');
             self._txQueue = null;
             self._txQueue = [];
@@ -91,7 +91,7 @@ function CcZnp() {
             self._init = false;
             self.emit('close');
         },
-        parseMtIncomingData: function(result) {
+        parseMtIncomingData(result) {
             self._parseMtIncomingData(result);
         },
     };
@@ -393,7 +393,7 @@ CcZnp.prototype._mtIncomingDataHdlr = function(err, data) {
         logAreq('<-- %s, %o', subsys + ':' + cmd, result);
         rxEvt = 'AREQ';
         msg = {
-            subsys: subsys,
+            subsys,
             ind: cmd,
             data: result,
         };

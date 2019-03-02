@@ -64,7 +64,7 @@ class DevicePublish {
 
         const deviceID = topic;
 
-        return {type: type, deviceID: deviceID, postfix: postfix};
+        return {type, deviceID, postfix};
     }
 
     onMQTTMessage(topic, message) {
