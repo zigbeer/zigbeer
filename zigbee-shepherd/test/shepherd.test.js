@@ -239,7 +239,7 @@ describe('Top Level of Tests', function () {
                 var _readyCbCalled = false,
                     readyCbCalled = false,
                     startCbCalled = false,
-                    startStub = sinon.stub(shepherd, 'start', function (callback) {
+                    startStub = sinon.stub(shepherd, 'start').callsFake(function (callback) {
                         var deferred = Q.defer();
 
                         shepherd._enabled = true;
@@ -300,10 +300,10 @@ describe('Top Level of Tests', function () {
 
         describe('#.mount', function () {
             it('should mount zApp', function (done) {
-                var coordStub = sinon.stub(shepherd.controller.query, 'coordInfo', function (callback) {
+                var coordStub = sinon.stub(shepherd.controller.query, 'coordInfo').callsFake(function (callback) {
                         return Q({}).nodeify(callback);
                     }),
-                    syncStub = sinon.stub(shepherd._devbox, 'sync', function (id, callback) {
+                    syncStub = sinon.stub(shepherd._devbox, 'sync').callsFake(function (id, callback) {
                         return Q({}).nodeify(callback);
                     });
 
@@ -345,7 +345,7 @@ describe('Top Level of Tests', function () {
 
         describe('#.lqi', function () {
             it('should get lqi of the device', function (done) {
-                var requestStub = sinon.stub(shepherd.controller, 'request', function (subsys, cmdId, valObj, callback) {
+                var requestStub = sinon.stub(shepherd.controller, 'request').callsFake(function (subsys, cmdId, valObj, callback) {
                     var deferred = Q.defer();
 
                     process.nextTick(function () {
@@ -387,7 +387,7 @@ describe('Top Level of Tests', function () {
 
         describe('#.remove', function () {
             it('should remove the device', function (done) {
-                var requestStub = sinon.stub(shepherd.controller, 'request', function (subsys, cmdId, valObj, callback) {
+                var requestStub = sinon.stub(shepherd.controller, 'request').callsFake(function (subsys, cmdId, valObj, callback) {
                     var deferred = Q.defer();
 
                     process.nextTick(function () {
@@ -410,7 +410,7 @@ describe('Top Level of Tests', function () {
             this.timeout(60000);
 
             it('should fire incoming message and get a new device', function (done) {
-                var acceptDevIncomingStub = sinon.stub(shepherd, 'acceptDevIncoming', function (devInfo, cb) {
+                var acceptDevIncomingStub = sinon.stub(shepherd, 'acceptDevIncoming').callsFake(function (devInfo, cb) {
                     setTimeout(function () {
                         var accepted = true;
                         cb(null, accepted);
@@ -437,12 +437,12 @@ describe('Top Level of Tests', function () {
         describe('#.reset', function () {
             this.timeout(20000);
             it('should reset - soft', function (done) {
-                var stopStub = sinon.stub(shepherd, 'stop', function (callback) {
+                var stopStub = sinon.stub(shepherd, 'stop').callsFake(function (callback) {
                         var deferred = Q.defer();
                         deferred.resolve();
                         return deferred.promise.nodeify(callback);
                     }),
-                    startStub = sinon.stub(shepherd, 'start', function (callback) {
+                    startStub = sinon.stub(shepherd, 'start').callsFake(function (callback) {
                         var deferred = Q.defer();
                         deferred.resolve();
                         return deferred.promise.nodeify(callback);
@@ -460,12 +460,12 @@ describe('Top Level of Tests', function () {
             });
 
             it('should reset - hard', function (done) {
-                var stopStub = sinon.stub(shepherd, 'stop', function (callback) {
+                var stopStub = sinon.stub(shepherd, 'stop').callsFake(function (callback) {
                         var deferred = Q.defer();
                         deferred.resolve();
                         return deferred.promise.nodeify(callback);
                     }),
-                    startStub = sinon.stub(shepherd, 'start', function (callback) {
+                    startStub = sinon.stub(shepherd, 'start').callsFake(function (callback) {
                         var deferred = Q.defer();
                         deferred.resolve();
                         return deferred.promise.nodeify(callback);
@@ -487,7 +487,7 @@ describe('Top Level of Tests', function () {
             it('should stop ok, permitJoin 0 should be fired, _enabled should be false', function (done) {
                 var joinFired = false,
                     stopCalled = false,
-                    closeStub = sinon.stub(shepherd.controller, 'close', function (callback) {
+                    closeStub = sinon.stub(shepherd.controller, 'close').callsFake(function (callback) {
                         var deferred = Q.defer();
 
                         deferred.resolve();

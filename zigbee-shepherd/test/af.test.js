@@ -640,7 +640,7 @@ describe('Module Methods Check', function() {
 
     describe('#.send - by delegator', function() {
         it('if srsp status !== 0, === 1, reject', function (done) {
-            var requestStub = sinon.stub(controller, 'request', function (subsys, cmdId, valObj, callback) {
+            var requestStub = sinon.stub(controller, 'request').callsFake(function (subsys, cmdId, valObj, callback) {
                     var deferred = Q.defer();
                     process.nextTick(function () {
                         deferred.resolve({ status: 1 });
@@ -657,7 +657,7 @@ describe('Module Methods Check', function() {
         });
 
         it('if srsp status === 0, nothing happen', function (done) {
-            var requestStub = sinon.stub(controller, 'request', function (subsys, cmdId, valObj, callback) {
+            var requestStub = sinon.stub(controller, 'request').callsFake(function (subsys, cmdId, valObj, callback) {
                     var deferred = Q.defer();
                     process.nextTick(function () {
                         deferred.resolve({ status: 0 });
@@ -674,7 +674,7 @@ describe('Module Methods Check', function() {
         });
 
         it('if srsp status === SUCCESS, nothing happen', function (done) {
-            var requestStub = sinon.stub(controller, 'request', function (subsys, cmdId, valObj, callback) {
+            var requestStub = sinon.stub(controller, 'request').callsFake(function (subsys, cmdId, valObj, callback) {
                     var deferred = Q.defer();
                     process.nextTick(function () {
                         deferred.resolve({ status: 'SUCCESS'});
@@ -691,7 +691,7 @@ describe('Module Methods Check', function() {
         });
 
         it('if areq status === 0xcd, NWK_NO_ROUTE, reject', function (done) {
-            var requestStub = sinon.stub(controller, 'request', function (subsys, cmdId, valObj, callback) {
+            var requestStub = sinon.stub(controller, 'request').callsFake(function (subsys, cmdId, valObj, callback) {
                     var deferred = Q.defer();
                     process.nextTick(function () {
                         deferred.resolve({ status: 0 });
@@ -710,7 +710,7 @@ describe('Module Methods Check', function() {
         });
 
         it('if areq status === 0xe9, MAC_NO_ACK, reject', function (done) {
-            var requestStub = sinon.stub(controller, 'request', function (subsys, cmdId, valObj, callback) {
+            var requestStub = sinon.stub(controller, 'request').callsFake(function (subsys, cmdId, valObj, callback) {
                     var deferred = Q.defer();
                     process.nextTick(function () {
                         deferred.resolve({ status: 0 });
@@ -729,7 +729,7 @@ describe('Module Methods Check', function() {
         });
 
         it('if areq status === 0xb7, APS_NO_ACK, reject', function (done) {
-            var requestStub = sinon.stub(controller, 'request', function (subsys, cmdId, valObj, callback) {
+            var requestStub = sinon.stub(controller, 'request').callsFake(function (subsys, cmdId, valObj, callback) {
                     var deferred = Q.defer();
                     process.nextTick(function () {
                         deferred.resolve({ status: 0 });
@@ -748,7 +748,7 @@ describe('Module Methods Check', function() {
         });
 
         it('if areq status === 0xf0, MAC_TRANSACTION_EXPIRED, reject', function (done) {
-            var requestStub = sinon.stub(controller, 'request', function (subsys, cmdId, valObj, callback) {
+            var requestStub = sinon.stub(controller, 'request').callsFake(function (subsys, cmdId, valObj, callback) {
                     var deferred = Q.defer();
                     process.nextTick(function () {
                         deferred.resolve({ status: 0 });
@@ -767,7 +767,7 @@ describe('Module Methods Check', function() {
         });
 
         it('if areq status === 0xANY, UNKNOWN ERROR, reject', function (done) {
-            var requestStub = sinon.stub(controller, 'request', function (subsys, cmdId, valObj, callback) {
+            var requestStub = sinon.stub(controller, 'request').callsFake(function (subsys, cmdId, valObj, callback) {
                     var deferred = Q.defer();
                     process.nextTick(function () {
                         deferred.resolve({ status: 0 });
@@ -803,7 +803,7 @@ describe('Module Methods Check', function() {
 
     describe('#.send - by local ep 8', function() {
         it('if srsp status !== 0, === 1, reject', function (done) {
-            var requestStub = sinon.stub(controller, 'request', function (subsys, cmdId, valObj, callback) {
+            var requestStub = sinon.stub(controller, 'request').callsFake(function (subsys, cmdId, valObj, callback) {
                     var deferred = Q.defer();
                     process.nextTick(function () {
                         deferred.resolve({ status: 1 });
@@ -820,7 +820,7 @@ describe('Module Methods Check', function() {
         });
 
         it('if srsp status === 0, nothing happen', function (done) {
-            var requestStub = sinon.stub(controller, 'request', function (subsys, cmdId, valObj, callback) {
+            var requestStub = sinon.stub(controller, 'request').callsFake(function (subsys, cmdId, valObj, callback) {
                     var deferred = Q.defer();
                     process.nextTick(function () {
                         deferred.resolve({ status: 0 });
@@ -837,7 +837,7 @@ describe('Module Methods Check', function() {
         });
 
         it('if srsp status === SUCCESS, nothing happen', function (done) {
-            var requestStub = sinon.stub(controller, 'request', function (subsys, cmdId, valObj, callback) {
+            var requestStub = sinon.stub(controller, 'request').callsFake(function (subsys, cmdId, valObj, callback) {
                     var deferred = Q.defer();
                     process.nextTick(function () {
                         deferred.resolve({ status: 'SUCCESS'});
@@ -854,7 +854,7 @@ describe('Module Methods Check', function() {
         });
 
         it('if areq status === 0xcd, NWK_NO_ROUTE, reject', function (done) {
-            var requestStub = sinon.stub(controller, 'request', function (subsys, cmdId, valObj, callback) {
+            var requestStub = sinon.stub(controller, 'request').callsFake(function (subsys, cmdId, valObj, callback) {
                     var deferred = Q.defer();
                     process.nextTick(function () {
                         deferred.resolve({ status: 0 });
@@ -873,7 +873,7 @@ describe('Module Methods Check', function() {
         });
 
         it('if areq status === 0xe9, MAC_NO_ACK, reject', function (done) {
-            var requestStub = sinon.stub(controller, 'request', function (subsys, cmdId, valObj, callback) {
+            var requestStub = sinon.stub(controller, 'request').callsFake(function (subsys, cmdId, valObj, callback) {
                     var deferred = Q.defer();
                     process.nextTick(function () {
                         deferred.resolve({ status: 0 });
@@ -892,7 +892,7 @@ describe('Module Methods Check', function() {
         });
 
         it('if areq status === 0xb7, APS_NO_ACK, reject', function (done) {
-            var requestStub = sinon.stub(controller, 'request', function (subsys, cmdId, valObj, callback) {
+            var requestStub = sinon.stub(controller, 'request').callsFake(function (subsys, cmdId, valObj, callback) {
                     var deferred = Q.defer();
                     process.nextTick(function () {
                         deferred.resolve({ status: 0 });
@@ -911,7 +911,7 @@ describe('Module Methods Check', function() {
         });
 
         it('if areq status === 0xf0, MAC_TRANSACTION_EXPIRED, reject', function (done) {
-            var requestStub = sinon.stub(controller, 'request', function (subsys, cmdId, valObj, callback) {
+            var requestStub = sinon.stub(controller, 'request').callsFake(function (subsys, cmdId, valObj, callback) {
                     var deferred = Q.defer();
                     process.nextTick(function () {
                         deferred.resolve({ status: 0 });
@@ -930,7 +930,7 @@ describe('Module Methods Check', function() {
         });
 
         it('if areq status === 0xANY, UNKNOWN ERROR, reject', function (done) {
-            var requestStub = sinon.stub(controller, 'request', function (subsys, cmdId, valObj, callback) {
+            var requestStub = sinon.stub(controller, 'request').callsFake(function (subsys, cmdId, valObj, callback) {
                     var deferred = Q.defer();
                     process.nextTick(function () {
                         deferred.resolve({ status: 0 });
@@ -966,7 +966,7 @@ describe('Module Methods Check', function() {
 
     describe('#.sendExt', function() {
         it('if srsp status !== 0, === 1, reject', function (done) {
-            var requestStub = sinon.stub(controller, 'request', function (subsys, cmdId, valObj, callback) {
+            var requestStub = sinon.stub(controller, 'request').callsFake(function (subsys, cmdId, valObj, callback) {
                     var deferred = Q.defer();
                     process.nextTick(function () {
                         deferred.resolve({ status: 1 });
@@ -983,7 +983,7 @@ describe('Module Methods Check', function() {
         });
 
         it('if srsp status === 0, nothing happen', function (done) {
-            var requestStub = sinon.stub(controller, 'request', function (subsys, cmdId, valObj, callback) {
+            var requestStub = sinon.stub(controller, 'request').callsFake(function (subsys, cmdId, valObj, callback) {
                     var deferred = Q.defer();
                     process.nextTick(function () {
                         deferred.resolve({ status: 0 });
@@ -1001,7 +1001,7 @@ describe('Module Methods Check', function() {
         });
 
         it('if srsp status === SUCCESS, nothing happen', function (done) {
-            var requestStub = sinon.stub(controller, 'request', function (subsys, cmdId, valObj, callback) {
+            var requestStub = sinon.stub(controller, 'request').callsFake(function (subsys, cmdId, valObj, callback) {
                     var deferred = Q.defer();
                     process.nextTick(function () {
                         deferred.resolve({ status: 'SUCCESS'});
@@ -1019,7 +1019,7 @@ describe('Module Methods Check', function() {
         });
 
         it('if areq status === 0xcd, NWK_NO_ROUTE, reject', function (done) {
-            var requestStub = sinon.stub(controller, 'request', function (subsys, cmdId, valObj, callback) {
+            var requestStub = sinon.stub(controller, 'request').callsFake(function (subsys, cmdId, valObj, callback) {
                     var deferred = Q.defer();
                     process.nextTick(function () {
                         deferred.resolve({ status: 0 });
@@ -1037,7 +1037,7 @@ describe('Module Methods Check', function() {
         });
 
         it('if areq status === 0xe9, MAC_NO_ACK, reject', function (done) {
-            var requestStub = sinon.stub(controller, 'request', function (subsys, cmdId, valObj, callback) {
+            var requestStub = sinon.stub(controller, 'request').callsFake(function (subsys, cmdId, valObj, callback) {
                     var deferred = Q.defer();
                     process.nextTick(function () {
                         deferred.resolve({ status: 0 });
@@ -1055,7 +1055,7 @@ describe('Module Methods Check', function() {
         });
 
         it('if areq status === 0xb7, APS_NO_ACK, reject', function (done) {
-            var requestStub = sinon.stub(controller, 'request', function (subsys, cmdId, valObj, callback) {
+            var requestStub = sinon.stub(controller, 'request').callsFake(function (subsys, cmdId, valObj, callback) {
                     var deferred = Q.defer();
                     process.nextTick(function () {
                         deferred.resolve({ status: 0 });
@@ -1073,7 +1073,7 @@ describe('Module Methods Check', function() {
         });
 
         it('if areq status === 0xf0, MAC_TRANSACTION_EXPIRED, reject', function (done) {
-            var requestStub = sinon.stub(controller, 'request', function (subsys, cmdId, valObj, callback) {
+            var requestStub = sinon.stub(controller, 'request').callsFake(function (subsys, cmdId, valObj, callback) {
                     var deferred = Q.defer();
                     process.nextTick(function () {
                         deferred.resolve({ status: 0 });
@@ -1091,7 +1091,7 @@ describe('Module Methods Check', function() {
         });
 
         it('if areq status === 0xANY, UNKNOWN ERROR, reject', function (done) {
-            var requestStub = sinon.stub(controller, 'request', function (subsys, cmdId, valObj, callback) {
+            var requestStub = sinon.stub(controller, 'request').callsFake(function (subsys, cmdId, valObj, callback) {
                     var deferred = Q.defer();
                     process.nextTick(function () {
                         deferred.resolve({ status: 0 });
@@ -1517,7 +1517,7 @@ describe('Module Methods Check', function() {
                 rmEp1GetInClusterListStub = sinon.stub(rmEp1, 'getInClusterList').returns([ 1, 2, 3 ]),
                 rmEp1GetOutClusterListStub = sinon.stub(rmEp1, 'getOutClusterList').returns([ 1, 3, 4, 5 ]);
 
-            var requestStub = sinon.stub(af, 'zclClusterAttrsReq', function (dstEp, cId, callback) {
+            var requestStub = sinon.stub(af, 'zclClusterAttrsReq').callsFake(function (dstEp, cId, callback) {
                     var deferred = Q.defer();
                     setTimeout(function () {
                         deferred.resolve({
