@@ -1,3 +1,4 @@
+'use strict';
 const chai = require('chai');
 const sinon = require('sinon');
 const DeviceReceive = require('../lib/extension/deviceReceive');

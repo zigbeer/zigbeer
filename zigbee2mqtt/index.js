@@ -1,3 +1,4 @@
+'use strict';
 const semver = require('semver');
 const engines = require('./package.json').engines;
 

@@ -1,3 +1,4 @@
+'use strict';
 const settings = require('../util/settings');
 const zigbeeShepherdConverters = require('zigbee-shepherd-converters');
 

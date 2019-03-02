@@ -1,3 +1,4 @@
+'use strict';
 const ccznp = require('../index.js');
 
 var spCfg = {

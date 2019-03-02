@@ -1,3 +1,4 @@
+'use strict';
 const devices = require('zigbee-shepherd-converters').devices;
 const chai = require('chai');
 const fs = require('fs');

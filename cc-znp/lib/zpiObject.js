@@ -1,3 +1,4 @@
+'use strict';
 const zmeta = require('./zmeta');
 const Unpi = require('unpi');
 const Concentrate = Unpi.Concentrate;

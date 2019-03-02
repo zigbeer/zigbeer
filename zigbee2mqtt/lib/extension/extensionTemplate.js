@@ -2,6 +2,8 @@
  * This extensions is for documentation purposes only.
  * It describes all methods that are called by the controller.
  */
+'use strict';
+
 class ExtensionTemplate {
     /**
      * Besides intializing variables, the constructor should do nothing!

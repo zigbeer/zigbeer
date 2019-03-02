@@ -1,3 +1,4 @@
+'use strict';
 const zclId = require('zcl-id/dist/legacy');
 
 const ZShepherd = require('zigbee-shepherd');

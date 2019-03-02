@@ -1,3 +1,4 @@
+'use strict';
 const devices = require('zigbee-shepherd-converters').devices;
 const HomeassistantExtension = require('../lib/extension/homeassistant');
 const chai = require('chai');

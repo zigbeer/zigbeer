@@ -1,3 +1,4 @@
+'use strict';
 const expect = require('chai').expect;
 const Chance = require('chance');
 const chance = new Chance();

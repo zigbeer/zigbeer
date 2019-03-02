@@ -1,3 +1,4 @@
+'use strict';
 const winston = require('winston');
 const moment = require('moment');
 const settings = require('./settings');

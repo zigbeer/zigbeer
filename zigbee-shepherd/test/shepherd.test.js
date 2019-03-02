@@ -1,3 +1,4 @@
+'use strict';
 var Q = require('q'),
     fs = require('fs'),
     path = require('path'),

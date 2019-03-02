@@ -1,4 +1,6 @@
 // Xiaomi uses 4151 and 4447 (lumi.plug) as manufacturer ID.
+'use strict';
+
 const xiaomiManufacturerID = [4151, 4447];
 
 module.exports = {

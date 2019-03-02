@@ -2,6 +2,8 @@
  * This script generates the supported devices page.
  */
 
+'use strict';
+
 const devices = require('zigbee-shepherd-converters').devices;
 const replaceByDash = [new RegExp('/', 'g'), new RegExp(':', 'g'), new RegExp(' ', 'g')];
 const imageBase = '../images/devices/';

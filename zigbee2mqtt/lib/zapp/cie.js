@@ -3,6 +3,8 @@
  * Based on: https://github.com/zigbeer/zapp-cie
  */
 
+'use strict';
+
 const Ziee = require('ziee');
 const Zive = require('zive');
 const cieClusters = new Ziee();

@@ -1,3 +1,4 @@
+'use strict';
 const MQTT = require('./mqtt');
 const Zigbee = require('./zigbee');
 const State = require('./state');

@@ -1,3 +1,4 @@
+'use strict';
 const logger = require('./util/logger');
 const data = require('./util/data');
 const fs = require('fs');

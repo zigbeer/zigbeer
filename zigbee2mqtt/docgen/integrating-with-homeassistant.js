@@ -2,6 +2,8 @@
  * This script generates the integrating-with-homeassistant page.
  */
 
+'use strict';
+
 const devices = require('zigbee-shepherd-converters').devices;
 const HomeassistantExtension = require('../lib/extension/homeassistant');
 const homeassistant = new HomeassistantExtension(null, null, null, null);

@@ -1,3 +1,4 @@
+'use strict';
 const _common = require("../src/definitions/common.json")
 
 const { zclId } = require("./zclId")
