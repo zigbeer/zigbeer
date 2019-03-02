@@ -1,11 +1,11 @@
 /* jshint node: true */
 'use strict';
 
-var ZSC = require('zstack-constants'),
-    NVID8 = ZSC.SAPI.nvItemIdsUint8,
-    NVID16 = ZSC.SYS.nvItemIds;
+const ZSC = require('zstack-constants');
+const NVID8 = ZSC.SAPI.nvItemIdsUint8;
+const NVID16 = ZSC.SYS.nvItemIds;
 
-var nvParams = {
+const nvParams = {
     startupOption: { 
         configid: NVID8.STARTUP_OPTION,     // 0x03
         len: 0x01,

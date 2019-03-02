@@ -1,9 +1,9 @@
 /* jshint node: true */
 'use strict';
 
-var zdoHelper = {},
-    zdoReqRspMap,
-    zdoIndSuffix;
+const zdoHelper = {};
+let zdoReqRspMap;
+let zdoIndSuffix;
 
 zdoReqRspMap = {
     nwkAddrReq:         { ind: 'nwkAddrRsp',        apiType: 'concat',  suffix: [ 'ieeeaddr', 'startindex' ]        },
@@ -99,18 +99,18 @@ zdoIndSuffix = {
 /*** Public APIs                                                                               ***/
 /*************************************************************************************************/
 zdoHelper.hasAreq = function (reqName) {
-    var meta = zdoReqRspMap[reqName];
+    const meta = zdoReqRspMap[reqName];
     return meta ? (!!meta.ind) : false;
 };
 
 zdoHelper.getRequestType = function (reqName) {
-    var meta = zdoReqRspMap[reqName];
+    const meta = zdoReqRspMap[reqName];
     return meta ? meta.apiType : 'rspless';
 };
 
 zdoHelper.generateEventOfRequest = function (reqName, valObj) {
-    var meta = zdoReqRspMap[reqName],
-        evtName;
+    const meta = zdoReqRspMap[reqName];
+    let evtName;
 
     if (!zdoHelper.hasAreq(reqName))
         return;
@@ -119,7 +119,7 @@ zdoHelper.generateEventOfRequest = function (reqName, valObj) {
 
     if (meta.suffix.length === 0)
         return evtName;
-    
+
     meta.suffix.forEach(function (key) {
         evtName = evtName + ':' + valObj[key].toString();
     });
@@ -128,8 +128,8 @@ zdoHelper.generateEventOfRequest = function (reqName, valObj) {
 };
 
 zdoHelper.generateEventOfIndication = function (indName, msgData) {
-    var meta = zdoIndSuffix[indName],
-        evtName;
+    const meta = zdoIndSuffix[indName];
+    let evtName;
 
     evtName = 'ZDO:' + indName;
 

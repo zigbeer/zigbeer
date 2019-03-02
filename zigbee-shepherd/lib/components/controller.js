@@ -1,34 +1,34 @@
 /* jshint node: true */
 'use strict';
 
-var util = require('util'),
-    EventEmitter = require('events');
+const util = require('util');
+const EventEmitter = require('events');
+const Q = require('q');
+const _ = require('busyman');
+const znp = require('cc-znp');
+const proving = require('proving');
+const ZSC = require('zstack-constants');
 
-var Q = require('q'),
-    _ = require('busyman'),
-    znp = require('cc-znp'),
-    proving = require('proving'),
-    ZSC = require('zstack-constants'),
-    debug = {
-        shepherd: require('debug')('zigbee-shepherd'),
-        init: require('debug')('zigbee-shepherd:init'),
-        request: require('debug')('zigbee-shepherd:request'),
-        response: require('debug')('zigbee-shepherd:response')
-    };
+const debug = {
+    shepherd: require('debug')('zigbee-shepherd'),
+    init: require('debug')('zigbee-shepherd:init'),
+    request: require('debug')('zigbee-shepherd:request'),
+    response: require('debug')('zigbee-shepherd:response')
+};
 
-var Zdo = require('./zdo'),
-    query = require('./query'),
-    bridge = require('./event_bridge.js'),
-    init = require('../initializers/init_controller'),
-    nvParams = require('../config/nv_start_options.js');
-
-var Device = require('../model/device'),
-    Coordpoint = require('../model/coordpoint');
+const Zdo = require('./zdo');
+const query = require('./query');
+const bridge = require('./event_bridge.js');
+var init = require('../initializers/init_controller');
+const nvParams = require('../config/nv_start_options.js');
+const Device = require('../model/device');
+const Coordpoint = require('../model/coordpoint');
 
 function Controller(shepherd, cfg) {
     // cfg is serial port config
-    var self = this,
-        transId = 0;
+    const self = this;
+
+    let transId = 0;
 
     EventEmitter.call(this);
 
@@ -127,7 +127,7 @@ function Controller(shepherd, cfg) {
         debug.shepherd('spinlock:', self._spinLock, self._joinQueue);
         if (self._spinLock) {
             // Check if joinQueue already has this device
-            for (var i = 0; i < self._joinQueue.length; i++) {
+            for (let i = 0; i < self._joinQueue.length; i++) {
                 if (self._joinQueue[i].ieeeAddr == data.ieeeaddr) {
                     debug.shepherd(`Device: ${self._joinQueue[i].ieeeAddr} already in joinqueue`);
                     return;
@@ -153,13 +153,13 @@ util.inherits(Controller, EventEmitter);
 /*** Public ZigBee Utility APIs                                                                ***/
 /*************************************************************************************************/
 Controller.prototype.getFirmwareInfo = function () {
-    var firmware = _.cloneDeep(this._firmware);
+    const firmware = _.cloneDeep(this._firmware);
 
     return firmware;
 };
 
 Controller.prototype.getNetInfo = function () {
-    var net = _.cloneDeep(this._net);
+    const net = _.cloneDeep(this._net);
 
     if (net.state === ZSC.ZDO.devStates.ZB_COORD)
         net.state = 'Coordinator';
@@ -170,7 +170,7 @@ Controller.prototype.getNetInfo = function () {
 };
 
 Controller.prototype.setNetInfo = function (netInfo) {
-    var self = this;
+    const self = this;
 
     _.forEach(netInfo, function (val, key) {
         if (_.has(self._net, key))
@@ -182,9 +182,9 @@ Controller.prototype.setNetInfo = function (netInfo) {
 /*** Mandatory Public APIs                                                                     ***/
 /*************************************************************************************************/
 Controller.prototype.start = function (callback) {
-    var self = this,
-        deferred = Q.defer(),
-        readyLsn;
+    const self = this;
+    const deferred = Q.defer();
+    let readyLsn;
 
     readyLsn = function (err) {
         return err ? deferred.reject(err) : deferred.resolve();
@@ -201,9 +201,9 @@ Controller.prototype.start = function (callback) {
 };
 
 Controller.prototype.close = function (callback) {
-    var self = this,
-        deferred = Q.defer(),
-        closeLsn;
+    const self = this;
+    const deferred = Q.defer();
+    let closeLsn;
 
     closeLsn = function () {
         deferred.resolve();
@@ -220,9 +220,9 @@ Controller.prototype.close = function (callback) {
 };
 
 Controller.prototype.reset = function (mode, callback) {
-    var self = this,
-        deferred = Q.defer(),
-        startupOption = nvParams.startupOption.value[0];
+    const self = this;
+    const deferred = Q.defer();
+    const startupOption = nvParams.startupOption.value[0];
 
     proving.stringOrNumber(mode, 'mode should be a number or a string.');
 
@@ -239,7 +239,7 @@ Controller.prototype.reset = function (mode, callback) {
             if (self._nvChanged && startupOption !== 0x02)
                 nvParams.startupOption.value[0] = 0x02;
 
-            var steps = [
+            const steps = [
                 function () { return self.request('SYS', 'resetReq', { type: 0x01 }).delay(0); },
                 function () { return self.request('SAPI', 'writeConfiguration', nvParams.startupOption).delay(10); },
                 function () { return self.request('SYS', 'resetReq', { type: 0x01 }).delay(10); },
@@ -283,8 +283,8 @@ Controller.prototype.reset = function (mode, callback) {
 };
 
 Controller.prototype.request = function (subsys, cmdId, valObj, callback) {
-    var deferred = Q.defer(),
-        rspHdlr;
+    const deferred = Q.defer();
+    let rspHdlr;
 
     proving.stringOrNumber(subsys, 'subsys should be a number or a string.');
     proving.stringOrNumber(cmdId, 'cmdId should be a number or a string.');
@@ -327,9 +327,10 @@ Controller.prototype.request = function (subsys, cmdId, valObj, callback) {
 Controller.prototype.permitJoin = function (time, type, callback) {
     // time: seconds, 0x00 disable, 0xFF always enable
     // type: 0 (coord) / 1 (all) / router addr if > 1
-    var self = this,
-        addrmode,
-        dstaddr;
+    const self = this;
+
+    let addrmode;
+    let dstaddr;
 
     proving.number(time, 'time should be a number.');
     proving.stringOrNumber(type, 'type should be a number or a string.');
@@ -371,9 +372,10 @@ Controller.prototype.permitJoin = function (time, type, callback) {
 
 Controller.prototype.remove = function (dev, cfg, callback) {
     // cfg: { reJoin, rmChildren }
-    var self = this,
-        reqArgObj,
-        rmChildren_reJoin = 0x00;
+    const self = this;
+
+    let reqArgObj;
+    let rmChildren_reJoin = 0x00;
 
     if (!(dev instanceof Device))
         throw new TypeError('dev should be an instance of Device class.');
@@ -399,7 +401,7 @@ Controller.prototype.remove = function (dev, cfg, callback) {
 };
 
 Controller.prototype.registerEp = function (loEp, callback) {
-    var self = this;
+    const self = this;
 
     if (!(loEp instanceof Coordpoint))
         throw new TypeError('loEp should be an instance of Coordpoint class.');
@@ -412,8 +414,8 @@ Controller.prototype.registerEp = function (loEp, callback) {
 };
 
 Controller.prototype.deregisterEp = function (loEp, callback) {
-    var self = this,
-        coordEps = this._coord.endpoints;
+    const self = this;
+    const coordEps = this._coord.endpoints;
 
     if (!(loEp instanceof Coordpoint))
         throw new TypeError('loEp should be an instance of Coordpoint class.');
@@ -430,7 +432,7 @@ Controller.prototype.deregisterEp = function (loEp, callback) {
 };
 
 Controller.prototype.reRegisterEp = function (loEp, callback) {
-    var self = this;
+    const self = this;
 
     return this.deregisterEp(loEp).then(function () {
         return self.request('AF', 'register', makeRegParams(loEp));
@@ -486,7 +488,7 @@ Controller.prototype.setNvParams = function (net) {
                 break;
             case 'channelList':
                 proving.array(val, 'net.channelList should be an array.');
-                var chList = 0;
+                let chList = 0;
 
                 _.forEach(val, function (ch) {
                     if (ch >= 11 && ch <= 26)
@@ -502,13 +504,13 @@ Controller.prototype.setNvParams = function (net) {
 };
 
 Controller.prototype.checkNvParams = function (callback) {
-    var self = this,
-        steps;
+    const self = this;
+    let steps;
 
     function bufToArray(buf) {
-        var arr = [];
+        const arr = [];
 
-        for (var i = 0; i < buf.length; i += 1) {
+        for (let i = 0; i < buf.length; i += 1) {
             arr.push(buf.readUInt8(i));
         }
 
@@ -550,10 +552,10 @@ Controller.prototype.checkNvParams = function (callback) {
 };
 
 Controller.prototype.checkOnline = function (dev, callback) {
-    var self = this,
-        nwkAddr = dev.getNwkAddr(),
-        ieeeAddr = dev.getIeeeAddr(),
-        deferred = Q.defer();
+    const self = this;
+    const nwkAddr = dev.getNwkAddr();
+    const ieeeAddr = dev.getIeeeAddr();
+    const deferred = Q.defer();
 
     Q.fcall(function () {
         return self.request('ZDO', 'nodeDescReq', { dstaddr: nwkAddr, nwkaddrofinterest: nwkAddr }).timeout(5000).fail(function () {
@@ -572,16 +574,16 @@ Controller.prototype.checkOnline = function (dev, callback) {
 };
 
 Controller.prototype.endDeviceAnnceHdlr = function (data) {
-    var self = this,
-        joinTimeout,
-        joinEvent = 'ind:incoming' + ':' + data.ieeeaddr,
-        dev = this._shepherd._findDevByAddr(data.ieeeaddr);
+    const self = this;
+    let joinTimeout;
+    const joinEvent = 'ind:incoming' + ':' + data.ieeeaddr;
+    const dev = this._shepherd._findDevByAddr(data.ieeeaddr);
 
     if (dev && dev.status === 'online'){  // Device has already joined, do next item in queue
         debug.shepherd(`Device: ${dev.getIeeeAddr()} already in network`);
 
         if (self._joinQueue.length) {
-            var next = self._joinQueue.shift();
+            const next = self._joinQueue.shift();
 
             if (next) {
                 debug.shepherd('next item in joinqueue');
@@ -615,7 +617,7 @@ Controller.prototype.endDeviceAnnceHdlr = function (data) {
         }
 
         if (self._joinQueue.length) {
-            var next = self._joinQueue.shift();
+            const next = self._joinQueue.shift();
 
             if (next){
                 setImmediate(function () {
@@ -643,7 +645,7 @@ Controller.prototype.endDeviceAnnceHdlr = function (data) {
         }
 
         // Defer a promise to wait for the controller to complete the ZDO:devIncoming event!
-        var processIncoming = Q.defer();
+        const processIncoming = Q.defer();
         self.emit('ZDO:devIncoming', devInfo, processIncoming.resolve, processIncoming.reject);
         return processIncoming.promise;
     }).then(function () {

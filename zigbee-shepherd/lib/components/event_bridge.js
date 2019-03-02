@@ -1,16 +1,17 @@
 /* jshint node: true */
 'use strict';
 
-var zdoHelper = require('./zdo_helper.js'),
-    debug = {
-        msgHdlr: require('debug')('zigbee-shepherd:msgHdlr')
-    };
+const zdoHelper = require('./zdo_helper.js');
 
-var bridge = {};
+const debug = {
+    msgHdlr: require('debug')('zigbee-shepherd:msgHdlr')
+};
+
+const bridge = {};
 
 bridge._areqEventBridge = function (controller, msg) {
     // msg: { subsys: 'ZDO', ind: 'endDeviceAnnceInd', data: { srcaddr: 63536, nwkaddr: 63536, ieeeaddr: '0x00124b0001ce3631', ... }
-    var mandatoryEvent = msg.subsys + ':' + msg.ind;    // 'SYS:resetInd', 'SYS:osalTimerExpired'
+    const mandatoryEvent = msg.subsys + ':' + msg.ind;    // 'SYS:resetInd', 'SYS:osalTimerExpired'
 
     controller.emit(mandatoryEvent, msg.data);          // bridge to subsystem events, like 'SYS:resetInd', 'SYS:osalTimerExpired'
 
@@ -28,9 +29,9 @@ bridge._areqEventBridge = function (controller, msg) {
 };
 
 bridge._zdoIndicationEventBridge = function (controller, msg) {
-    var payload = msg.data,
-        zdoEventHead = 'ZDO:' + msg.ind,
-        zdoBridgedEvent;
+    const payload = msg.data;
+    const zdoEventHead = 'ZDO:' + msg.ind;
+    let zdoBridgedEvent;
 
     if (msg.ind === 'stateChangeInd') {    // this is a special event
         if (!payload.hasOwnProperty('nwkaddr'))    // Coord itself
@@ -48,9 +49,9 @@ bridge._zdoIndicationEventBridge = function (controller, msg) {
 };
 
 bridge._sapiIndicationEventBridge = function (controller, msg) {
-    var payload = msg.data,
-        sapiEventHead = 'SAPI:' + msg.ind,
-        sapiBridgedEvent;
+    const payload = msg.data;
+    const sapiEventHead = 'SAPI:' + msg.ind;
+    let sapiBridgedEvent;
 
     switch (msg.ind) {
         case 'bindConfirm':

@@ -1,18 +1,17 @@
 /* jshint node: true */
 'use strict';
 
-var Q = require('q'),
-    debug = require('debug')('zigbee-shepherd:init');
+const Q = require('q');
+const debug = require('debug')('zigbee-shepherd:init');
+const af = require('../components/af');
+const loader = require('../components/loader');
 
-var af = require('../components/af'),
-    loader = require('../components/loader');
-
-var init = {};
+const init = {};
 
 init.setupShepherd = function (shepherd, callback) {
-    var deferred = Q.defer(),
-        controller = shepherd.controller,
-        netInfo;
+    const deferred = Q.defer();
+    const controller = shepherd.controller;
+    let netInfo;
 
     debug('zigbee-shepherd booting...');
 

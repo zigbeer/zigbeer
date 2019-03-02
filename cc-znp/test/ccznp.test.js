@@ -163,10 +163,9 @@ describe('Functional Check', function() {
                 revision: 5,
             };
 
-            for (let key in result) {
-                if (parsedResult[key] !== result[key]) {
+            for (const key in result) {
+                if (parsedResult[key] !== result[key])
                     flag = false;
-                }
             }
 
             if (dataEvtFlag && flag) {

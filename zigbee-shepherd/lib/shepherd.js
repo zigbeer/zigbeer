@@ -1,32 +1,30 @@
 /* jshint node: true */
 'use strict';
 
-var util = require('util'),
-    EventEmitter = require('events');
-
-var Q = require('q'),
-    _ = require('busyman'),
-    proving = require('proving'),
-    Objectbox = require('objectbox'),
-    debug = { shepherd: require('debug')('zigbee-shepherd') };
-
-var init = require('./initializers/init_shepherd'),
-    zutils = require('./components/zutils'),
-    Controller = require('./components/controller'),
-    eventHandlers = require('./components/event_handlers');
-
-var Device = require('./model/device'),
-    Coordinator = require('./model/coord'),
-    Group = require('./model/group'),
-    Coordpoint = require('./model/coordpoint');
+const util = require('util');
+const EventEmitter = require('events');
+const Q = require('q');
+const _ = require('busyman');
+const proving = require('proving');
+const Objectbox = require('objectbox');
+const debug = { shepherd: require('debug')('zigbee-shepherd') };
+const init = require('./initializers/init_shepherd');
+const zutils = require('./components/zutils');
+const Controller = require('./components/controller');
+const eventHandlers = require('./components/event_handlers');
+const Device = require('./model/device');
+const Coordinator = require('./model/coord');
+const Group = require('./model/group');
+const Coordpoint = require('./model/coordpoint');
 
 /*************************************************************************************************/
 /*** ZShepherd Class                                                                           ***/
 /*************************************************************************************************/
 function ZShepherd(path, opts) {
     // opts: { sp: {}, net: {}, dbPath: 'xxx', zclId: ZclID }
-    var self = this,
-        spCfg = {};
+    const self = this;
+
+    const spCfg = {};
 
     EventEmitter.call(this);
 
@@ -61,7 +59,7 @@ function ZShepherd(path, opts) {
 
     this.acceptDevIncoming = function (devInfo, callback) {  // Override at will.
         setImmediate(function () {
-            var accepted = true;
+            const accepted = true;
             callback(null, accepted);
         });
     };
@@ -83,7 +81,7 @@ function ZShepherd(path, opts) {
     });
 
     this.on('ind:incoming', function (dev) {
-        var endpoints = [];
+        const endpoints = [];
 
         _.forEach(dev.epList, function (epId) {
             endpoints.push(dev.getEndpoint(epId));
@@ -116,11 +114,12 @@ function ZShepherd(path, opts) {
     });
 
     this.on('ind:statusChange', function (ep, cId, payload, msg) {
-        var cIdString = self.zclId.cluster(cId),
-            notifData = {
-                cid: '',
-                zoneStatus: null
-            };
+        let cIdString = self.zclId.cluster(cId);
+
+        const notifData = {
+            cid: '',
+            zoneStatus: null
+        };
 
         cIdString = cIdString ? cIdString.key : cId;
         notifData.cid = cIdString;
@@ -130,11 +129,12 @@ function ZShepherd(path, opts) {
     });
 
     this.on('ind:reported', function (ep, cId, attrs, msg) {
-        var cIdString = self.zclId.cluster(cId),
-            notifData = {
-                cid: '',
-                data: {}
-            };
+        let cIdString = self.zclId.cluster(cId);
+
+        const notifData = {
+            cid: '',
+            data: {}
+        };
 
         self._updateFinalizer(ep, cId, attrs, true);
 
@@ -142,7 +142,7 @@ function ZShepherd(path, opts) {
         notifData.cid = cIdString;
 
         _.forEach(attrs, function (rec) {  // { attrId, dataType, attrData }
-            var attrIdString = self.zclId.attr(cIdString, rec.attrId);
+            let attrIdString = self.zclId.attr(cIdString, rec.attrId);
             attrIdString = attrIdString ? attrIdString.key : rec.attrId;
 
             notifData.data[attrIdString] = rec.attrData;
@@ -152,7 +152,7 @@ function ZShepherd(path, opts) {
     });
 
     this.on('ind:status', function (dev, status) {
-        var endpoints = [];
+        const endpoints = [];
 
         _.forEach(dev.epList, function (epId) {
             endpoints.push(dev.getEndpoint(epId));
@@ -168,7 +168,7 @@ util.inherits(ZShepherd, EventEmitter);
 /*** Public Methods                                                                            ***/
 /*************************************************************************************************/
 ZShepherd.prototype.start = function (callback) {
-    var self = this;
+    const self = this;
 
     return init.setupShepherd(this).then(function () {
         self._enabled = true;   // shepherd is enabled
@@ -178,8 +178,8 @@ ZShepherd.prototype.start = function (callback) {
 };
 
 ZShepherd.prototype.stop = function (callback) {
-    var self = this,
-        devbox = this._devbox;
+    const self = this;
+    const devbox = this._devbox;
     debug.shepherd('zigbee-shepherd is stopping.');
 
     return Q.fcall(function () {
@@ -199,9 +199,9 @@ ZShepherd.prototype.stop = function (callback) {
 };
 
 ZShepherd.prototype.reset = function (mode, callback) {
-    var self = this,
-        devbox = this._devbox,
-        removeDevs = [];
+    const self = this;
+    const devbox = this._devbox;
+    const removeDevs = [];
 
     proving.stringOrNumber(mode, 'mode should be a number or a string.');
 
@@ -243,8 +243,8 @@ ZShepherd.prototype.permitJoin = function (time, type, callback) {
 };
 
 ZShepherd.prototype.info = function () {
-    var net = this.controller.getNetInfo();
-    var firmware = this.controller.getFirmwareInfo();
+    const net = this.controller.getNetInfo();
+    const firmware = this.controller.getFirmwareInfo();
 
     return {
         enabled: this._enabled,
@@ -263,11 +263,11 @@ ZShepherd.prototype.info = function () {
 };
 
 ZShepherd.prototype.mount = function (zApp, callback) {
-    var self = this,
-        deferred = (callback && Q.isPromise(callback.promise)) ? callback : Q.defer(),
-        coord = this.controller._coord,
-        mountId,
-        loEp;
+    const self = this;
+    const deferred = (callback && Q.isPromise(callback.promise)) ? callback : Q.defer();
+    const coord = this.controller._coord;
+    let mountId;
+    let loEp;
 
     if (zApp.constructor.name !== 'Zive')
         throw new TypeError('zApp should be an instance of Zive class.');
@@ -338,8 +338,8 @@ ZShepherd.prototype.mount = function (zApp, callback) {
 };
 
 ZShepherd.prototype.list = function (ieeeAddrs) {
-    var self = this,
-        foundDevs;
+    const self = this;
+    let foundDevs;
 
     if (_.isString(ieeeAddrs))
         ieeeAddrs = [ ieeeAddrs ];
@@ -353,8 +353,8 @@ ZShepherd.prototype.list = function (ieeeAddrs) {
     foundDevs = _.map(ieeeAddrs, function (ieeeAddr) {
         proving.string(ieeeAddr, 'ieeeAddr should be a string.');
 
-        var devInfo,
-            found = self._findDevByAddr(ieeeAddr);
+        let devInfo;
+        const found = self._findDevByAddr(ieeeAddr);
 
         if (found)
             devInfo = _.omit(found.dump(), [ 'id', 'endpoints' ]);
@@ -375,15 +375,15 @@ ZShepherd.prototype.getGroup = function (groupID) {
 ZShepherd.prototype.find = function (addr, epId) {
     proving.number(epId, 'epId should be a number.');
 
-    var dev = this._findDevByAddr(addr);
+    const dev = this._findDevByAddr(addr);
     return dev ? dev.getEndpoint(epId) : undefined;
 };
 
 ZShepherd.prototype.lqi = function (ieeeAddr, callback) {
     proving.string(ieeeAddr, 'ieeeAddr should be a string.');
 
-    var self = this,
-        dev = this._findDevByAddr(ieeeAddr);
+    const self = this;
+    const dev = this._findDevByAddr(ieeeAddr);
 
     return Q.fcall(function () {
         if (dev)
@@ -401,7 +401,7 @@ ZShepherd.prototype.lqi = function (ieeeAddr, callback) {
 ZShepherd.prototype.remove = function (ieeeAddr, cfg, callback) {
     proving.string(ieeeAddr, 'ieeeAddr should be a string.');
 
-    var dev = this._findDevByAddr(ieeeAddr);
+    const dev = this._findDevByAddr(ieeeAddr);
 
     if (_.isFunction(cfg) && !_.isFunction(callback)) {
         callback = cfg;
@@ -417,13 +417,13 @@ ZShepherd.prototype.remove = function (ieeeAddr, cfg, callback) {
 };
 
 ZShepherd.prototype.lqiScan = function (ieeeAddr) {
-    var info = this.info();
-    var self = this;
+    const info = this.info();
+    const self = this;
     const noDuplicate = {};
 
     const processResponse = function(parent){
         return function(data){
-            var chain = Q();
+            let chain = Q();
             data.forEach(function (devinfo) {
                 const ieeeAddr = devinfo.ieeeAddr;
                 if (ieeeAddr == "0x0000000000000000") return;
@@ -439,7 +439,7 @@ ZShepherd.prototype.lqiScan = function (ieeeAddr) {
                 noDuplicate[dedupKey] = devinfo;
             });
             return chain;
-        }
+        };
     }
 
     if(!ieeeAddr){
@@ -470,8 +470,8 @@ ZShepherd.prototype._findDevByAddr = function (addr) {
 };
 
 ZShepherd.prototype._registerDev = function (dev, callback) {
-    var devbox = this._devbox,
-        oldDev;
+    const devbox = this._devbox;
+    let oldDev;
 
     if (!(dev instanceof Device) && !(dev instanceof Coordinator))
         throw new TypeError('dev should be an instance of Device class.');
@@ -502,12 +502,12 @@ ZShepherd.prototype._unregisterDev = function (dev, callback) {
 };
 
 ZShepherd.prototype._attachZclMethods = function (ep) {
-    var self = this;
+    const self = this;
 
     if (ep.constructor.name === 'Zive') {
-        var zApp = ep;
+        const zApp = ep;
         zApp.foundation = function (dstAddr, dstEpId, cId, cmd, zclData, cfg, callback) {
-            var dstEp = self.find(dstAddr, dstEpId);
+            const dstEp = self.find(dstAddr, dstEpId);
 
             if (typeof cfg === 'function') {
                 callback = cfg;
@@ -521,7 +521,7 @@ ZShepherd.prototype._attachZclMethods = function (ep) {
         };
 
         zApp.functional = function (dstAddr, dstEpId, cId, cmd, zclData, cfg, callback) {
-            var dstEp = self.find(dstAddr, dstEpId);
+            const dstEp = self.find(dstAddr, dstEpId);
 
             if (typeof cfg === 'function') {
                 callback = cfg;
@@ -551,13 +551,13 @@ ZShepherd.prototype._attachZclMethods = function (ep) {
             return self.controller.unbind(ep, cId, dstEpOrGrpId, callback);
         };
         ep.read = function (cId, attrId, callback) {
-            var deferred = Q.defer(),
-                attr = self.zclId.attr(cId, attrId);
+            const deferred = Q.defer();
+            let attr = self.zclId.attr(cId, attrId);
 
             attr = attr ? attr.value : attrId;
 
             self._foundation(ep, ep, cId, 'read', [{ attrId: attr }]).then(function (readStatusRecsRsp) {
-                var rec = readStatusRecsRsp[0];
+                const rec = readStatusRecsRsp[0];
 
                 if (rec.status === 0)
                     deferred.resolve(rec.attrData);
@@ -570,12 +570,12 @@ ZShepherd.prototype._attachZclMethods = function (ep) {
             return deferred.promise.nodeify(callback);
         };
         ep.write = function (cId, attrId, data, callback) {
-            var deferred = Q.defer(),
-                attr = self.zclId.attr(cId, attrId),
-                attrType = self.zclId.attrType(cId, attrId).value;
+            const deferred = Q.defer();
+            const attr = self.zclId.attr(cId, attrId);
+            const attrType = self.zclId.attrType(cId, attrId).value;
 
             self._foundation(ep, ep, cId, 'write', [{ attrId: attr.value, dataType: attrType, attrData: data }]).then(function (writeStatusRecsRsp) {
-                var rec = writeStatusRecsRsp[0];
+                const rec = writeStatusRecsRsp[0];
 
                 if (rec.status === 0)
                     deferred.resolve(data);
@@ -588,13 +588,13 @@ ZShepherd.prototype._attachZclMethods = function (ep) {
             return deferred.promise.nodeify(callback);
         };
         ep.report = function (cId, attrId, minInt, maxInt, repChange, callback) {
-            var deferred = Q.defer(),
-                coord = self.controller._coord,
-                dlgEp = coord.getDelegator(ep.getProfId()),
-                cfgRpt = true,
-                cfgRptRec,
-                attrIdVal,
-                attrTypeVal;
+            const deferred = Q.defer();
+            const coord = self.controller._coord;
+            const dlgEp = coord.getDelegator(ep.getProfId());
+            let cfgRpt = true;
+            let cfgRptRec;
+            let attrIdVal;
+            let attrTypeVal;
 
             if (arguments.length === 1) {
                 cfgRpt = false;
@@ -622,7 +622,7 @@ ZShepherd.prototype._attachZclMethods = function (ep) {
                     return ep.bind(cId, dlgEp).then(function () {
                         if (cfgRpt)
                             return ep.foundation(cId, 'configReport', [ cfgRptRec ]).then(function (rsp) {
-                                var status = rsp[0].status;
+                                const status = rsp[0].status;
                                 if (status !== 0)
                                     deferred.reject(self.zclId.status(status).key);
                             });
@@ -642,7 +642,7 @@ ZShepherd.prototype._attachZclMethods = function (ep) {
 };
 
 ZShepherd.prototype._foundation = function (srcEp, dstEp, cId, cmd, zclData, cfg, callback) {
-    var self = this;
+    const self = this;
 
     if (_.isFunction(cfg) && !_.isFunction(callback)) {
         callback = cfg;
@@ -652,7 +652,7 @@ ZShepherd.prototype._foundation = function (srcEp, dstEp, cId, cmd, zclData, cfg
     }
 
     return this.af.zclFoundation(srcEp, dstEp, cId, cmd, zclData, cfg).then(function (msg) {
-        var cmdString = self.zclId.foundation(cmd);
+        let cmdString = self.zclId.foundation(cmd);
         cmdString = cmdString ? cmdString.key : cmd;
 
         if (cmdString === 'read')
@@ -665,7 +665,7 @@ ZShepherd.prototype._foundation = function (srcEp, dstEp, cId, cmd, zclData, cfg
 };
 
 ZShepherd.prototype._functional = function (srcEp, dstEp, cId, cmd, zclData, cfg, callback) {
-    var self = this;
+    const self = this;
 
     if (_.isFunction(cfg) && !_.isFunction(callback)) {
         callback = cfg;
@@ -686,18 +686,18 @@ ZShepherd.prototype._updateFinalizer = function (ep, cId, attrs, reported) {
         return;
     }
 
-    var self = this,
-        cIdString = self.zclId.cluster(cId),
-        clusters = ep.getClusters().dumpSync();
+    const self = this;
+    let cIdString = self.zclId.cluster(cId);
+    const clusters = ep.getClusters().dumpSync();
 
     cIdString = cIdString ? cIdString.key : cId;
 
     Q.fcall(function () {
         if (attrs) {
-            var newAttrs = {};
+            const newAttrs = {};
 
             _.forEach(attrs, function (rec) {  // { attrId, status, dataType, attrData }
-                var attrIdString = self.zclId.attr(cId, rec.attrId);
+                let attrIdString = self.zclId.attr(cId, rec.attrId);
                 attrIdString = attrIdString ? attrIdString.key : rec.attrId;
 
                 if (reported)
@@ -711,8 +711,8 @@ ZShepherd.prototype._updateFinalizer = function (ep, cId, attrs, reported) {
             return self.af.zclClusterAttrsReq(ep, cId);
         }
     }).then(function (newAttrs) {
-        var oldAttrs = clusters[cIdString].attrs,
-            diff = zutils.objectDiff(oldAttrs, newAttrs);
+        const oldAttrs = clusters[cIdString].attrs;
+        const diff = zutils.objectDiff(oldAttrs, newAttrs);
 
         if (!_.isEmpty(diff)) {
             _.forEach(diff, function (val, attrId) {

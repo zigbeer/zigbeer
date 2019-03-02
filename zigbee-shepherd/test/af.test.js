@@ -1,21 +1,20 @@
 'use strict';
-var EventEmitter = require('events'),
-    controller = new EventEmitter();
-
-var sinon = require('sinon'),
-    expect = require('chai').expect,
-    Q = require('q');
+const EventEmitter = require('events');
+const controller = new EventEmitter();
+const sinon = require('sinon');
+const expect = require('chai').expect;
+const Q = require('q');
 
 const zclId = require('zcl-id/dist/legacy');
 
-var afConstructor = require('../lib/components/af')(zclId),
-    Device  = require('../lib/model/device'),
-    Endpoint  = require('../lib/model/endpoint'),
-    Coord  = require('../lib/model/coord'),
-    Coordpoint  = require('../lib/model/coordpoint'),
-    af;
+const afConstructor = require('../lib/components/af')(zclId);
+const Device  = require('../lib/model/device');
+const Endpoint  = require('../lib/model/endpoint');
+const Coord  = require('../lib/model/coord');
+const Coordpoint  = require('../lib/model/coordpoint');
+let af;
 
-var remoteDev = new Device({
+const remoteDev = new Device({
     type: 1,
     ieeeAddr: '0x123456789ABCDEF',
     nwkAddr: 100,
@@ -26,7 +25,7 @@ var remoteDev = new Device({
     endpoints: {}
 });
 
-var rmEp1 = new Endpoint(remoteDev, {
+const rmEp1 = new Endpoint(remoteDev, {
     profId: 0x0104,
     epId: 1,
     devId: 0x0000,
@@ -34,7 +33,7 @@ var rmEp1 = new Endpoint(remoteDev, {
     outClusterList: [ 0x0000 ]
 });
 
-var rmEp2 = new Endpoint(remoteDev, {
+const rmEp2 = new Endpoint(remoteDev, {
     profId: 0x0104,
     epId: 2,
     devId: 0x0002,
@@ -42,7 +41,7 @@ var rmEp2 = new Endpoint(remoteDev, {
     outClusterList: [ 0x0000, 0x0006 ]
 });
 
-var coordDev = new Coord({
+const coordDev = new Coord({
     type: 0,
     ieeeAddr: '0xABCDEF123456789',
     nwkAddr: 0,
@@ -53,7 +52,7 @@ var coordDev = new Coord({
     endpoints: {}
 });
 
-var loEp1 = new Coordpoint(coordDev, {
+const loEp1 = new Coordpoint(coordDev, {
     profId: 0x0104,
     epId: 1,
     devId: 0x0002,
@@ -61,7 +60,7 @@ var loEp1 = new Coordpoint(coordDev, {
     outClusterList: [ 0x0000, 0x0006 ]
 }, true);
 
-var loEp8 = new Coordpoint(coordDev, {
+const loEp8 = new Coordpoint(coordDev, {
     profId: 0x0104,
     epId: 8,
     devId: 0x0050,
@@ -79,7 +78,7 @@ coordDev.getDelegator = function (profId) {
 
 controller._coord = coordDev;
 
-var transId = 0;
+let transId = 0;
 controller.nextTransId = function () {
     if (++transId > 0xff)
         transId = 1;
@@ -87,7 +86,7 @@ controller.nextTransId = function () {
 };
 
 controller.request = function (subsys, cmdId, valObj, callback) {
-    var deferred = Q.defer();
+    const deferred = Q.defer();
     process.nextTick(function () {
         deferred.resolve({ status: 0 });
     });
@@ -110,7 +109,7 @@ controller.findEndpoint = function (srcaddr, srcendpoint) {
 };
 
 function fireFakeCnf(status, epid, transid) {
-    var afEventCnf = 'AF:dataConfirm:' + epid + ':' + transid;
+    const afEventCnf = 'AF:dataConfirm:' + epid + ':' + transid;
     setTimeout(function () {
         controller.emit(afEventCnf, { status: status, endpoint: epid, transid: transid  });
     });
@@ -641,8 +640,8 @@ describe('Module Methods Check', function() {
 
     describe('#.send - by delegator', function() {
         it('if srsp status !== 0, === 1, reject', function (done) {
-            var requestStub = sinon.stub(controller, 'request').callsFake(function (subsys, cmdId, valObj, callback) {
-                    var deferred = Q.defer();
+            const requestStub = sinon.stub(controller, 'request').callsFake(function (subsys, cmdId, valObj, callback) {
+                    const deferred = Q.defer();
                     process.nextTick(function () {
                         deferred.resolve({ status: 1 });
                     });
@@ -658,8 +657,8 @@ describe('Module Methods Check', function() {
         });
 
         it('if srsp status === 0, nothing happen', function (done) {
-            var requestStub = sinon.stub(controller, 'request').callsFake(function (subsys, cmdId, valObj, callback) {
-                    var deferred = Q.defer();
+            const requestStub = sinon.stub(controller, 'request').callsFake(function (subsys, cmdId, valObj, callback) {
+                    const deferred = Q.defer();
                     process.nextTick(function () {
                         deferred.resolve({ status: 0 });
                     });
@@ -675,8 +674,8 @@ describe('Module Methods Check', function() {
         });
 
         it('if srsp status === SUCCESS, nothing happen', function (done) {
-            var requestStub = sinon.stub(controller, 'request').callsFake(function (subsys, cmdId, valObj, callback) {
-                    var deferred = Q.defer();
+            const requestStub = sinon.stub(controller, 'request').callsFake(function (subsys, cmdId, valObj, callback) {
+                    const deferred = Q.defer();
                     process.nextTick(function () {
                         deferred.resolve({ status: 'SUCCESS'});
                     });
@@ -692,8 +691,8 @@ describe('Module Methods Check', function() {
         });
 
         it('if areq status === 0xcd, NWK_NO_ROUTE, reject', function (done) {
-            var requestStub = sinon.stub(controller, 'request').callsFake(function (subsys, cmdId, valObj, callback) {
-                    var deferred = Q.defer();
+            const requestStub = sinon.stub(controller, 'request').callsFake(function (subsys, cmdId, valObj, callback) {
+                    const deferred = Q.defer();
                     process.nextTick(function () {
                         deferred.resolve({ status: 0 });
                     });
@@ -711,8 +710,8 @@ describe('Module Methods Check', function() {
         });
 
         it('if areq status === 0xe9, MAC_NO_ACK, reject', function (done) {
-            var requestStub = sinon.stub(controller, 'request').callsFake(function (subsys, cmdId, valObj, callback) {
-                    var deferred = Q.defer();
+            const requestStub = sinon.stub(controller, 'request').callsFake(function (subsys, cmdId, valObj, callback) {
+                    const deferred = Q.defer();
                     process.nextTick(function () {
                         deferred.resolve({ status: 0 });
                     });
@@ -730,8 +729,8 @@ describe('Module Methods Check', function() {
         });
 
         it('if areq status === 0xb7, APS_NO_ACK, reject', function (done) {
-            var requestStub = sinon.stub(controller, 'request').callsFake(function (subsys, cmdId, valObj, callback) {
-                    var deferred = Q.defer();
+            const requestStub = sinon.stub(controller, 'request').callsFake(function (subsys, cmdId, valObj, callback) {
+                    const deferred = Q.defer();
                     process.nextTick(function () {
                         deferred.resolve({ status: 0 });
                     });
@@ -749,8 +748,8 @@ describe('Module Methods Check', function() {
         });
 
         it('if areq status === 0xf0, MAC_TRANSACTION_EXPIRED, reject', function (done) {
-            var requestStub = sinon.stub(controller, 'request').callsFake(function (subsys, cmdId, valObj, callback) {
-                    var deferred = Q.defer();
+            const requestStub = sinon.stub(controller, 'request').callsFake(function (subsys, cmdId, valObj, callback) {
+                    const deferred = Q.defer();
                     process.nextTick(function () {
                         deferred.resolve({ status: 0 });
                     });
@@ -768,8 +767,8 @@ describe('Module Methods Check', function() {
         });
 
         it('if areq status === 0xANY, UNKNOWN ERROR, reject', function (done) {
-            var requestStub = sinon.stub(controller, 'request').callsFake(function (subsys, cmdId, valObj, callback) {
-                    var deferred = Q.defer();
+            const requestStub = sinon.stub(controller, 'request').callsFake(function (subsys, cmdId, valObj, callback) {
+                    const deferred = Q.defer();
                     process.nextTick(function () {
                         deferred.resolve({ status: 0 });
                     });
@@ -804,8 +803,8 @@ describe('Module Methods Check', function() {
 
     describe('#.send - by local ep 8', function() {
         it('if srsp status !== 0, === 1, reject', function (done) {
-            var requestStub = sinon.stub(controller, 'request').callsFake(function (subsys, cmdId, valObj, callback) {
-                    var deferred = Q.defer();
+            const requestStub = sinon.stub(controller, 'request').callsFake(function (subsys, cmdId, valObj, callback) {
+                    const deferred = Q.defer();
                     process.nextTick(function () {
                         deferred.resolve({ status: 1 });
                     });
@@ -821,8 +820,8 @@ describe('Module Methods Check', function() {
         });
 
         it('if srsp status === 0, nothing happen', function (done) {
-            var requestStub = sinon.stub(controller, 'request').callsFake(function (subsys, cmdId, valObj, callback) {
-                    var deferred = Q.defer();
+            const requestStub = sinon.stub(controller, 'request').callsFake(function (subsys, cmdId, valObj, callback) {
+                    const deferred = Q.defer();
                     process.nextTick(function () {
                         deferred.resolve({ status: 0 });
                     });
@@ -838,8 +837,8 @@ describe('Module Methods Check', function() {
         });
 
         it('if srsp status === SUCCESS, nothing happen', function (done) {
-            var requestStub = sinon.stub(controller, 'request').callsFake(function (subsys, cmdId, valObj, callback) {
-                    var deferred = Q.defer();
+            const requestStub = sinon.stub(controller, 'request').callsFake(function (subsys, cmdId, valObj, callback) {
+                    const deferred = Q.defer();
                     process.nextTick(function () {
                         deferred.resolve({ status: 'SUCCESS'});
                     });
@@ -855,8 +854,8 @@ describe('Module Methods Check', function() {
         });
 
         it('if areq status === 0xcd, NWK_NO_ROUTE, reject', function (done) {
-            var requestStub = sinon.stub(controller, 'request').callsFake(function (subsys, cmdId, valObj, callback) {
-                    var deferred = Q.defer();
+            const requestStub = sinon.stub(controller, 'request').callsFake(function (subsys, cmdId, valObj, callback) {
+                    const deferred = Q.defer();
                     process.nextTick(function () {
                         deferred.resolve({ status: 0 });
                     });
@@ -874,8 +873,8 @@ describe('Module Methods Check', function() {
         });
 
         it('if areq status === 0xe9, MAC_NO_ACK, reject', function (done) {
-            var requestStub = sinon.stub(controller, 'request').callsFake(function (subsys, cmdId, valObj, callback) {
-                    var deferred = Q.defer();
+            const requestStub = sinon.stub(controller, 'request').callsFake(function (subsys, cmdId, valObj, callback) {
+                    const deferred = Q.defer();
                     process.nextTick(function () {
                         deferred.resolve({ status: 0 });
                     });
@@ -893,8 +892,8 @@ describe('Module Methods Check', function() {
         });
 
         it('if areq status === 0xb7, APS_NO_ACK, reject', function (done) {
-            var requestStub = sinon.stub(controller, 'request').callsFake(function (subsys, cmdId, valObj, callback) {
-                    var deferred = Q.defer();
+            const requestStub = sinon.stub(controller, 'request').callsFake(function (subsys, cmdId, valObj, callback) {
+                    const deferred = Q.defer();
                     process.nextTick(function () {
                         deferred.resolve({ status: 0 });
                     });
@@ -912,8 +911,8 @@ describe('Module Methods Check', function() {
         });
 
         it('if areq status === 0xf0, MAC_TRANSACTION_EXPIRED, reject', function (done) {
-            var requestStub = sinon.stub(controller, 'request').callsFake(function (subsys, cmdId, valObj, callback) {
-                    var deferred = Q.defer();
+            const requestStub = sinon.stub(controller, 'request').callsFake(function (subsys, cmdId, valObj, callback) {
+                    const deferred = Q.defer();
                     process.nextTick(function () {
                         deferred.resolve({ status: 0 });
                     });
@@ -931,8 +930,8 @@ describe('Module Methods Check', function() {
         });
 
         it('if areq status === 0xANY, UNKNOWN ERROR, reject', function (done) {
-            var requestStub = sinon.stub(controller, 'request').callsFake(function (subsys, cmdId, valObj, callback) {
-                    var deferred = Q.defer();
+            const requestStub = sinon.stub(controller, 'request').callsFake(function (subsys, cmdId, valObj, callback) {
+                    const deferred = Q.defer();
                     process.nextTick(function () {
                         deferred.resolve({ status: 0 });
                     });
@@ -967,8 +966,8 @@ describe('Module Methods Check', function() {
 
     describe('#.sendExt', function() {
         it('if srsp status !== 0, === 1, reject', function (done) {
-            var requestStub = sinon.stub(controller, 'request').callsFake(function (subsys, cmdId, valObj, callback) {
-                    var deferred = Q.defer();
+            const requestStub = sinon.stub(controller, 'request').callsFake(function (subsys, cmdId, valObj, callback) {
+                    const deferred = Q.defer();
                     process.nextTick(function () {
                         deferred.resolve({ status: 1 });
                     });
@@ -984,8 +983,8 @@ describe('Module Methods Check', function() {
         });
 
         it('if srsp status === 0, nothing happen', function (done) {
-            var requestStub = sinon.stub(controller, 'request').callsFake(function (subsys, cmdId, valObj, callback) {
-                    var deferred = Q.defer();
+            const requestStub = sinon.stub(controller, 'request').callsFake(function (subsys, cmdId, valObj, callback) {
+                    const deferred = Q.defer();
                     process.nextTick(function () {
                         deferred.resolve({ status: 0 });
                     });
@@ -1002,8 +1001,8 @@ describe('Module Methods Check', function() {
         });
 
         it('if srsp status === SUCCESS, nothing happen', function (done) {
-            var requestStub = sinon.stub(controller, 'request').callsFake(function (subsys, cmdId, valObj, callback) {
-                    var deferred = Q.defer();
+            const requestStub = sinon.stub(controller, 'request').callsFake(function (subsys, cmdId, valObj, callback) {
+                    const deferred = Q.defer();
                     process.nextTick(function () {
                         deferred.resolve({ status: 'SUCCESS'});
                     });
@@ -1020,8 +1019,8 @@ describe('Module Methods Check', function() {
         });
 
         it('if areq status === 0xcd, NWK_NO_ROUTE, reject', function (done) {
-            var requestStub = sinon.stub(controller, 'request').callsFake(function (subsys, cmdId, valObj, callback) {
-                    var deferred = Q.defer();
+            const requestStub = sinon.stub(controller, 'request').callsFake(function (subsys, cmdId, valObj, callback) {
+                    const deferred = Q.defer();
                     process.nextTick(function () {
                         deferred.resolve({ status: 0 });
                     });
@@ -1038,8 +1037,8 @@ describe('Module Methods Check', function() {
         });
 
         it('if areq status === 0xe9, MAC_NO_ACK, reject', function (done) {
-            var requestStub = sinon.stub(controller, 'request').callsFake(function (subsys, cmdId, valObj, callback) {
-                    var deferred = Q.defer();
+            const requestStub = sinon.stub(controller, 'request').callsFake(function (subsys, cmdId, valObj, callback) {
+                    const deferred = Q.defer();
                     process.nextTick(function () {
                         deferred.resolve({ status: 0 });
                     });
@@ -1056,8 +1055,8 @@ describe('Module Methods Check', function() {
         });
 
         it('if areq status === 0xb7, APS_NO_ACK, reject', function (done) {
-            var requestStub = sinon.stub(controller, 'request').callsFake(function (subsys, cmdId, valObj, callback) {
-                    var deferred = Q.defer();
+            const requestStub = sinon.stub(controller, 'request').callsFake(function (subsys, cmdId, valObj, callback) {
+                    const deferred = Q.defer();
                     process.nextTick(function () {
                         deferred.resolve({ status: 0 });
                     });
@@ -1074,8 +1073,8 @@ describe('Module Methods Check', function() {
         });
 
         it('if areq status === 0xf0, MAC_TRANSACTION_EXPIRED, reject', function (done) {
-            var requestStub = sinon.stub(controller, 'request').callsFake(function (subsys, cmdId, valObj, callback) {
-                    var deferred = Q.defer();
+            const requestStub = sinon.stub(controller, 'request').callsFake(function (subsys, cmdId, valObj, callback) {
+                    const deferred = Q.defer();
                     process.nextTick(function () {
                         deferred.resolve({ status: 0 });
                     });
@@ -1092,8 +1091,8 @@ describe('Module Methods Check', function() {
         });
 
         it('if areq status === 0xANY, UNKNOWN ERROR, reject', function (done) {
-            var requestStub = sinon.stub(controller, 'request').callsFake(function (subsys, cmdId, valObj, callback) {
-                    var deferred = Q.defer();
+            const requestStub = sinon.stub(controller, 'request').callsFake(function (subsys, cmdId, valObj, callback) {
+                    const deferred = Q.defer();
                     process.nextTick(function () {
                         deferred.resolve({ status: 0 });
                     });
@@ -1128,7 +1127,7 @@ describe('Module Methods Check', function() {
 
     describe('#.zclFoundation - by delegator', function() {
         it('zcl good send', function (done) {
-            var fakeZclMsg;
+            let fakeZclMsg;
             af.zclFoundation(rmEp1, rmEp1, 3, 'read', [ { attrId: 0 }, { attrId: 1 }, { attrId: 3 } ], function (err, zclMsg) {
                 if (!err && (zclMsg === fakeZclMsg))
                     done();
@@ -1164,7 +1163,7 @@ describe('Module Methods Check', function() {
 
     describe('#.zclFoundation - by loEp8', function() {
         it('zcl good send', function (done) {
-            var fakeZclMsg;
+            let fakeZclMsg;
             af.zclFoundation(loEp8, rmEp1, 3, 'read', [ { attrId: 0 }, { attrId: 1 }, { attrId: 3 } ], { direction: 0 }, function (err, zclMsg) {
                 if (!err && (zclMsg === fakeZclMsg))
                     done();
@@ -1185,7 +1184,7 @@ describe('Module Methods Check', function() {
         });
 
         it('zcl good send - rsp, no listen', function (done) {
-            var fakeZclMsg;
+            let fakeZclMsg;
             af.zclFoundation(loEp8, rmEp1, 3, 'readRsp', [ { attrId: 0 }, { attrId: 1 }, { attrId: 3 } ], { direction: 1 }, function (err, msg) {
                 if (!err && (msg.status === 0))
                     done();
@@ -1211,7 +1210,7 @@ describe('Module Methods Check', function() {
 
     describe('#.zclFunctional - by delegator', function() {
         it('zcl good send', function (done) {
-            var fakeZclMsg;
+            let fakeZclMsg;
 
             af.zclFunctional(rmEp1, rmEp1, 5, 'removeAll', { groupid: 1 }, { direction: 0 }, function (err, zclMsg) {
                 if (!err && (zclMsg === fakeZclMsg))
@@ -1248,7 +1247,7 @@ describe('Module Methods Check', function() {
 
     describe('#.zclFunctional - by loEp8', function() {
         it('zcl good send', function (done) {
-            var fakeZclMsg;
+            let fakeZclMsg;
 
             af.zclFunctional(loEp8, rmEp1, 5, 'removeAll', { groupid: 1 }, { direction: 0 }, function (err, zclMsg) {
                 if (!err && (zclMsg === fakeZclMsg))
@@ -1270,7 +1269,7 @@ describe('Module Methods Check', function() {
 
 
         it('zcl good send - rsp, no listen', function (done) {
-            var fakeZclMsg;
+            let fakeZclMsg;
 
             af.zclFunctional(loEp8, rmEp1, 5, 'removeAllRsp', { status: 0, groupid: 1 }, { direction: 1 }, function (err, zclMsg) {
                 if (!err )
@@ -1297,7 +1296,7 @@ describe('Module Methods Check', function() {
 
     describe('#.zclFoundation - by delegator - rawZclRsp', function() {
         it('zcl good send', function (done) {
-            var fakeZclRaw;
+            let fakeZclRaw;
             af.zclFoundation(rmEp1, rmEp1, 3, 'read', [ { attrId: 0 }, { attrId: 1 }, { attrId: 3 } ], function (err, zclMsg) {
                 if (!err)
                     done();
@@ -1310,7 +1309,7 @@ describe('Module Methods Check', function() {
 
     describe('#.zclFoundation - by loEp8', function() {
         it('zcl good send', function (done) {
-            var fakeZclRaw;
+            let fakeZclRaw;
             af.zclFoundation(loEp8, rmEp1, 3, 'read', [ { attrId: 0 }, { attrId: 1 }, { attrId: 3 } ], { direction: 0 }, function (err, zclMsg) {
                 if (!err)
                     done();
@@ -1323,7 +1322,7 @@ describe('Module Methods Check', function() {
 
     describe('#.zclFunctional - by delegator', function() {
         it('zcl good send', function (done) {
-            var fakeZclRaw;
+            let fakeZclRaw;
 
             af.zclFunctional(rmEp1, rmEp1, 5, 'removeAll', { groupid: 1 }, { direction: 0 }, function (err, zclMsg) {
                 if (!err)
@@ -1337,7 +1336,7 @@ describe('Module Methods Check', function() {
 
     describe('#.zclFunctional - by loEp8', function() {
         it('zcl good send', function (done) {
-            var fakeZclRaw;
+            let fakeZclRaw;
 
             af.zclFunctional(loEp8, rmEp1, 5, 'removeAll', { groupid: 1 }, { direction: 0 }, function (err, zclMsg) {
                 if (!err)
@@ -1351,7 +1350,7 @@ describe('Module Methods Check', function() {
 
     describe('#.zclClusterAttrIdsReq', function() {
         it('zcl good send - only 1 rsp', function (done) {
-            var fakeZclMsg;
+            let fakeZclMsg;
             af.zclClusterAttrIdsReq(rmEp1, 6, function (err, rsp) {
                 if (!err)
                     done();
@@ -1376,10 +1375,10 @@ describe('Module Methods Check', function() {
 
 
         it('zcl good send - 3 rsps', function (done) {
-            var fakeZclMsg,
-                seqNum1,
-                seqNum2,
-                seqNum3;
+            let fakeZclMsg;
+            let seqNum1;
+            let seqNum2;
+            let seqNum3;
 
             af.zclClusterAttrIdsReq(rmEp1, 6, function (err, rsp) {
                 if (!err)
@@ -1424,7 +1423,7 @@ describe('Module Methods Check', function() {
 
     describe('#.zclClusterAttrsReq', function() {
         it('zcl good send - only 1 rsp', function (done) {
-            var fakeZclMsg;
+            let fakeZclMsg;
             af.zclClusterAttrsReq(rmEp1, 6, function (err, rsp) {
                 if (!err)
                     done();
@@ -1443,7 +1442,7 @@ describe('Module Methods Check', function() {
                     attrInfos: [ { attrId: 16384, dataType: 0 }, { attrId: 16385, dataType: 0 } ]
                 }
             };
-            var seqNum2 = af._seq + 1;
+            const seqNum2 = af._seq + 1;
 
             fireFakeZclRsp(rmEp1.getNwkAddr(), rmEp1.getEpId(), null, fakeZclMsg);
             setTimeout(function () {
@@ -1456,11 +1455,11 @@ describe('Module Methods Check', function() {
 
 
         it('zcl good send - 3 rsps', function (done) {
-            var fakeZclMsg,
-                seqNum1,
-                seqNum2,
-                seqNum3,
-                seqNum4;
+            let fakeZclMsg;
+            let seqNum1;
+            let seqNum2;
+            let seqNum3;
+            let seqNum4;
 
             af.zclClusterAttrsReq(rmEp1, 6, function (err, rsp) {
                 if (!err)
@@ -1515,46 +1514,46 @@ describe('Module Methods Check', function() {
 
     describe('#.zclClustersReq', function() {
        it('should resove for sequentially requests', function (done) {
-            var rmEp1GetClusterListStub = sinon.stub(rmEp1, 'getClusterList').returns([ 1, 2, 3, 4, 5 ]),
-                rmEp1GetInClusterListStub = sinon.stub(rmEp1, 'getInClusterList').returns([ 1, 2, 3 ]),
-                rmEp1GetOutClusterListStub = sinon.stub(rmEp1, 'getOutClusterList').returns([ 1, 3, 4, 5 ]);
+           const rmEp1GetClusterListStub = sinon.stub(rmEp1, 'getClusterList').returns([ 1, 2, 3, 4, 5 ]);
+           const rmEp1GetInClusterListStub = sinon.stub(rmEp1, 'getInClusterList').returns([ 1, 2, 3 ]);
+           const rmEp1GetOutClusterListStub = sinon.stub(rmEp1, 'getOutClusterList').returns([ 1, 3, 4, 5 ]);
 
-            var requestStub = sinon.stub(af, 'zclClusterAttrsReq').callsFake(function (dstEp, cId, callback) {
-                    var deferred = Q.defer();
-                    setTimeout(function () {
-                        deferred.resolve({
-                            x1: { value: 'hello' },
-                            x2: { value: 'world' }
-                        });
-                    }, 10);
-                    return deferred.promise.nodeify(callback);
-            });
+           const requestStub = sinon.stub(af, 'zclClusterAttrsReq').callsFake(function (dstEp, cId, callback) {
+                   const deferred = Q.defer();
+                   setTimeout(function () {
+                       deferred.resolve({
+                           x1: { value: 'hello' },
+                           x2: { value: 'world' }
+                       });
+                   }, 10);
+                   return deferred.promise.nodeify(callback);
+           });
 
-            af.zclClustersReq(rmEp1, function (err, data) {
-                rmEp1GetClusterListStub.restore();
-                rmEp1GetInClusterListStub.restore();
-                rmEp1GetOutClusterListStub.restore();
-                requestStub.restore();
+           af.zclClustersReq(rmEp1, function (err, data) {
+               rmEp1GetClusterListStub.restore();
+               rmEp1GetInClusterListStub.restore();
+               rmEp1GetOutClusterListStub.restore();
+               requestStub.restore();
 
-                var good = false;
-                if (data.genPowerCfg.dir === 3 && data.genPowerCfg.attrs.x1.value === 'hello' && data.genPowerCfg.attrs.x2.value === 'world' )
-                    good = true;
+               let good = false;
+               if (data.genPowerCfg.dir === 3 && data.genPowerCfg.attrs.x1.value === 'hello' && data.genPowerCfg.attrs.x2.value === 'world' )
+                   good = true;
 
-                if (data.genDeviceTempCfg.dir === 1 && data.genDeviceTempCfg.attrs.x1.value === 'hello' && data.genDeviceTempCfg.attrs.x2.value === 'world' )
-                    good = good && true;
+               if (data.genDeviceTempCfg.dir === 1 && data.genDeviceTempCfg.attrs.x1.value === 'hello' && data.genDeviceTempCfg.attrs.x2.value === 'world' )
+                   good = good && true;
 
-                if (data.genIdentify.dir === 3 && data.genIdentify.attrs.x1.value === 'hello' && data.genIdentify.attrs.x2.value === 'world' )
-                    good = good && true;
+               if (data.genIdentify.dir === 3 && data.genIdentify.attrs.x1.value === 'hello' && data.genIdentify.attrs.x2.value === 'world' )
+                   good = good && true;
 
-                if (data.genGroups.dir === 2 && data.genGroups.attrs.x1.value === 'hello' && data.genGroups.attrs.x2.value === 'world' )
-                    good = good && true;
+               if (data.genGroups.dir === 2 && data.genGroups.attrs.x1.value === 'hello' && data.genGroups.attrs.x2.value === 'world' )
+                   good = good && true;
 
-                if (data.genScenes.dir === 2 && data.genScenes.attrs.x1.value === 'hello' && data.genScenes.attrs.x2.value === 'world' )
-                    good = good && true;
+               if (data.genScenes.dir === 2 && data.genScenes.attrs.x1.value === 'hello' && data.genScenes.attrs.x2.value === 'world' )
+                   good = good && true;
 
-                if (good)
-                    done();
-            });
+               if (good)
+                   done();
+           });
        });
 
        // it('should reject for sequentially requests when receiver bad', function (done) {

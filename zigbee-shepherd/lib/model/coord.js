@@ -1,9 +1,9 @@
 /* jshint node: true */
 'use strict';
 
-var _ = require('busyman'),
-    util = require('util'),
-    Device = require('./device');
+const _ = require('busyman');
+const util = require('util');
+const Device = require('./device');
 
 function Coordinator(devInfo) {
     // devInfo = { type, ieeeAddr, nwkAddr, manufId, epList }

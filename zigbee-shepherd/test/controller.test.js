@@ -1,19 +1,18 @@
 'use strict';
-var Q = require('q'),
-    sinon = require('sinon'),
-    expect = require('chai').expect,
-    EventEmitter = require('events'),
-    znp = require('cc-znp');
-
-var Device  = require('../lib/model/device'),
-    Endpoint  = require('../lib/model/endpoint'),
-    Controller = require('../lib/components/controller'),
-    Coord  = require('../lib/model/coord'),
-    Coordpoint  = require('../lib/model/coordpoint');
+const Q = require('q');
+const sinon = require('sinon');
+const expect = require('chai').expect;
+const EventEmitter = require('events');
+const znp = require('cc-znp');
+const Device  = require('../lib/model/device');
+const Endpoint  = require('../lib/model/endpoint');
+const Controller = require('../lib/components/controller');
+const Coord  = require('../lib/model/coord');
+const Coordpoint  = require('../lib/model/coordpoint');
 
 const zclId = require('zcl-id/dist/legacy');
 
-var remoteDev = new Device({
+const remoteDev = new Device({
     type: 1,
     ieeeAddr: '0x123456789abcdef',
     nwkAddr: 100,
@@ -24,7 +23,7 @@ var remoteDev = new Device({
     endpoints: {}
 });
 
-var rmEp1 = new Endpoint(remoteDev, {
+const rmEp1 = new Endpoint(remoteDev, {
     profId: 0x0104,
     epId: 1,
     devId: 0x0000,
@@ -32,7 +31,7 @@ var rmEp1 = new Endpoint(remoteDev, {
     outClusterList: [ 0x0000 ]
 });
 
-var rmEp2 = new Endpoint(remoteDev, {
+const rmEp2 = new Endpoint(remoteDev, {
     profId: 0x0104,
     epId: 2,
     devId: 0x0002,
@@ -40,7 +39,7 @@ var rmEp2 = new Endpoint(remoteDev, {
     outClusterList: [ 0x0000, 0x0006 ]
 });
 
-var coordDev = new Coord({
+const coordDev = new Coord({
     type: 0,
     ieeeAddr: '0x0abcdef123456789',
     nwkAddr: 0,
@@ -51,7 +50,7 @@ var coordDev = new Coord({
     endpoints: {}
 });
 
-var loEp1 = new Coordpoint(coordDev, {
+const loEp1 = new Coordpoint(coordDev, {
     profId: 0x0104,
     epId: 1,
     devId: 0x0002,
@@ -59,7 +58,7 @@ var loEp1 = new Coordpoint(coordDev, {
     outClusterList: [ 0x0000, 0x0006 ]
 }, true);
 
-var loEp8 = new Coordpoint(coordDev, {
+const loEp8 = new Coordpoint(coordDev, {
     profId: 0x0104,
     epId: 8,
     devId: 0x0050,
@@ -69,7 +68,7 @@ var loEp8 = new Coordpoint(coordDev, {
 
 describe('Constructor Check', function () {
     it('should has all correct members after new', function () {
-        var controller = new Controller({zclId}, { path: '/dev/ttyUSB0' });
+        const controller = new Controller({zclId}, { path: '/dev/ttyUSB0' });
 
         expect(controller._shepherd).to.be.an('object');
         expect(controller._coord).to.be.null;
@@ -109,7 +108,7 @@ describe('Constructor Check', function () {
 });
 
 describe('Signature Check', function () {
-    var controller = new Controller({zclId}, { path: '/dev/ttyUSB0' });
+    const controller = new Controller({zclId}, { path: '/dev/ttyUSB0' });
 
     controller._coord = coordDev;
 
@@ -464,10 +463,10 @@ describe('Signature Check', function () {
 });
 
 describe('Functional Check', function () {
-    var controller;
+    let controller;
 
     before(function () {
-        var shepherd = new EventEmitter();
+        const shepherd = new EventEmitter();
 
         shepherd._findDevByAddr = function () {
             return;
@@ -481,7 +480,7 @@ describe('Functional Check', function () {
 
     describe('#.start', function () {
         it('should init znp', function (done) {
-            var initStub = sinon.stub(znp, 'init').callsFake(function (spCfg, callback) {
+            const initStub = sinon.stub(znp, 'init').callsFake(function (spCfg, callback) {
                 setImmediate(function () {
                     callback(null);
                     controller.emit('ZNP:INIT');
@@ -499,7 +498,7 @@ describe('Functional Check', function () {
 
     describe('#.close', function () {
         it('should close znp', function (done) {
-            var closeStub = sinon.stub(znp, 'close').callsFake(function (callback) {
+            const closeStub = sinon.stub(znp, 'close').callsFake(function (callback) {
                 setImmediate(function () {
                     callback(null);
                     controller.emit('ZNP:CLOSE');
@@ -517,8 +516,8 @@ describe('Functional Check', function () {
 
     describe('#.reset', function () {
         it('soft reset', function (done) {
-            var requestStub = sinon.stub(controller, 'request').callsFake(function (subsys, cmdId, valObj, callback) {
-                var deferred = Q.defer();
+            const requestStub = sinon.stub(controller, 'request').callsFake(function (subsys, cmdId, valObj, callback) {
+                const deferred = Q.defer();
 
                 setImmediate(function () {
                     deferred.resolve({ status: 0 });
@@ -541,8 +540,8 @@ describe('Functional Check', function () {
         });
 
         it('hard reset', function (done) {
-            var requestStub = sinon.stub(controller, 'request').callsFake(function (subsys, cmdId, valObj, callback) {
-                var deferred = Q.defer();
+            const requestStub = sinon.stub(controller, 'request').callsFake(function (subsys, cmdId, valObj, callback) {
+                const deferred = Q.defer();
 
                 setImmediate(function () {
                     deferred.resolve({ status: 0 });
@@ -567,7 +566,7 @@ describe('Functional Check', function () {
 
     describe('#.request', function () {
         it('request ZDO command', function (done) {
-            var _zdoRequestStub = sinon.stub(controller._zdo, 'request').callsFake(function (cmdId, valObj, callback) {
+            const _zdoRequestStub = sinon.stub(controller._zdo, 'request').callsFake(function (cmdId, valObj, callback) {
                 expect(cmdId).to.be.equal('nodeDescReq');
 
                 setImmediate(function () {
@@ -584,7 +583,7 @@ describe('Functional Check', function () {
         });
 
         it('request SYS command', function (done) {
-            var _znpRequestStub = sinon.stub(znp, 'request').callsFake(function (subsys, cmdId, valObj, callback) {
+            const _znpRequestStub = sinon.stub(znp, 'request').callsFake(function (subsys, cmdId, valObj, callback) {
                 expect(subsys).to.be.equal('SYS');
                 expect(cmdId).to.be.equal('resetReq');
 
@@ -604,8 +603,8 @@ describe('Functional Check', function () {
 
     describe('#.permitJoin', function () {
         it('only permit devices join the network through the coordinator', function (done) {
-            var requestStub = sinon.stub(controller, 'request').callsFake(function (subsys, cmdId, valObj, callback) {
-                var deferred = Q.defer();
+            const requestStub = sinon.stub(controller, 'request').callsFake(function (subsys, cmdId, valObj, callback) {
+                const deferred = Q.defer();
 
                 expect(valObj.addrmode).to.be.equal(0x02);
                 expect(valObj.dstaddr).to.be.equal(0x0000);
@@ -630,8 +629,8 @@ describe('Functional Check', function () {
         });
 
         it('permit devices join the network through the coordinator or routers', function (done) {
-            var requestStub = sinon.stub(controller, 'request').callsFake(function (subsys, cmdId, valObj, callback) {
-                var deferred = Q.defer();
+            const requestStub = sinon.stub(controller, 'request').callsFake(function (subsys, cmdId, valObj, callback) {
+                const deferred = Q.defer();
 
                 expect(valObj.addrmode).to.be.equal(0x0F);
                 expect(valObj.dstaddr).to.be.equal(0xFFFC);
@@ -658,8 +657,8 @@ describe('Functional Check', function () {
 
     describe('#.remove', function () {
         it('remove device', function (done) {
-            var requestStub = sinon.stub(controller, 'request').callsFake(function (subsys, cmdId, valObj, callback) {
-                var deferred = Q.defer();
+            const requestStub = sinon.stub(controller, 'request').callsFake(function (subsys, cmdId, valObj, callback) {
+                const deferred = Q.defer();
 
                 expect(valObj.deviceaddress).to.be.equal('0x123456789abcdef');
 
@@ -681,8 +680,8 @@ describe('Functional Check', function () {
 
     describe('#.registerEp', function () {
         it('register loEp1', function (done) {
-            var requestStub = sinon.stub(controller, 'request').callsFake(function (subsys, cmdId, valObj, callback) {
-                var deferred = Q.defer();
+            const requestStub = sinon.stub(controller, 'request').callsFake(function (subsys, cmdId, valObj, callback) {
+                const deferred = Q.defer();
 
                 expect(cmdId).to.be.equal('register');
 
@@ -704,8 +703,8 @@ describe('Functional Check', function () {
 
     describe('#.deregisterEp', function () {
         it('delete loEp1', function (done) {
-            var requestStub = sinon.stub(controller, 'request').callsFake(function (subsys, cmdId, valObj, callback) {
-                var deferred = Q.defer();
+            const requestStub = sinon.stub(controller, 'request').callsFake(function (subsys, cmdId, valObj, callback) {
+                const deferred = Q.defer();
 
                 expect(cmdId).to.be.equal('delete');
 
@@ -729,17 +728,18 @@ describe('Functional Check', function () {
 
     describe('#.reRegisterEp', function () {
         it('reRegister loEp1', function (done) {
-            var requestStub = sinon.stub(controller, 'request').callsFake(function (subsys, cmdId, valObj, callback) {
-                var deferred = Q.defer();
+            const requestStub = sinon.stub(controller, 'request').callsFake(function (subsys, cmdId, valObj, callback) {
+                const deferred = Q.defer();
 
                 setImmediate(function () {
                     deferred.resolve({ status: 0 });
                 });
 
                 return deferred.promise.nodeify(callback);
-            }),
-            deregisterEpStub = sinon.stub(controller, 'deregisterEp').callsFake(function (loEp, callback) {
-                var deferred = Q.defer();
+            });
+
+            const deregisterEpStub = sinon.stub(controller, 'deregisterEp').callsFake(function (loEp, callback) {
+                const deferred = Q.defer();
 
                 setImmediate(function () {
                     deferred.resolve();
@@ -760,8 +760,8 @@ describe('Functional Check', function () {
 
     describe('#.simpleDescReq', function () {
         it('get remoteDev simple description', function (done) {
-            var deviceWithEndpointsStub = sinon.stub(controller.query, 'deviceWithEndpoints').callsFake(function (nwkAddr, ieeeAddr, callback) {
-                var deferred = Q.defer();
+            const deviceWithEndpointsStub = sinon.stub(controller.query, 'deviceWithEndpoints').callsFake(function (nwkAddr, ieeeAddr, callback) {
+                const deferred = Q.defer();
 
                 setImmediate(function () {
                     deferred.resolve({
@@ -789,8 +789,8 @@ describe('Functional Check', function () {
 
     describe('#.bind', function () {
         it('bind loEp1 and rmEp1', function (done) {
-            var requestStub = sinon.stub(controller, 'request').callsFake(function (subsys, cmdId, valObj, callback) {
-                var deferred = Q.defer();
+            const requestStub = sinon.stub(controller, 'request').callsFake(function (subsys, cmdId, valObj, callback) {
+                const deferred = Q.defer();
 
                 expect(cmdId).to.be.equal('bindReq');
 
@@ -812,8 +812,8 @@ describe('Functional Check', function () {
 
     describe('#.unbind', function () {
         it('unbind loEp1 and rmEp1', function (done) {
-            var requestStub = sinon.stub(controller, 'request').callsFake(function (subsys, cmdId, valObj, callback) {
-                var deferred = Q.defer();
+            const requestStub = sinon.stub(controller, 'request').callsFake(function (subsys, cmdId, valObj, callback) {
+                const deferred = Q.defer();
 
                 expect(cmdId).to.be.equal('unbindReq');
 
@@ -835,8 +835,8 @@ describe('Functional Check', function () {
 
     describe('#.endDeviceAnnceHdlr', function () {
         it('unbind loEp1 and rmEp1', function (done) {
-            var simpleDescReqStub = sinon.stub(controller, 'simpleDescReq').callsFake(function (nwkAddr, ieeeAddr, callback) {
-                var deferred = Q.defer();
+            const simpleDescReqStub = sinon.stub(controller, 'simpleDescReq').callsFake(function (nwkAddr, ieeeAddr, callback) {
+                const deferred = Q.defer();
 
                 setImmediate(function () {
                     deferred.resolve({
@@ -850,9 +850,10 @@ describe('Functional Check', function () {
                 });
 
                 return deferred.promise.nodeify(callback);
-            }),
-            dev_1,
-            dev_2;
+            });
+
+            let dev_1;
+            let dev_2;
 
             controller.on('ZDO:devIncoming', function (devInfo) {
                 controller.emit('ind:incoming' + ':' + devInfo.ieeeaddr);

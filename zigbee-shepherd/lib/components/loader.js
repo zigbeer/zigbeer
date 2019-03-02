@@ -1,18 +1,17 @@
 /* jshint node: true */
 'use strict';
 
-var Q = require('q'),
-    _ = require('busyman'),
-    Ziee = require('ziee');
+const Q = require('q');
+const _ = require('busyman');
+const Ziee = require('ziee');
+const Device = require('../model/device');
+const Endpoint = require('../model/endpoint');
 
-var Device = require('../model/device'),
-    Endpoint = require('../model/endpoint');
-
-var loader = {};
+const loader = {};
 
 loader.reloadSingleDev = function (shepherd, devRec, callback) {
-    var deferred = Q.defer(),
-        dev = shepherd._devbox.get(devRec.id);
+    const deferred = Q.defer();
+    const dev = shepherd._devbox.get(devRec.id);
 
     if (dev && isSameDevice(dev, devRec)) {
         deferred.resolve(null);  // same dev exists, do not reload
@@ -21,10 +20,10 @@ loader.reloadSingleDev = function (shepherd, devRec, callback) {
         devRec.id = null;        // give new id to devRec
     }
 
-    var recoveredDev = new Device(devRec);
+    const recoveredDev = new Device(devRec);
 
     _.forEach(devRec.endpoints, function (epRec, epId) {
-        var recoveredEp = new Endpoint(recoveredDev, epRec);
+        const recoveredEp = new Endpoint(recoveredDev, epRec);
 
         recoveredEp.clusters = new Ziee();
 
@@ -42,11 +41,11 @@ loader.reloadSingleDev = function (shepherd, devRec, callback) {
 };
 
 loader.reloadDevs = function (shepherd, callback) {
-    var deferred = Q.defer(),
-        recoveredIds = [];
+    const deferred = Q.defer();
+    const recoveredIds = [];
 
     Q.ninvoke(shepherd._devbox, 'findFromDb', {}).then(function (devRecs) {
-        var total = devRecs.length;
+        let total = devRecs.length;
 
         devRecs.forEach(function (devRec) {
             if (devRec.nwkAddr === 0) {  // coordinator
@@ -73,7 +72,7 @@ loader.reloadDevs = function (shepherd, callback) {
 };
 
 loader.reload = function (shepherd, callback) {
-    var deferred = Q.defer();
+    const deferred = Q.defer();
 
     loader.reloadDevs(shepherd).then(function (devIds) {
         loader.syncDevs(shepherd, function () {
@@ -87,8 +86,8 @@ loader.reload = function (shepherd, callback) {
 };
 
 loader.syncDevs = function (shepherd, callback) {
-    var deferred = Q.defer(),
-        idsNotInBox = [];
+    const deferred = Q.defer();
+    const idsNotInBox = [];
 
     Q.ninvoke(shepherd._devbox, 'findFromDb', {}).then(function (devRecs) {
         devRecs.forEach(function (devRec) {
@@ -97,7 +96,7 @@ loader.syncDevs = function (shepherd, callback) {
         });
 
         if (idsNotInBox.length) {
-            var ops = devRecs.length;
+            let ops = devRecs.length;
             idsNotInBox.forEach(function (id) {
                 setImmediate(function () {
                     shepherd._devbox.remove(id, function () {

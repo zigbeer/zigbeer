@@ -1,23 +1,21 @@
 /* jshint node: true */
 'use strict';
 
-var Q = require('q'),
-    _ = require('busyman'),
-    proving = require('proving'),
-    ZSC = require('zstack-constants');
-
-var Endpoint  = require('../model/endpoint'),
-    Coordpoint  = require('../model/coordpoint'),
-    zutils = require('./zutils');
-
-var controller,
-    query = {};
+const Q = require('q');
+const _ = require('busyman');
+const proving = require('proving');
+const ZSC = require('zstack-constants');
+const Endpoint  = require('../model/endpoint');
+const Coordpoint  = require('../model/coordpoint');
+const zutils = require('./zutils');
+let controller;
+const query = {};
 
 /*************************************************************************************************/
 /*** Public APIs                                                                               ***/
 /*************************************************************************************************/
 query.coordInfo = function (callback) {
-    var info = controller.getNetInfo();
+    const info = controller.getNetInfo();
     return query.device(info.ieeeAddr, info.nwkAddr, callback);
 };
 
@@ -52,7 +50,7 @@ query.firmware = function(){
 }
 
 query.device = function (ieeeAddr, nwkAddr, callback) {
-    var devInfo = {
+    const devInfo = {
             type: null,
             ieeeAddr: ieeeAddr,
             nwkAddr: nwkAddr,
@@ -91,20 +89,20 @@ query.endpoint = function (nwkAddr, epId, callback) {
 };
 
 query.deviceWithEndpoints = function (nwkAddr, ieeeAddr, callback) {
-    var deferred = Q.defer(),
-        epQueries = [],
-        fullDev;
+    const deferred = Q.defer();
+    const epQueries = [];
+    let fullDev;
 
     query.device(ieeeAddr, nwkAddr).then(function (devInfo) {
         fullDev = devInfo;
 
         _.forEach(fullDev.epList, function (epId) {
-            var epQuery = {func: query.endpoint, nwkAddr: nwkAddr, epId: epId};
+            const epQuery = {func: query.endpoint, nwkAddr: nwkAddr, epId: epId};
             epQueries.push(epQuery);
         });
 
-        var result = Q();
-        var resultArray = [];
+        let result = Q();
+        const resultArray = [];
         epQueries.forEach(function (f) {
             result = result.then(function(){
                 return f.func(f.nwkAddr, f.epId).then(res => resultArray.push(res));
@@ -122,12 +120,12 @@ query.deviceWithEndpoints = function (nwkAddr, ieeeAddr, callback) {
 };
 
 query.setBindingEntry = function (bindMode, srcEp, cId, dstEpOrGrpId, callback, zclId) {
-    var deferred = Q.defer(),
-        cIdItem = zclId.cluster(cId),
-        bindParams,
-        dstEp,
-        grpId,
-        req;
+    const deferred = Q.defer();
+    const cIdItem = zclId.cluster(cId);
+    let bindParams;
+    let dstEp;
+    let grpId;
+    let req;
 
     if (!((srcEp instanceof Endpoint) || (srcEp instanceof Coordpoint)))
         throw new TypeError('srcEp should be an instance of Endpoint class.');
@@ -174,7 +172,7 @@ query.setBindingEntry = function (bindMode, srcEp, cId, dstEpOrGrpId, callback, 
 /*** Protected Methods                                                                         ***/
 /*************************************************************************************************/
 query._network = function (param, callback) {
-    var prop = ZSC.SAPI.zbDeviceInfo[param];
+    const prop = ZSC.SAPI.zbDeviceInfo[param];
 
     return Q.fcall(function () {
         if (_.isNil(prop))
@@ -200,20 +198,22 @@ query._network = function (param, callback) {
 };
 
 query._networkAll = function (callback) {
-    var paramsInfo = [
+    const paramsInfo = [
             { param: 'DEV_STATE',  name: 'state'   }, { param: 'IEEE_ADDR',  name: 'ieeeAddr' },
             { param: 'SHORT_ADDR', name: 'nwkAddr' }, { param: 'CHANNEL',    name: 'channel'  },
             { param: 'PAN_ID',     name: 'panId'   }, { param: 'EXT_PAN_ID', name: 'extPanId' }
-        ],
-        net = {
-            state: null,
-            channel: null,
-            panId: null,
-            extPanId: null,
-            ieeeAddr: null,
-            nwkAddr: null
-        },
-        steps = [];
+        ];
+
+    const net = {
+        state: null,
+        channel: null,
+        panId: null,
+        extPanId: null,
+        ieeeAddr: null,
+        nwkAddr: null
+    };
+
+    const steps = [];
 
     _.forEach(paramsInfo, function (paramInfo) {
         steps.push(function (net) {
@@ -230,7 +230,7 @@ query._networkAll = function (callback) {
 };
 
 function devType(type) {
-    var DEVTYPE = ZSC.ZDO.deviceLogicalType;
+    const DEVTYPE = ZSC.ZDO.deviceLogicalType;
 
     switch (type) {
         case DEVTYPE.COORDINATOR:
@@ -249,11 +249,11 @@ function devType(type) {
 }
 
 function addrBuf2Str(buf) {
-    var val,
-        bufLen = buf.length,
-        strChunk = '0x';
+    let val;
+    const bufLen = buf.length;
+    let strChunk = '0x';
 
-    for (var i = 0; i < bufLen; i += 1) {
+    for (let i = 0; i < bufLen; i += 1) {
         val = buf.readUInt8(bufLen - i - 1);
 
         if (val <= 15)
@@ -266,8 +266,8 @@ function addrBuf2Str(buf) {
 }
 
 function bufToArray(buf, nip) {
-    var i,
-        nipArr = [];
+    let i;
+    const nipArr = [];
 
     if (nip === 'uint8') {
         for (i = 0; i < buf.length; i += 1) {
