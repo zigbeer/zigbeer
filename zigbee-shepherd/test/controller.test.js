@@ -480,7 +480,7 @@ describe('Functional Check', function () {
 
     describe('#.start', function () {
         it('should init znp', function (done) {
-            var initStub = sinon.stub(znp, 'init', function (spCfg, callback) {
+            var initStub = sinon.stub(znp, 'init').callsFake(function (spCfg, callback) {
                 setImmediate(function () {
                     callback(null);
                     controller.emit('ZNP:INIT');
@@ -498,7 +498,7 @@ describe('Functional Check', function () {
 
     describe('#.close', function () {
         it('should close znp', function (done) {
-            var closeStub = sinon.stub(znp, 'close', function (callback) {
+            var closeStub = sinon.stub(znp, 'close').callsFake(function (callback) {
                 setImmediate(function () {
                     callback(null);
                     controller.emit('ZNP:CLOSE');
@@ -516,7 +516,7 @@ describe('Functional Check', function () {
 
     describe('#.reset', function () {
         it('soft reset', function (done) {
-            var requestStub = sinon.stub(controller, 'request', function (subsys, cmdId, valObj, callback) {
+            var requestStub = sinon.stub(controller, 'request').callsFake(function (subsys, cmdId, valObj, callback) {
                 var deferred = Q.defer();
 
                 setImmediate(function () {
@@ -540,7 +540,7 @@ describe('Functional Check', function () {
         });
 
         it('hard reset', function (done) {
-            var requestStub = sinon.stub(controller, 'request', function (subsys, cmdId, valObj, callback) {
+            var requestStub = sinon.stub(controller, 'request').callsFake(function (subsys, cmdId, valObj, callback) {
                 var deferred = Q.defer();
 
                 setImmediate(function () {
@@ -566,7 +566,7 @@ describe('Functional Check', function () {
 
     describe('#.request', function () {
         it('request ZDO command', function (done) {
-            var _zdoRequestStub = sinon.stub(controller._zdo, 'request', function (cmdId, valObj, callback) {
+            var _zdoRequestStub = sinon.stub(controller._zdo, 'request').callsFake(function (cmdId, valObj, callback) {
                 expect(cmdId).to.be.equal('nodeDescReq');
 
                 setImmediate(function () {
@@ -583,7 +583,7 @@ describe('Functional Check', function () {
         });
 
         it('request SYS command', function (done) {
-            var _znpRequestStub = sinon.stub(znp, 'request', function (subsys, cmdId, valObj, callback) {
+            var _znpRequestStub = sinon.stub(znp, 'request').callsFake(function (subsys, cmdId, valObj, callback) {
                 expect(subsys).to.be.equal('SYS');
                 expect(cmdId).to.be.equal('resetReq');
 
@@ -603,7 +603,7 @@ describe('Functional Check', function () {
 
     describe('#.permitJoin', function () {
         it('only permit devices join the network through the coordinator', function (done) {
-            var requestStub = sinon.stub(controller, 'request', function (subsys, cmdId, valObj, callback) {
+            var requestStub = sinon.stub(controller, 'request').callsFake(function (subsys, cmdId, valObj, callback) {
                 var deferred = Q.defer();
 
                 expect(valObj.addrmode).to.be.equal(0x02);
@@ -629,7 +629,7 @@ describe('Functional Check', function () {
         });
 
         it('permit devices join the network through the coordinator or routers', function (done) {
-            var requestStub = sinon.stub(controller, 'request', function (subsys, cmdId, valObj, callback) {
+            var requestStub = sinon.stub(controller, 'request').callsFake(function (subsys, cmdId, valObj, callback) {
                 var deferred = Q.defer();
 
                 expect(valObj.addrmode).to.be.equal(0x0F);
@@ -657,7 +657,7 @@ describe('Functional Check', function () {
 
     describe('#.remove', function () {
         it('remove device', function (done) {
-            var requestStub = sinon.stub(controller, 'request', function (subsys, cmdId, valObj, callback) {
+            var requestStub = sinon.stub(controller, 'request').callsFake(function (subsys, cmdId, valObj, callback) {
                 var deferred = Q.defer();
 
                 expect(valObj.deviceaddress).to.be.equal('0x123456789abcdef');
@@ -680,7 +680,7 @@ describe('Functional Check', function () {
 
     describe('#.registerEp', function () {
         it('register loEp1', function (done) {
-            var requestStub = sinon.stub(controller, 'request', function (subsys, cmdId, valObj, callback) {
+            var requestStub = sinon.stub(controller, 'request').callsFake(function (subsys, cmdId, valObj, callback) {
                 var deferred = Q.defer();
 
                 expect(cmdId).to.be.equal('register');
@@ -703,7 +703,7 @@ describe('Functional Check', function () {
 
     describe('#.deregisterEp', function () {
         it('delete loEp1', function (done) {
-            var requestStub = sinon.stub(controller, 'request', function (subsys, cmdId, valObj, callback) {
+            var requestStub = sinon.stub(controller, 'request').callsFake(function (subsys, cmdId, valObj, callback) {
                 var deferred = Q.defer();
 
                 expect(cmdId).to.be.equal('delete');
@@ -728,7 +728,7 @@ describe('Functional Check', function () {
 
     describe('#.reRegisterEp', function () {
         it('reRegister loEp1', function (done) {
-            var requestStub = sinon.stub(controller, 'request', function (subsys, cmdId, valObj, callback) {
+            var requestStub = sinon.stub(controller, 'request').callsFake(function (subsys, cmdId, valObj, callback) {
                 var deferred = Q.defer();
 
                 setImmediate(function () {
@@ -737,7 +737,7 @@ describe('Functional Check', function () {
 
                 return deferred.promise.nodeify(callback);
             }),
-            deregisterEpStub = sinon.stub(controller, 'deregisterEp', function (loEp, callback) {
+            deregisterEpStub = sinon.stub(controller, 'deregisterEp').callsFake(function (loEp, callback) {
                 var deferred = Q.defer();
 
                 setImmediate(function () {
@@ -759,7 +759,7 @@ describe('Functional Check', function () {
 
     describe('#.simpleDescReq', function () {
         it('get remoteDev simple description', function (done) {
-            var deviceWithEndpointsStub = sinon.stub(controller.query, 'deviceWithEndpoints', function (nwkAddr, ieeeAddr, callback) {
+            var deviceWithEndpointsStub = sinon.stub(controller.query, 'deviceWithEndpoints').callsFake(function (nwkAddr, ieeeAddr, callback) {
                 var deferred = Q.defer();
 
                 setImmediate(function () {
@@ -788,7 +788,7 @@ describe('Functional Check', function () {
 
     describe('#.bind', function () {
         it('bind loEp1 and rmEp1', function (done) {
-            var requestStub = sinon.stub(controller, 'request', function (subsys, cmdId, valObj, callback) {
+            var requestStub = sinon.stub(controller, 'request').callsFake(function (subsys, cmdId, valObj, callback) {
                 var deferred = Q.defer();
 
                 expect(cmdId).to.be.equal('bindReq');
@@ -811,7 +811,7 @@ describe('Functional Check', function () {
 
     describe('#.unbind', function () {
         it('unbind loEp1 and rmEp1', function (done) {
-            var requestStub = sinon.stub(controller, 'request', function (subsys, cmdId, valObj, callback) {
+            var requestStub = sinon.stub(controller, 'request').callsFake(function (subsys, cmdId, valObj, callback) {
                 var deferred = Q.defer();
 
                 expect(cmdId).to.be.equal('unbindReq');
@@ -834,7 +834,7 @@ describe('Functional Check', function () {
 
     describe('#.endDeviceAnnceHdlr', function () {
         it('unbind loEp1 and rmEp1', function (done) {
-            var simpleDescReqStub = sinon.stub(controller, 'simpleDescReq', function (nwkAddr, ieeeAddr, callback) {
+            var simpleDescReqStub = sinon.stub(controller, 'simpleDescReq').callsFake(function (nwkAddr, ieeeAddr, callback) {
                 var deferred = Q.defer();
 
                 setImmediate(function () {
