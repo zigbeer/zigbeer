@@ -89,7 +89,7 @@ function afFactory(zclId) {
             afEventCnf = 'AF:dataConfirm:' + senderEp.getEpId() + ':' + afParams.transid;
         }
 
-        areq.register(afEventCnf, deferred, function (cnf) {
+        areq.register(afEventCnf, deferred, cnf => {
             const errText = 'AF data request fails, status code: ';
 
             if (cnf.status === 0 || cnf.status === 'SUCCESS')   // success
@@ -106,12 +106,12 @@ function afFactory(zclId) {
                 areq.reject(afEventCnf, new Error(errText + cnf.status));
         }, areqTimeout);
 
-        controller.request('AF', 'dataRequest', afParams).then(function (rsp) {
+        controller.request('AF', 'dataRequest', afParams).then(rsp => {
             if (rsp.status !== 0 && rsp.status !== 'SUCCESS' )  // unsuccessful
                 areq.reject(afEventCnf, new Error('AF data request failed, status code: ' + rsp.status + '.'));
             else if (!apsAck)
                 areq.resolve(afEventCnf, rsp);
-        }).fail(function (err) {
+        }).fail(err => {
             areq.reject(afEventCnf, err);
         }).done();
 
@@ -179,12 +179,12 @@ function afFactory(zclId) {
 
         if (addrMode === ZSC.AF.addressMode.ADDR_GROUP || addrMode === ZSC.AF.addressMode.ADDR_BROADCAST) {
             // no ack
-            controller.request('AF', 'dataRequestExt', afParamsExt).then(function (rsp) {
+            controller.request('AF', 'dataRequestExt', afParamsExt).then(rsp => {
                 if (rsp.status !== 0 && rsp.status !== 'SUCCESS')   // unsuccessful
                     deferred.reject(new Error('AF data extend request failed, status code: ' + rsp.status + '.'));
                 else
                     deferred.resolve(rsp);  // Broadcast (or Groupcast) has no AREQ confirm back, just resolve this transaction.
-            }).fail(function (err) {
+            }).fail(err => {
                 deferred.reject(err);
             }).done();
 
@@ -197,7 +197,7 @@ function afFactory(zclId) {
                 afEventCnf = 'AF:dataConfirm:' + senderEp.getEpId() + ':' + afParamsExt.transid;
             }
 
-            areq.register(afEventCnf, deferred, function (cnf) {
+            areq.register(afEventCnf, deferred, cnf => {
                 const errText = 'AF data request fails, status code: ';
 
                 if (cnf.status === 0 || cnf.status === 'SUCCESS')   // success
@@ -214,12 +214,12 @@ function afFactory(zclId) {
                     areq.reject(afEventCnf, new Error(errText + cnf.status));
             }, areqTimeout);
 
-            controller.request('AF', 'dataRequestExt', afParamsExt).then(function (rsp) {
+            controller.request('AF', 'dataRequestExt', afParamsExt).then(rsp => {
                 if (rsp.status !== 0 && rsp.status !== 'SUCCESS')   // unsuccessful
                     areq.reject(afEventCnf, new Error('AF data request failed, status code: ' + rsp.status + '.'));
                 else if (!apsAck)
                     areq.resolve(afEventCnf, rsp);
-            }).fail(function (err) {
+            }).fail(err => {
                 areq.reject(afEventCnf, err);
             }).done();
         }
@@ -282,18 +282,18 @@ function afFactory(zclId) {
             else                    // from local ep to remote ep
                 mandatoryEvent = 'ZCL:incomingMsg:' + dstEp.getNwkAddr() + ':' + dstEp.getEpId() + ':' + srcEp.getEpId() + ':' + seqNum;
 
-            areq.register(mandatoryEvent, deferred, function (msg) {
+            areq.register(mandatoryEvent, deferred, msg => {
                 // { groupid, clusterid, srcaddr, srcendpoint, dstendpoint, wasbroadcast, linkquality, securityuse, timestamp, transseqnumber, zclMsg }
                 areq.resolve(mandatoryEvent, msg.zclMsg);
             });
         }
 
-        af.send(srcEp, dstEp, cId, zclBuffer).fail(function (err) {
+        af.send(srcEp, dstEp, cId, zclBuffer).fail(err => {
             if (mandatoryEvent && areq.isEventPending(mandatoryEvent))
                 areq.reject(mandatoryEvent, err);
             else
                 deferred.reject(err);
-        }).then(function (rsp) {
+        }).then(rsp => {
             if (!mandatoryEvent)
                 deferred.resolve(rsp);
         }).done();
@@ -369,7 +369,7 @@ function afFactory(zclId) {
             else                    // from local ep to remote ep
                 mandatoryEvent = 'ZCL:incomingMsg:' + dstEp.getNwkAddr() + ':' + dstEp.getEpId() + ':' + srcEp.getEpId() + ':' + seqNum;
 
-            areq.register(mandatoryEvent, deferred, function (msg) {
+            areq.register(mandatoryEvent, deferred, msg => {
                 // { groupid, clusterid, srcaddr, srcendpoint, dstendpoint, wasbroadcast, linkquality, securityuse, timestamp, transseqnumber, zclMsg }
                 areq.resolve(mandatoryEvent, msg.zclMsg);
             });
@@ -377,22 +377,22 @@ function afFactory(zclId) {
 
         // af.send(srcEp, dstEp, cId, rawPayload, opt, callback)
         if (srcEp instanceof Group) {
-            af.sendExt(srcEp, ZSC.AF.addressMode.ADDR_GROUP, srcEp.groupID, cId, zclBuffer).fail(function (err) {
+            af.sendExt(srcEp, ZSC.AF.addressMode.ADDR_GROUP, srcEp.groupID, cId, zclBuffer).fail(err => {
                 if (mandatoryEvent && areq.isEventPending(mandatoryEvent))
                     areq.reject(mandatoryEvent, err);
                 else
                     deferred.reject(err);
-            }).then(function (rsp) {
+            }).then(rsp => {
                 if (!mandatoryEvent)
                     deferred.resolve(rsp);
             }).done();
         } else {
-            af.send(srcEp, dstEp, cId, zclBuffer).fail(function (err) {
+            af.send(srcEp, dstEp, cId, zclBuffer).fail(err => {
                 if (mandatoryEvent && areq.isEventPending(mandatoryEvent))
                     areq.reject(mandatoryEvent, err);
                 else
                     deferred.reject(err);
-            }).then(function (rsp) {
+            }).then(rsp => {
                 if (!mandatoryEvent)
                     deferred.resolve(rsp);
             }).done();
@@ -433,59 +433,55 @@ function afFactory(zclId) {
 
         let i = 0;
         // each request
-        _.forEach(clusterList, function (cId) {
+        _.forEach(clusterList, cId => {
             let cIdString = zclId.cluster(cId);
             cIdString = cIdString ? cIdString.key : cId;
 
-            clusterAttrsReqs.push(function (clusters) {
-                return af.zclClusterAttrsReq(dstEp, cId).then(function (attrs) {
-                    i++;
-                    if (eventEmitter instanceof EventEmitter) {
-                        eventEmitter.emit('ind:interview', {
-                            endpoint: {
-                                current: epId,
-                                cluster: {
-                                    total: clusterList.length,
-                                    current: i,
-                                }
+            clusterAttrsReqs.push(clusters => af.zclClusterAttrsReq(dstEp, cId).then(attrs => {
+                i++;
+                if (eventEmitter instanceof EventEmitter) {
+                    eventEmitter.emit('ind:interview', {
+                        endpoint: {
+                            current: epId,
+                            cluster: {
+                                total: clusterList.length,
+                                current: i,
                             }
-                        });
-                    }
-                    clusters[cIdString] = clusters[cIdString] || { dir: 0, attrs: null };
-                    clusters[cIdString].dir = _.includes(inClusterList, cId) ? (clusters[cIdString].dir | 0x01) : clusters[cIdString].dir;
-                    clusters[cIdString].dir = _.includes(outClusterList, cId) ? (clusters[cIdString].dir | 0x02) : clusters[cIdString].dir;
-                    clusters[cIdString].attrs = attrs;
-                    return clusters;
-                }).fail(function (err) {
-                    i++;
-                    if (eventEmitter instanceof EventEmitter) {
-                        eventEmitter.emit('ind:interview', {
-                            endpoint:{
-                                current: epId,
-                                cluster: {
-                                    total: clusterList.length,
-                                    current: i,
-                                }
+                        }
+                    });
+                }
+                clusters[cIdString] = clusters[cIdString] || { dir: 0, attrs: null };
+                clusters[cIdString].dir = _.includes(inClusterList, cId) ? (clusters[cIdString].dir | 0x01) : clusters[cIdString].dir;
+                clusters[cIdString].dir = _.includes(outClusterList, cId) ? (clusters[cIdString].dir | 0x02) : clusters[cIdString].dir;
+                clusters[cIdString].attrs = attrs;
+                return clusters;
+            }).fail(err => {
+                i++;
+                if (eventEmitter instanceof EventEmitter) {
+                    eventEmitter.emit('ind:interview', {
+                        endpoint:{
+                            current: epId,
+                            cluster: {
+                                total: clusterList.length,
+                                current: i,
                             }
-                        });
-                    }
-                    clusters[cIdString] = clusters[cIdString] || { dir: 0, attrs: null };
-                    clusters[cIdString].dir = _.includes(inClusterList, cId) ? (clusters[cIdString].dir | 0x01) : clusters[cIdString].dir;
-                    clusters[cIdString].dir = _.includes(outClusterList, cId) ? (clusters[cIdString].dir | 0x02) : clusters[cIdString].dir;
-                    clusters[cIdString].attrs = {};
-                    return clusters;
-                });
-            });
+                        }
+                    });
+                }
+                clusters[cIdString] = clusters[cIdString] || { dir: 0, attrs: null };
+                clusters[cIdString].dir = _.includes(inClusterList, cId) ? (clusters[cIdString].dir | 0x01) : clusters[cIdString].dir;
+                clusters[cIdString].dir = _.includes(outClusterList, cId) ? (clusters[cIdString].dir | 0x02) : clusters[cIdString].dir;
+                clusters[cIdString].attrs = {};
+                return clusters;
+            }));
         });
 
         // all clusters
-        const allReqs = clusterAttrsReqs.reduce(function (soFar, f) {
-            return soFar.then(f);
-        }, Q(clusters));
+        const allReqs = clusterAttrsReqs.reduce((soFar, f) => soFar.then(f), Q(clusters));
 
-        allReqs.then(function (clusters) {
+        allReqs.then(clusters => {
             deferred.resolve(clusters);
-        }).fail(function (err) {
+        }).fail(err => {
             deferred.reject(err);
         }).done();
 
@@ -495,34 +491,30 @@ function afFactory(zclId) {
     af.zclClusterAttrsReq = function (dstEp, cId, callback) {
         const deferred = Q.defer();
 
-        af.zclClusterAttrIdsReq(dstEp, cId).then(function (attrIds) {
+        af.zclClusterAttrIdsReq(dstEp, cId).then(attrIds => {
             let readReq = [];
             const attrsReqs = [];
             let attributes = [];
             let attrIdsLen = attrIds.length;
 
-            _.forEach(attrIds, function (id) {
+            _.forEach(attrIds, id => {
                 readReq.push({ attrId: id });
 
                 if (readReq.length === 5 || readReq.length === attrIdsLen) {
                     const req = _.cloneDeep(readReq);
-                    attrsReqs.push(function (attributes) {
-                        return af.zclFoundation(dstEp, dstEp, cId, 'read', req).then(function (readStatusRecsRsp) {
-                            attributes = _.concat(attributes, readStatusRecsRsp.payload);
-                            return attributes;
-                        });
-                    });
+                    attrsReqs.push(attributes => af.zclFoundation(dstEp, dstEp, cId, 'read', req).then(readStatusRecsRsp => {
+                        attributes = _.concat(attributes, readStatusRecsRsp.payload);
+                        return attributes;
+                    }));
                     attrIdsLen -= 5;
                     readReq = [];
                 }
             });
 
-            return attrsReqs.reduce(function (soFar, f) {
-                return soFar.then(f);
-            }, Q(attributes));
-        }).then(function (attributes) {
+            return attrsReqs.reduce((soFar, f) => soFar.then(f), Q(attributes));
+        }).then(attributes => {
             const attrs = {};
-            _.forEach(attributes, function (rec) {  // { attrId, status, dataType, attrData }
+            _.forEach(attributes, rec => {  // { attrId, status, dataType, attrData }
                 let attrIdString = zclId.attr(cId, rec.attrId);
 
                 attrIdString = attrIdString ? attrIdString.key : rec.attrId;
@@ -534,9 +526,9 @@ function afFactory(zclId) {
             });
 
             return attrs;
-        }).then(function (attrs) {
+        }).then(attrs => {
             deferred.resolve(attrs);
-        }).fail(function (err) {
+        }).fail(err => {
             deferred.reject(err);
         }).done();
 
@@ -554,7 +546,7 @@ function afFactory(zclId) {
             af.zclFoundation(dstEp, dstEp, cId, 'discover', {
                 startAttrId: startAttrId,
                 maxAttrIds: 240
-            }).then(function (discoverRsp) {
+            }).then(discoverRsp => {
                 // discoverRsp.payload: { discComplete, attrInfos: [ { attrId, dataType }, ... ] }
                 const payload = discoverRsp.payload;
 
@@ -562,7 +554,7 @@ function afFactory(zclId) {
                 const attrInfos = payload.attrInfos;
                 let nextReqIndex;
 
-                _.forEach(attrInfos, function (info) {
+                _.forEach(attrInfos, info => {
                     if (_.indexOf(attrsToRead, info.attrId) === -1)
                         attrsToRead.push(info.attrId);
                 });
@@ -573,7 +565,7 @@ function afFactory(zclId) {
                 } else {
                     defer.resolve(attrsToRead);
                 }
-            }).fail(function (err) {
+            }).fail(err => {
                 defer.reject(err);
             }).done();
         };
@@ -620,18 +612,18 @@ function afFactory(zclId) {
                     } else if (_.isUndefined(msgBuffer)) {
                         msgBuffer = rebornDevs[msg.srcaddr] = [ { type: type, msg: msg } ];
 
-                        af.controller.request('ZDO', 'ieeeAddrReq', { shortaddr: msg.srcaddr, reqtype: 0, startindex:0 }).then(function (rsp) {
+                        af.controller.request('ZDO', 'ieeeAddrReq', { shortaddr: msg.srcaddr, reqtype: 0, startindex:0 }).then(rsp => {
                             // rsp: { status, ieeeaddr, nwkaddr, startindex, numassocdev, assocdevlist }
-                            af.controller.once('ind:incoming' + ':' + rsp.ieeeaddr, function () {
+                            af.controller.once('ind:incoming' + ':' + rsp.ieeeaddr, () => {
                                 if (af.controller.findEndpoint(msg.srcaddr, msg.srcendpoint) && _.isArray(msgBuffer))
-                                    _.forEach(msgBuffer, function(item) {
+                                    _.forEach(msgBuffer, item => {
                                         dispatchIncomingMsg(item.type, item.msg);
                                     });
                                 else
                                     delete rebornDevs[msg.srcaddr];
                             });
                             af.controller.emit('ZDO:endDeviceAnnceInd', { srcaddr: rsp.nwkaddr, nwkaddr: rsp.nwkaddr, ieeeaddr: rsp.ieeeaddr, capabilities: {} });
-                        }).fail(function (err) {
+                        }).fail(err => {
                             delete rebornDevs[msg.srcaddr];
                         }).done();
                     }
@@ -710,7 +702,7 @@ function afFactory(zclId) {
         }
 
         if (_.isFunction(dispatchTo)) {
-            setImmediate(function () {
+            setImmediate(() => {
                 dispatchTo(msg, remoteEp);
             });
         }
@@ -758,7 +750,7 @@ function afFactory(zclId) {
         const parsedMsg = _.cloneDeep(msg);
         parsedMsg.zclMsg = zclData;
 
-        setImmediate(function () {
+        setImmediate(() => {
             af.controller.emit('ZCL:incomingMsg', parsedMsg);
         });
     }
@@ -876,9 +868,7 @@ function afFactory(zclId) {
             const lsns = af.controller.listeners(evt);
 
             if (_.isArray(lsns) && lsns.length) {
-                has = _.find(lsns, function (n) {
-                    return n === lsn;
-                });
+                has = _.find(lsns, n => n === lsn);
             } else if (_.isFunction(lsns)) {
                 has = (lsns === lsn);
             }
@@ -886,7 +876,7 @@ function afFactory(zclId) {
         }
 
         // attach event listeners
-        _.forEach(msgHandlers, function (rec) {
+        _.forEach(msgHandlers, rec => {
             if (!isAttached(rec.evt, rec.hdlr))
                 af.controller.on(rec.evt, rec.hdlr);
         });

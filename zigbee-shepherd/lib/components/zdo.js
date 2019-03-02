@@ -36,7 +36,7 @@ Zdo.prototype.request = function (apiName, valObj, callback) {
 Zdo.prototype._sendZdoRequestViaZnp = function (apiName, valObj, callback) {
     const zdoRequest = znp.zdoRequest.bind(znp); // bind zdo._sendZdoRequestViaZnp() to znp.zdoRequest()
 
-    return zdoRequest(apiName, valObj, function (err, rsp) {
+    return zdoRequest(apiName, valObj, (err, rsp) => {
         let error = null;
 
         if (err)
@@ -58,11 +58,11 @@ Zdo.prototype._genericRequest = function (apiName, valObj, callback) {
     const areqEvtKey = zdoHelper.generateEventOfRequest(apiName, valObj);
 
     if (areqEvtKey)
-        areq.register(areqEvtKey, deferred, function (payload) {
+        areq.register(areqEvtKey, deferred, payload => {
             areq.resolve(areqEvtKey, payload);
         });
 
-    this._sendZdoRequestViaZnp(apiName, valObj, function (err, rsp) {
+    this._sendZdoRequestViaZnp(apiName, valObj, (err, rsp) => {
         if (err)
             areq.reject(areqEvtKey, err);
     });
@@ -147,7 +147,7 @@ Zdo.prototype._concatAddrRequest = function (apiName, valObj, callback) {
         reqObj.shortaddr = valObj.shortaddr;
 
     const recursiveRequest = function () {
-        self._genericRequest(apiName, reqObj, function (err, rsp) {
+        self._genericRequest(apiName, reqObj, (err, rsp) => {
             if (err) {
                 callback(err, finalRsp);
             } else if (rsp.status !== 0) {
@@ -208,7 +208,7 @@ Zdo.prototype._concatListRequest = function (apiName, valObj, listKeys, callback
     }
 
     const recursiveRequest = function () {
-        self._genericRequest(apiName, reqObj, function (err, rsp) {
+        self._genericRequest(apiName, reqObj, (err, rsp) => {
             if (err) {
                 callback(err, finalRsp);
             } else if (rsp.status !== 0) {

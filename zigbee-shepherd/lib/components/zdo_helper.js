@@ -120,7 +120,7 @@ zdoHelper.generateEventOfRequest = function (reqName, valObj) {
     if (meta.suffix.length === 0)
         return evtName;
 
-    meta.suffix.forEach(function (key) {
+    meta.suffix.forEach(key => {
         evtName = evtName + ':' + valObj[key].toString();
     });
 
@@ -136,7 +136,7 @@ zdoHelper.generateEventOfIndication = function (indName, msgData) {
     if (!meta || (meta.length === 0))
         return;
 
-    meta.forEach(function (key) {
+    meta.forEach(key => {
         evtName = evtName + ':' + msgData[key].toString();
     });
 

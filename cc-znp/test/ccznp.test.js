@@ -124,7 +124,7 @@ describe('Functional Check', function() {
         };
 
         ccznp._unpi.send = () => {};
-        ccznp.request('SYS', 'ping', {}, function(err, result) {
+        ccznp.request('SYS', 'ping', {}, (err, result) => {
             if (err) {
                 throw err;
             } else if (result === rsp && ccznp._spinLock === false) {
@@ -147,12 +147,12 @@ describe('Functional Check', function() {
         };
         let dataEvtFlag = false;
 
-        ccznp.on('data', function(msg) {
+        ccznp.on('data', msg => {
             if (msg === data) {
                 dataEvtFlag = true;
             }
         });
-        ccznp.on('SRSP:SYS:version', function (result) {
+        ccznp.on('SRSP:SYS:version', result => {
             let flag = true;
 
             let parsedResult = {
@@ -191,13 +191,13 @@ describe('Functional Check', function() {
 
         let dataEvtFlag = false;
 
-        ccznp.on('data', function(msg) {
+        ccznp.on('data', msg => {
             if (msg === data) {
                 dataEvtFlag = true;
             }
         });
 
-        ccznp.on('AREQ', function(result) {
+        ccznp.on('AREQ', result => {
             let flag = true;
             const parsedResult = {
                 subsys: 'AF',

@@ -22,12 +22,12 @@ loader.reloadSingleDev = function (shepherd, devRec, callback) {
 
     const recoveredDev = new Device(devRec);
 
-    _.forEach(devRec.endpoints, function (epRec, epId) {
+    _.forEach(devRec.endpoints, (epRec, epId) => {
         const recoveredEp = new Endpoint(recoveredDev, epRec);
 
         recoveredEp.clusters = new Ziee();
 
-        _.forEach(epRec.clusters, function (cInfo, cid) {
+        _.forEach(epRec.clusters, (cInfo, cid) => {
             recoveredEp.clusters.init(cid, 'dir', cInfo.dir);
             recoveredEp.clusters.init(cid, 'attrs', cInfo.attrs, false);
         });
@@ -44,27 +44,27 @@ loader.reloadDevs = function (shepherd, callback) {
     const deferred = Q.defer();
     const recoveredIds = [];
 
-    Q.ninvoke(shepherd._devbox, 'findFromDb', {}).then(function (devRecs) {
+    Q.ninvoke(shepherd._devbox, 'findFromDb', {}).then(devRecs => {
         let total = devRecs.length;
 
-        devRecs.forEach(function (devRec) {
+        devRecs.forEach(devRec => {
             if (devRec.nwkAddr === 0) {  // coordinator
                 total -= 1;
                 if (total === 0)         // all done
                     deferred.resolve(recoveredIds);
             } else {
-                loader.reloadSingleDev(shepherd, devRec).then(function (id) {
+                loader.reloadSingleDev(shepherd, devRec).then(id => {
                     recoveredIds.push(id);
-                }).fail(function (err) {
+                }).fail(err => {
                     recoveredIds.push(null);
-                }).done(function () {
+                }).done(() => {
                     total -= 1;
                     if (total === 0)     // all done
                         deferred.resolve(recoveredIds);
                 });
             }
         });
-    }).fail(function (err) {
+    }).fail(err => {
         deferred.reject(err);
     }).done();
 
@@ -74,11 +74,11 @@ loader.reloadDevs = function (shepherd, callback) {
 loader.reload = function (shepherd, callback) {
     const deferred = Q.defer();
 
-    loader.reloadDevs(shepherd).then(function (devIds) {
-        loader.syncDevs(shepherd, function () {
+    loader.reloadDevs(shepherd).then(devIds => {
+        loader.syncDevs(shepherd, () => {
             deferred.resolve();  // whether sync or not, return success
         });
-    }).fail(function (err) {
+    }).fail(err => {
         deferred.reject(err);
     }).done();
 
@@ -89,17 +89,17 @@ loader.syncDevs = function (shepherd, callback) {
     const deferred = Q.defer();
     const idsNotInBox = [];
 
-    Q.ninvoke(shepherd._devbox, 'findFromDb', {}).then(function (devRecs) {
-        devRecs.forEach(function (devRec) {
+    Q.ninvoke(shepherd._devbox, 'findFromDb', {}).then(devRecs => {
+        devRecs.forEach(devRec => {
             if (!shepherd._devbox.get(devRec.id))
                 idsNotInBox.push(devRec.id);
         });
 
         if (idsNotInBox.length) {
             let ops = devRecs.length;
-            idsNotInBox.forEach(function (id) {
-                setImmediate(function () {
-                    shepherd._devbox.remove(id, function () {
+            idsNotInBox.forEach(id => {
+                setImmediate(() => {
+                    shepherd._devbox.remove(id, () => {
                         ops -= 1;
                         if (ops === 0)
                             deferred.resolve();
@@ -109,7 +109,7 @@ loader.syncDevs = function (shepherd, callback) {
         } else {
             deferred.resolve();
         }
-    }).fail(function (err) {
+    }).fail(err => {
         deferred.reject(err);
     }).done();
 

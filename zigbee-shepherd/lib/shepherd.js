@@ -58,7 +58,7 @@ function ZShepherd(path, opts) {
     this._devbox = new Objectbox(this._dbPath);
 
     this.acceptDevIncoming = function (devInfo, callback) {  // Override at will.
-        setImmediate(function () {
+        setImmediate(() => {
             const accepted = true;
             callback(null, accepted);
         });
@@ -69,40 +69,40 @@ function ZShepherd(path, opts) {
     /***************************************************/
     eventHandlers.attachEventHandlers(this);
 
-    this.controller.on('permitJoining', function (time) {
+    this.controller.on('permitJoining', time => {
         self.emit('permitJoining', time);
     });
 
-    this.on('_ready', function () {
+    this.on('_ready', () => {
         self._startTime = Math.floor(Date.now()/1000);
-        setImmediate(function () {
+        setImmediate(() => {
             self.emit('ready');
         });
     });
 
-    this.on('ind:incoming', function (dev) {
+    this.on('ind:incoming', dev => {
         const endpoints = [];
 
-        _.forEach(dev.epList, function (epId) {
+        _.forEach(dev.epList, epId => {
             endpoints.push(dev.getEndpoint(epId));
         });
 
         self.emit('ind', { type: 'devIncoming', endpoints: endpoints, data: dev.getIeeeAddr() });
     });
 
-    this.on('ind:interview', function (dev, status) {
+    this.on('ind:interview', (dev, status) => {
         self.emit('ind', { type: 'devInterview', status: status, data: dev });
     });
 
-    this.on('ind:leaving', function (epList, ieeeAddr) {
+    this.on('ind:leaving', (epList, ieeeAddr) => {
         self.emit('ind', { type: 'devLeaving', endpoints: epList, data: ieeeAddr });
     });
 
-    this.on('ind:changed', function (ep, notifData) {
+    this.on('ind:changed', (ep, notifData) => {
         self.emit('ind', { type: 'devChange', endpoints: [ ep ], data: notifData });
     });
 
-    this.on('ind:cmd', function (ep, cId, payload, cmdId, msg) {
+    this.on('ind:cmd', (ep, cId, payload, cmdId, msg) => {
         const cIdString = self.zclId.cluster(cId);
         const type = `cmd${cmdId.charAt(0).toUpperCase() + cmdId.substr(1)}`;
         const notifData = {};
@@ -113,7 +113,7 @@ function ZShepherd(path, opts) {
         self.emit('ind', { type: type, endpoints: [ ep ], data: notifData, linkquality: msg.linkquality });
     });
 
-    this.on('ind:statusChange', function (ep, cId, payload, msg) {
+    this.on('ind:statusChange', (ep, cId, payload, msg) => {
         let cIdString = self.zclId.cluster(cId);
 
         const notifData = {
@@ -128,7 +128,7 @@ function ZShepherd(path, opts) {
         self.emit('ind', { type: 'statusChange', endpoints: [ ep ], data: notifData, linkquality: msg.linkquality });
     });
 
-    this.on('ind:reported', function (ep, cId, attrs, msg) {
+    this.on('ind:reported', (ep, cId, attrs, msg) => {
         let cIdString = self.zclId.cluster(cId);
 
         const notifData = {
@@ -141,7 +141,7 @@ function ZShepherd(path, opts) {
         cIdString = cIdString ? cIdString.key : cId;
         notifData.cid = cIdString;
 
-        _.forEach(attrs, function (rec) {  // { attrId, dataType, attrData }
+        _.forEach(attrs, rec => {  // { attrId, dataType, attrData }
             let attrIdString = self.zclId.attr(cIdString, rec.attrId);
             attrIdString = attrIdString ? attrIdString.key : rec.attrId;
 
@@ -151,10 +151,10 @@ function ZShepherd(path, opts) {
         self.emit('ind', { type: 'attReport', endpoints: [ ep ], data: notifData, linkquality: msg.linkquality });
     });
 
-    this.on('ind:status', function (dev, status) {
+    this.on('ind:status', (dev, status) => {
         const endpoints = [];
 
-        _.forEach(dev.epList, function (epId) {
+        _.forEach(dev.epList, epId => {
             endpoints.push(dev.getEndpoint(epId));
         });
 
@@ -170,7 +170,7 @@ util.inherits(ZShepherd, EventEmitter);
 ZShepherd.prototype.start = function (callback) {
     const self = this;
 
-    return init.setupShepherd(this).then(function () {
+    return init.setupShepherd(this).then(() => {
         self._enabled = true;   // shepherd is enabled
         self.emit('_ready');    // if all done, shepherd fires '_ready' event for inner use
         debug.shepherd('zigbee-shepherd is _ready and _enabled');
@@ -182,15 +182,15 @@ ZShepherd.prototype.stop = function (callback) {
     const devbox = this._devbox;
     debug.shepherd('zigbee-shepherd is stopping.');
 
-    return Q.fcall(function () {
+    return Q.fcall(() => {
         if (self._enabled) {
             self.permitJoin(0x00, 'all');
-            _.forEach(devbox.exportAllIds(), function (id) {
+            _.forEach(devbox.exportAllIds(), id => {
                 devbox.removeElement(id);
             });
             return self.controller.close();
         }
-    }).then(function () {
+    }).then(() => {
         self._enabled = false;
         self._zApp = null;
         self._zApp = [];
@@ -208,16 +208,16 @@ ZShepherd.prototype.reset = function (mode, callback) {
     if (mode === 'hard' || mode === 0) {
         // clear database
         if (devbox) {
-            _.forEach(devbox.exportAllIds(), function (id) {
+            _.forEach(devbox.exportAllIds(), id => {
                 removeDevs.push(Q.ninvoke(devbox, 'remove', id));
             });
 
-            Q.all(removeDevs).then(function () {
+            Q.all(removeDevs).then(() => {
                 if (devbox.isEmpty())
                     debug.shepherd('Database cleared.');
                 else
                     debug.shepherd('Database not cleared.');
-            }).fail(function (err) {
+            }).fail(err => {
                 debug.shepherd(err);
             }).done();
         } else {
@@ -273,7 +273,7 @@ ZShepherd.prototype.mount = function (zApp, callback) {
         throw new TypeError('zApp should be an instance of Zive class.');
 
     if (this._mounting) {
-        this._mountQueue.push(function () {
+        this._mountQueue.push(() => {
             self.mount(zApp, deferred);
         });
         return deferred.promise.nodeify(callback);
@@ -281,13 +281,13 @@ ZShepherd.prototype.mount = function (zApp, callback) {
 
     this._mounting = true;
 
-    Q.fcall(function () {
-        _.forEach(self._zApp, function (app) {
+    Q.fcall(() => {
+        _.forEach(self._zApp, app => {
             if (app === zApp)
                 throw new  Error('zApp already exists.');
         });
         self._zApp.push(zApp);
-    }).then(function () {
+    }).then(() => {
         if (coord) {
             mountId = Math.max.apply(null, coord.epList);
             zApp._simpleDesc.epId = mountId > 10 ? mountId + 1 : 11;  // epId 1-10 are reserved for delegator
@@ -298,37 +298,29 @@ ZShepherd.prototype.mount = function (zApp, callback) {
         } else {
             throw new Error('Coordinator has not been initialized yet.');
         }
-    }).then(function () {
-        return self.controller.registerEp(loEp).then(function () {
-            debug.shepherd('Register zApp, epId: %s, profId: %s ', loEp.getEpId(), loEp.getProfId());
-        });
-    }).then(function () {
-        return self.controller.query.coordInfo().then(function (coordInfo) {
-            coord.update(coordInfo);
-            return Q.ninvoke(self._devbox, 'sync', coord._getId());
-        });
-    }).then(function () {
+    }).then(() => self.controller.registerEp(loEp).then(() => {
+        debug.shepherd('Register zApp, epId: %s, profId: %s ', loEp.getEpId(), loEp.getProfId());
+    })).then(() => self.controller.query.coordInfo().then(coordInfo => {
+        coord.update(coordInfo);
+        return Q.ninvoke(self._devbox, 'sync', coord._getId());
+    })).then(() => {
         self._attachZclMethods(loEp);
         self._attachZclMethods(zApp);
 
         loEp.onZclFoundation = function (msg, remoteEp) {
-            setImmediate(function () {
-                return zApp.foundationHandler(msg, remoteEp);
-            });
+            setImmediate(() => zApp.foundationHandler(msg, remoteEp));
         };
         loEp.onZclFunctional = function (msg, remoteEp) {
-            setImmediate(function () {
-                return zApp.functionalHandler(msg, remoteEp);
-            });
+            setImmediate(() => zApp.functionalHandler(msg, remoteEp));
         };
 
         deferred.resolve(loEp.getEpId());
-    }).fail(function (err) {
+    }).fail(err => {
         deferred.reject(err);
-    }).done(function () {
+    }).done(() => {
         self._mounting = false;
         if (self._mountQueue.length)
-            process.nextTick(function () {
+            process.nextTick(() => {
                 self._mountQueue.shift()();
             });
     });
@@ -346,11 +338,10 @@ ZShepherd.prototype.list = function (ieeeAddrs) {
     else if (!_.isUndefined(ieeeAddrs) && !_.isArray(ieeeAddrs))
         throw new TypeError('ieeeAddrs should be a string or an array of strings if given.');
     else if (!ieeeAddrs)
-        ieeeAddrs = _.map(this._devbox.exportAllObjs(), function (dev) {
-            return dev.getIeeeAddr();  // list all
-        });
+        ieeeAddrs = _.map(this._devbox.exportAllObjs(), dev => // list all
+        dev.getIeeeAddr());
 
-    foundDevs = _.map(ieeeAddrs, function (ieeeAddr) {
+    foundDevs = _.map(ieeeAddrs, ieeeAddr => {
         proving.string(ieeeAddr, 'ieeeAddr should be a string.');
 
         let devInfo;
@@ -385,16 +376,18 @@ ZShepherd.prototype.lqi = function (ieeeAddr, callback) {
     const self = this;
     const dev = this._findDevByAddr(ieeeAddr);
 
-    return Q.fcall(function () {
+    return Q.fcall(() => {
         if (dev)
             return self.controller.request('ZDO', 'mgmtLqiReq', { dstaddr: dev.getNwkAddr(), startindex: 0 });
         else
             return Q.reject(new Error('device is not found.'));
-    }).then(function (rsp) {   // { srcaddr, status, neighbortableentries, startindex, neighborlqilistcount, neighborlqilist }
+    }).then(rsp => {   // { srcaddr, status, neighbortableentries, startindex, neighborlqilistcount, neighborlqilist }
         if (rsp.status === 0)  // success
-            return _.map(rsp.neighborlqilist, function (neighbor) {
-                return { ieeeAddr: neighbor.extAddr, nwkAddr: neighbor.nwkAddr, lqi: neighbor.lqi };
-            });
+            return _.map(rsp.neighborlqilist, neighbor => ({
+                ieeeAddr: neighbor.extAddr,
+                nwkAddr: neighbor.nwkAddr,
+                lqi: neighbor.lqi
+            }));
     }).nodeify(callback);
 };
 
@@ -424,7 +417,7 @@ ZShepherd.prototype.lqiScan = function (ieeeAddr) {
     const processResponse = function(parent){
         return function(data){
             let chain = Q();
-            data.forEach(function (devinfo) {
+            data.forEach(devinfo => {
                 const ieeeAddr = devinfo.ieeeAddr;
                 if (ieeeAddr == "0x0000000000000000") return;
                 let dev = self._findDevByAddr(ieeeAddr);
@@ -432,9 +425,7 @@ ZShepherd.prototype.lqiScan = function (ieeeAddr) {
                 devinfo.status = dev ? dev.status : "offline";
                 const dedupKey = parent + '|' + ieeeAddr;
                 if (dev && dev.type == "Router" && !noDuplicate[dedupKey]) {
-                    chain = chain.then(function () {
-                        return self.lqi(ieeeAddr).then(processResponse(ieeeAddr));
-                    });
+                    chain = chain.then(() => self.lqi(ieeeAddr).then(processResponse(ieeeAddr)));
                 }
                 noDuplicate[dedupKey] = devinfo;
             });
@@ -449,12 +440,8 @@ ZShepherd.prototype.lqiScan = function (ieeeAddr) {
     return self.lqi(ieeeAddr)
         .timeout(1000)
         .then(processResponse(ieeeAddr))
-        .then(function(){
-            return Object.values(noDuplicate);
-        })
-        .catch(function(){
-            return Object.values(noDuplicate);
-        });
+        .then(() => Object.values(noDuplicate))
+        .catch(() => Object.values(noDuplicate));
 };
 
 /*************************************************************************************************/
@@ -464,9 +451,7 @@ ZShepherd.prototype._findDevByAddr = function (addr) {
     // addr: ieeeAddr(String) or nwkAddr(Number)
     proving.stringOrNumber(addr, 'addr should be a number or a string.');
 
-    return this._devbox.find(function (dev) {
-        return _.isString(addr) ? dev.getIeeeAddr() === addr : dev.getNwkAddr() === addr;
-    });
+    return this._devbox.find(dev => _.isString(addr) ? dev.getIeeeAddr() === addr : dev.getNwkAddr() === addr);
 };
 
 ZShepherd.prototype._registerDev = function (dev, callback) {
@@ -478,18 +463,18 @@ ZShepherd.prototype._registerDev = function (dev, callback) {
 
     oldDev = _.isNil(dev._getId()) ? undefined : devbox.get(dev._getId());
 
-    return Q.fcall(function () {
+    return Q.fcall(() => {
         if (oldDev) {
             throw new Error('dev exists, unregister it first.');
         } else if (dev._recovered) {
-            return Q.ninvoke(devbox, 'set', dev._getId(), dev).then(function (id) {
+            return Q.ninvoke(devbox, 'set', dev._getId(), dev).then(id => {
                 dev._recovered = false;
                 delete dev._recovered;
                 return id;
             });
         } else {
             dev.update({ joinTime: Math.floor(Date.now()/1000) });
-            return Q.ninvoke(devbox, 'add', dev).then(function (id) {
+            return Q.ninvoke(devbox, 'add', dev).then(id => {
                 dev._setId(id);
                 return id;
             });
@@ -556,14 +541,14 @@ ZShepherd.prototype._attachZclMethods = function (ep) {
 
             attr = attr ? attr.value : attrId;
 
-            self._foundation(ep, ep, cId, 'read', [{ attrId: attr }]).then(function (readStatusRecsRsp) {
+            self._foundation(ep, ep, cId, 'read', [{ attrId: attr }]).then(readStatusRecsRsp => {
                 const rec = readStatusRecsRsp[0];
 
                 if (rec.status === 0)
                     deferred.resolve(rec.attrData);
                 else
                     deferred.reject(new Error('request unsuccess: ' + rec.status));
-            }).catch(function(err) {
+            }).catch(err => {
                 deferred.reject(err);
             });
 
@@ -574,14 +559,14 @@ ZShepherd.prototype._attachZclMethods = function (ep) {
             const attr = self.zclId.attr(cId, attrId);
             const attrType = self.zclId.attrType(cId, attrId).value;
 
-            self._foundation(ep, ep, cId, 'write', [{ attrId: attr.value, dataType: attrType, attrData: data }]).then(function (writeStatusRecsRsp) {
+            self._foundation(ep, ep, cId, 'write', [{ attrId: attr.value, dataType: attrType, attrData: data }]).then(writeStatusRecsRsp => {
                 const rec = writeStatusRecsRsp[0];
 
                 if (rec.status === 0)
                     deferred.resolve(data);
                 else
                     deferred.reject(new Error('request unsuccess: ' + rec.status));
-            }).catch(function(err) {
+            }).catch(err => {
                 deferred.reject(err);
             });
 
@@ -617,11 +602,11 @@ ZShepherd.prototype._attachZclMethods = function (ep) {
                 };
             }
 
-            Q.fcall(function () {
+            Q.fcall(() => {
                 if (dlgEp) {
-                    return ep.bind(cId, dlgEp).then(function () {
+                    return ep.bind(cId, dlgEp).then(() => {
                         if (cfgRpt)
-                            return ep.foundation(cId, 'configReport', [ cfgRptRec ]).then(function (rsp) {
+                            return ep.foundation(cId, 'configReport', [ cfgRptRec ]).then(rsp => {
                                 const status = rsp[0].status;
                                 if (status !== 0)
                                     deferred.reject(self.zclId.status(status).key);
@@ -630,9 +615,9 @@ ZShepherd.prototype._attachZclMethods = function (ep) {
                 } else {
                     return Q.reject(new Error('Profile: ' + ep.getProfId() + ' is not supported.'));
                 }
-            }).then(function () {
+            }).then(() => {
                 deferred.resolve();
-            }).fail(function (err) {
+            }).fail(err => {
                 deferred.reject(err);
             }).done();
 
@@ -651,7 +636,7 @@ ZShepherd.prototype._foundation = function (srcEp, dstEp, cId, cmd, zclData, cfg
         cfg = cfg || {};
     }
 
-    return this.af.zclFoundation(srcEp, dstEp, cId, cmd, zclData, cfg).then(function (msg) {
+    return this.af.zclFoundation(srcEp, dstEp, cId, cmd, zclData, cfg).then(msg => {
         let cmdString = self.zclId.foundation(cmd);
         cmdString = cmdString ? cmdString.key : cmd;
 
@@ -674,7 +659,7 @@ ZShepherd.prototype._functional = function (srcEp, dstEp, cId, cmd, zclData, cfg
         cfg = cfg || {};
     }
 
-    return this.af.zclFunctional(srcEp, dstEp, cId, cmd, zclData, cfg).then(function (msg) {
+    return this.af.zclFunctional(srcEp, dstEp, cId, cmd, zclData, cfg).then(msg => {
         self._updateFinalizer(dstEp, cId);
         return msg.payload;
     }).nodeify(callback);
@@ -692,11 +677,11 @@ ZShepherd.prototype._updateFinalizer = function (ep, cId, attrs, reported) {
 
     cIdString = cIdString ? cIdString.key : cId;
 
-    Q.fcall(function () {
+    Q.fcall(() => {
         if (attrs) {
             const newAttrs = {};
 
-            _.forEach(attrs, function (rec) {  // { attrId, status, dataType, attrData }
+            _.forEach(attrs, rec => {  // { attrId, status, dataType, attrData }
                 let attrIdString = self.zclId.attr(cId, rec.attrId);
                 attrIdString = attrIdString ? attrIdString.key : rec.attrId;
 
@@ -710,20 +695,18 @@ ZShepherd.prototype._updateFinalizer = function (ep, cId, attrs, reported) {
         } else {
             return self.af.zclClusterAttrsReq(ep, cId);
         }
-    }).then(function (newAttrs) {
+    }).then(newAttrs => {
         const oldAttrs = clusters[cIdString].attrs;
         const diff = zutils.objectDiff(oldAttrs, newAttrs);
 
         if (!_.isEmpty(diff)) {
-            _.forEach(diff, function (val, attrId) {
+            _.forEach(diff, (val, attrId) => {
                 ep.getClusters().set(cIdString, 'attrs', attrId, val);
             });
 
             self.emit('ind:changed', ep, { cid: cIdString, data: diff });
         }
-    }).fail(function () {
-        return;
-    }).done();
+    }).fail(() => {}).done();
 };
 
 module.exports = ZShepherd;
