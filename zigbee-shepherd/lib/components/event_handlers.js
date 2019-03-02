@@ -22,7 +22,7 @@ handlers.attachEventHandlers = function (shepherd) {
     const controller = shepherd.controller;
     const hdls = {};
 
-    _.forEach(handlers, function (hdl, key) {
+    _.forEach(handlers, (hdl, key) => {
         if (key !== 'attachEventHandlers')
             hdls[key] = hdl.bind(shepherd);
     });
@@ -65,12 +65,10 @@ handlers.resetInd = function (msg) {
     if (msg !== '_reset')
         debug.shepherd('Starting a software reset...');
 
-    this.stop().then(function () {
-        return self.start();
-    }).then(function () {
+    this.stop().then(() => self.start()).then(() => {
         if (msg === '_reset')
             return self.controller.emit('_reset');
-    }).fail(function (err) {
+    }).fail(err => {
         if (msg === '_reset') {
             return self.controller.emit('_reset', err);
         } else {
@@ -88,7 +86,7 @@ handlers.devIncoming = function (devInfo, resolve) {
     const clustersReqs = [];
 
     function syncEndpoints(dev) {
-        devInfo.endpoints.forEach(function (simpleDesc) {
+        devInfo.endpoints.forEach(simpleDesc => {
             let ep = dev.getEndpoint(simpleDesc.epId);
 
             if (ep) {
@@ -102,7 +100,7 @@ handlers.devIncoming = function (devInfo, resolve) {
         });
     }
 
-    const processDev = Q.fcall(function () {
+    const processDev = Q.fcall(() => {
         if (dev) {
             dev.update(devInfo);
             dev.update({ status: 'online', joinTime: Math.floor(Date.now()/1000) });
@@ -112,11 +110,9 @@ handlers.devIncoming = function (devInfo, resolve) {
             dev = new Device(devInfo);
             dev.update({ status: 'online' });
             syncEndpoints(dev);
-            return self._registerDev(dev).then(function () {
-                            return dev;
-                });
+            return self._registerDev(dev).then(() => dev);
         }
-    }).then(function(dev) {
+    }).then(dev => {
         if (!dev || !dev.hasOwnProperty('endpoints')) return dev;
 
         // Try genBasic interview, not certain if it works for all devices
@@ -154,10 +150,10 @@ handlers.devIncoming = function (devInfo, resolve) {
             if (!basicEpInst || basicEpInst instanceof Error) return dev;
 
             // Get manufName, modelId and powerSource information
-            return self.af.zclFoundation(basicEpInst, basicEpInst, 0, 'read', [{ attrId: 4 }, { attrId: 5 }, { attrId: 7 }]).then(function (readStatusRecsRsp) {
+            return self.af.zclFoundation(basicEpInst, basicEpInst, 0, 'read', [{ attrId: 4 }, { attrId: 5 }, { attrId: 7 }]).then(readStatusRecsRsp => {
                 const data = {};
                 if (readStatusRecsRsp && _.isArray(readStatusRecsRsp.payload)) {
-                    readStatusRecsRsp.payload.forEach(function(item){  // { attrId, status, dataType, attrData }
+                    readStatusRecsRsp.payload.forEach(item => {  // { attrId, status, dataType, attrData }
                         if (item && item.hasOwnProperty('attrId') && item.hasOwnProperty('attrData')) {
                             if (item.attrId === 7)
                                 data[attrMap[item.attrId]] = powerSourceMap[item.attrData];
@@ -173,47 +169,39 @@ handlers.devIncoming = function (devInfo, resolve) {
                 debug.shepherd('Identified Device: { manufacturer: %s, product: %s }', data.manufName, data.modelId);
 
                 // Save device
-                return Q.ninvoke(self._devbox, 'sync', dev._getId()).then(function () {
-                    return dev;
-                });
-            }).catch(function(){
-                return dev;
-            });
+                return Q.ninvoke(self._devbox, 'sync', dev._getId()).then(() => dev);
+            }).catch(() => dev);
         } catch (err) {
             return dev;
         }
-    }).then(function (dev) {
+    }).then(dev => {
         const numberOfEndpoints = _.keys(dev.endpoints).length;
 
         const interviewEvents = new EventEmitter();
-        interviewEvents.on('ind:interview', function(status) {
+        interviewEvents.on('ind:interview', status => {
             if (status && status.endpoint) status.endpoint.total = numberOfEndpoints;
             self.emit('ind:interview', dev.ieeeAddr, status);
         });
 
-        _.forEach(dev.endpoints, function (ep) {
+        _.forEach(dev.endpoints, ep => {
             // if (ep.isZclSupported())
-            clustersReqs.push(function () {
-                return self.af.zclClustersReq(ep, interviewEvents).then(function (clusters) {
-                    _.forEach(clusters, function (cInfo, cid) {
-                        ep.clusters.init(cid, 'dir', { value: cInfo.dir });
-                        ep.clusters.init(cid, 'attrs', cInfo.attrs, false);
-                    });
+            clustersReqs.push(() => self.af.zclClustersReq(ep, interviewEvents).then(clusters => {
+                _.forEach(clusters, (cInfo, cid) => {
+                    ep.clusters.init(cid, 'dir', { value: cInfo.dir });
+                    ep.clusters.init(cid, 'attrs', cInfo.attrs, false);
                 });
-            });
+            }));
         });
 
-        return clustersReqs.reduce(function (soFar, fn) {
-            return soFar.then(fn);
-        }, Q(0));
-    }).then(function () {
+        return clustersReqs.reduce((soFar, fn) => soFar.then(fn), Q(0));
+    }).then(() => {
         if (_.isFunction(self.acceptDevIncoming)) {
             const info = {
                 ieeeAddr: dev.getIeeeAddr(),
                 endpoints: []
             };
 
-            _.forEach(dev.epList, function (epId) {
+            _.forEach(dev.epList, epId => {
                 info.endpoints.push(dev.getEndpoint(epId));
             });
 
@@ -221,7 +209,7 @@ handlers.devIncoming = function (devInfo, resolve) {
         } else {
             return true;
         }
-    }).then(function (accepted) {
+    }).then(accepted => {
         if (accepted) {
             Q.ninvoke(self._devbox, 'sync', dev._getId());
             debug.shepherd('Device: %s join the network.', dev.getIeeeAddr());
@@ -230,11 +218,11 @@ handlers.devIncoming = function (devInfo, resolve) {
             self.emit('ind:status', dev, 'online');
             self.controller.emit('ind:incoming' + ':' + dev.getIeeeAddr());
         } else {
-            self.remove(dev.getIeeeAddr(), { reJoin: false }).then(function () {
+            self.remove(dev.getIeeeAddr(), { reJoin: false }).then(() => {
                 Q.ninvoke(self._devbox, 'remove', dev._getId());
             });
         }
-    }).fail(function (err) {
+    }).fail(err => {
         self.emit('error', err);
     });
 
@@ -256,7 +244,7 @@ handlers.leaveInd = function (msg) {
         if (msg.request)    // request
             this._unregisterDev(dev);
         else                // indication
-            this._devbox.remove(dev._getId(), function () {});
+            this._devbox.remove(dev._getId(), () => {});
 
         debug.shepherd('Device: %s leave the network.', ieeeAddr);
         this.emit('ind:leaving', epList, ieeeAddr);
@@ -270,7 +258,7 @@ handlers.stateChangeInd = function (msg) {
 
     let devStates = msg.state;
 
-    _.forEach(ZSC.ZDO.devStates, function (statesCode, states) {
+    _.forEach(ZSC.ZDO.devStates, (statesCode, states) => {
         if (msg.state === statesCode)
             devStates = states;
     });

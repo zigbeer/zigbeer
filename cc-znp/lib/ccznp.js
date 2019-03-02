@@ -69,7 +69,7 @@ function CcZnp() {
     this._spinLock = false;
     this._txQueue = [];
 
-    this.on('_ready', function() {
+    this.on('_ready', () => {
         self._init = true;
         self.emit('ready');
     });
@@ -149,8 +149,16 @@ CcZnp.prototype.init = function(spCfg, callback) {
     unpi.on('data', parseMtIncomingData);
     sp.once('open', spOpenLsn);
 
-    sp.open(function(err) {
-        if (err) return callback(err);
+    if (sp && sp instanceof Serialport && sp.isOpen) {
+        debug('Initialize, serial port was already open');
+        sp.on('error', spErrLsn);
+        sp.on('close', spCloseLsn);
+        return callback(null);
+    }
+    debug('Initialize, opening serial port');
+    sp.open(err => {
+        if (err)
+            return callback(err);
 
         sp.on('error', spErrLsn);
         sp.on('close', spCloseLsn);
@@ -162,7 +170,7 @@ CcZnp.prototype.close = function(callback) {
     const self = this;
 
     if (this._init) {
-        this._sp.flush(function() {
+        this._sp.flush(() => {
             self._sp.close(callback);
         });
     } else {
@@ -180,7 +188,7 @@ CcZnp.prototype.request = function(subsys, cmd, valObj, callback) {
     }
 
     if (this._spinLock) {
-        this._txQueue.push(function() {
+        this._txQueue.push(() => {
             self.request(subsys, cmd, valObj, callback);
         });
         return;
@@ -250,7 +258,7 @@ CcZnp.prototype._sendSREQ = function(argObj, callback) {
         return;
     }
 
-    sreqTimeout = setTimeout(function() {
+    sreqTimeout = setTimeout(() => {
         if (self.listenerCount(srspEvt)) {
             self.emit(srspEvt, '__timeout__');
         }
@@ -259,7 +267,7 @@ CcZnp.prototype._sendSREQ = function(argObj, callback) {
     }, 1500);
 
     // attach response listener
-    this.once(srspEvt, function(result) {
+    this.once(srspEvt, result => {
         self._spinLock = false;
 
         // clear timeout controller if it is there
@@ -300,7 +308,7 @@ CcZnp.prototype._sendAREQ = function(argObj, callback) {
         this._txQueue = null;
         this._txQueue = [];
 
-        this.once('AREQ:SYS:RESET', function() {
+        this.once('AREQ:SYS:RESET', () => {
             // hold the lock until coordinator reset completed
             self._resetting = false;
             self._spinLock = false;
@@ -309,7 +317,7 @@ CcZnp.prototype._sendAREQ = function(argObj, callback) {
 
         // if AREQ:SYS:RESET does not return in 30 sec
         // release the lock to avoid the requests from enqueuing
-        setTimeout(function() {
+        setTimeout(() => {
             if (self._resetting) {
                 self._spinLock = false;
             }
@@ -327,7 +335,7 @@ CcZnp.prototype._scheduleNextSend = function() {
     const txQueue = this._txQueue;
 
     if (txQueue.length) {
-        setImmediate(function() {
+        setImmediate(() => {
             txQueue.shift()();
         });
     }
@@ -353,10 +361,10 @@ CcZnp.prototype._parseMtIncomingData = function(data) {
         // make sure data.cmd will be string
         data.cmd = argObj.cmd;
 
-        argObj.parse(data.type, data.len, data.payload, function(err, result) {
+        argObj.parse(data.type, data.len, data.payload, (err, result) => {
             data.payload = result;
 
-            setImmediate(function() {
+            setImmediate(() => {
                 self._mtIncomingDataHdlr(err, data);
             });
         });

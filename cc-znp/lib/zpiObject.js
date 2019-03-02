@@ -57,11 +57,11 @@ function ZpiObject(subsys, cmd, args) {
     if (reqParams) {
         if (Array.isArray(args)) {
             // arg: { name, type } -> { name, type, value }
-            reqParams.forEach(function(arg, idx) {
+            reqParams.forEach((arg, idx) => {
                 arg.value = args[idx];
             });
         } else if (typeof args === 'object') {
-            reqParams.forEach(function(arg, idx) {
+            reqParams.forEach((arg, idx) => {
                 if (!args.hasOwnProperty(arg.name)) {
                     throw new Error('The argument object has incorrect properties');
                 } else {
@@ -93,7 +93,7 @@ ZpiObject.prototype.parse = function(type, bufLen, zBuf, callback) {
 
     // [ { name, type }, ... ]
     if (rspParams) {
-        rspParams.forEach(function(arg) {
+        rspParams.forEach(arg => {
             let rule = ru[arg.type];
             if (rule) {
                 rule = rule(arg.name, bufLen);
@@ -114,7 +114,7 @@ ZpiObject.prototype.parse = function(type, bufLen, zBuf, callback) {
 
         parser = DChunks().join(chunkRules).compile();
 
-        parseTimeout = setTimeout(function() {
+        parseTimeout = setTimeout(() => {
             if (parser.listenerCount('parsed')) {
                 parser.emit('parsed', '__timeout__');
             }
@@ -122,7 +122,7 @@ ZpiObject.prototype.parse = function(type, bufLen, zBuf, callback) {
             parseTimeout = null;
         }, 3000);
 
-        parser.once('parsed', function(result) {
+        parser.once('parsed', result => {
             if (parseTimeout) {
                 clearTimeout(parseTimeout);
                 parseTimeout = null;
@@ -155,7 +155,7 @@ ZpiObject.prototype.frame = function() {
     let dataBuf = Concentrate();
 
     // arg: { name, type, value }
-    this.args.forEach(function(arg, idx) {
+    this.args.forEach((arg, idx) => {
         const type = arg.type;
         const val = arg.value;
         let msb;

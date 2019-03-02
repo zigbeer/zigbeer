@@ -15,14 +15,11 @@ init.setupShepherd = function (shepherd, callback) {
 
     debug('zigbee-shepherd booting...');
 
-    controller.start().then(function () {
+    controller.start().then(() => {
         shepherd.af = af(shepherd.zclId)(controller);
         return controller.request('ZDO', 'mgmtPermitJoinReq', { addrmode: 0x02, dstaddr: 0 , duration: 0, tcsignificance: 0 });
-    }).then(function () {
-        return shepherd._registerDev(controller._coord);
-    }).then(function () {
-        return loader.reload(shepherd);    // reload all devices from database
-    }).then(function() {
+    }).then(() => shepherd._registerDev(controller._coord)).then(() => // reload all devices from database
+    loader.reload(shepherd)).then(() => {
     debug('Loading devices from database done.');
     }).done(deferred.resolve, deferred.reject);
 

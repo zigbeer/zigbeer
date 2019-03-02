@@ -58,13 +58,13 @@ ru.clause('nwklistbuffer', function(name, bufLen) {
     });
 });
 
-describe('#.parse', function() {
-    zmeta.Subsys.enums.forEach(function(subsysObj) {
+describe('#.parse', () => {
+    zmeta.Subsys.enums.forEach(subsysObj => {
         const subsys = subsysObj.key;
 
         if (subsys === 'RES0' || subsys === 'NWK') return;
 
-        zmeta[subsys].enums.forEach(function(zpiObject) {
+        zmeta[subsys].enums.forEach(zpiObject => {
             const cmd = zpiObject.key;
             let argObj;
             let rspParams;
@@ -89,7 +89,7 @@ describe('#.parse', function() {
                 rspParams = zmeta.getReqParams(subsys, cmd);
             }
 
-            rspParams.forEach(function(arg) {
+            rspParams.forEach(arg => {
                 arg.value = randomArgForParse(arg.type, arg.name);
 
                 if (arg.type === 'devlistbuffer') {
@@ -106,8 +106,8 @@ describe('#.parse', function() {
             argObj.args = rspParams;
             payload = argObj.framer();
 
-            argObj.parse(argObj.type, payload.length, payload, function(err, result) {
-                it(argObj.cmd + ' parser check', function() {
+            argObj.parse(argObj.type, payload.length, payload, (err, result) => {
+                it(argObj.cmd + ' parser check', () => {
                     expect(result).to.eql(args);
                 });
             });
@@ -206,7 +206,7 @@ function framer() {
     let dataBuf = Concentrate();
 
     // arg: { name, type, value }
-    this.args.forEach(function(arg, idx) {
+    this.args.forEach((arg, idx) => {
         const type = arg.type;
         const val = arg.value;
         let msb;

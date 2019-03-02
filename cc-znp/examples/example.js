@@ -9,22 +9,22 @@ const spCfg = {
     },
 };
 
-ccznp.on('ready', function() {
-    ccznp.sysRequest('ping', {}, function(err, result) {
+ccznp.on('ready', () => {
+    ccznp.sysRequest('ping', {}, (err, result) => {
         if (err) console.log(err);
         else console.log(result);
     });
 
-    ccznp.sysRequest('version', {}, function(err, result) {
+    ccznp.sysRequest('version', {}, (err, result) => {
         if (err) console.log(err);
         else console.log(result);
     });
 });
 
-ccznp.on('AREQ', function(result) {
+ccznp.on('AREQ', result => {
     console.log(result);
 });
 
-ccznp.init(spCfg, function(err) {
+ccznp.init(spCfg, err => {
     if (err) console.log(err);
 });

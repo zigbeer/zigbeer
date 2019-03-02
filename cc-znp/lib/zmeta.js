@@ -87,7 +87,7 @@ zmeta.getRspParams = function(subsys, cmd) {
 zmeta.cloneParamsWithNewFormat = function(params) {
     let output = [];
 
-    params.forEach(function(item, idx) {
+    params.forEach((item, idx) => {
         const newItem = {
             name: Object.keys(item)[0],
             type: null,
@@ -104,7 +104,7 @@ zmeta.cloneParamsWithNewFormat = function(params) {
 };
 
 zmeta._paramTypeToString = function(params) {
-    params.forEach(function(item, idx) {
+    params.forEach((item, idx) => {
         // enum | undefined
         const type = zmeta.ParamType.get(item.type);
         // item.type is a string

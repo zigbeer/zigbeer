@@ -79,7 +79,7 @@ zutils.objectDiff = function (oldObj, newObj) {
     const pvp = zutils.buildPathValuePairs('/', newObj);
     const diff = {};
 
-    _.forEach(pvp, function (val, path) {
+    _.forEach(pvp, (val, path) => {
         if (!_.has(oldObj, path) || _.get(oldObj, path) !== val)
             _.set(diff, path, val);
     });

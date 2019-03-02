@@ -37,16 +37,14 @@ query.network = function (param, callback) {
 
 query.firmware = function(){
     return controller.request('SYS', 'version', {})
-        .then(function(rsp){
-            return {
-                transportrev: rsp.transportrev,
-                product: rsp.product,
-                version: rsp.majorrel + "." + rsp.minorrel + "." + rsp.maintrel,
-                revision: rsp.revision
-            }
-        }).fail(function(){
-            return {error: "Unable to get firmware version"}
-        });
+        .then(rsp => ({
+        transportrev: rsp.transportrev,
+        product: rsp.product,
+        version: rsp.majorrel + "." + rsp.minorrel + "." + rsp.maintrel,
+        revision: rsp.revision
+    })).fail(() => ({
+        error: "Unable to get firmware version"
+    }));
 }
 
 query.device = function (ieeeAddr, nwkAddr, callback) {
@@ -61,12 +59,12 @@ query.device = function (ieeeAddr, nwkAddr, callback) {
     proving.string(ieeeAddr, 'ieeeAddr should be a string.');
     proving.number(nwkAddr, 'nwkAddr should be a number.');
 
-    return controller.request('ZDO', 'nodeDescReq', { dstaddr: nwkAddr, nwkaddrofinterest: nwkAddr }).then(function (rsp) {
+    return controller.request('ZDO', 'nodeDescReq', { dstaddr: nwkAddr, nwkaddrofinterest: nwkAddr }).then(rsp => {
         // rsp: { srcaddr, status, nwkaddr, logicaltype_cmplxdescavai_userdescavai, ..., manufacturercode, ... }
         devInfo.type = devType(rsp.logicaltype_cmplxdescavai_userdescavai & 0x07);  // logical type: bit0-2
         devInfo.manufId = rsp.manufacturercode;
         return controller.request('ZDO', 'activeEpReq', { dstaddr: nwkAddr, nwkaddrofinterest: nwkAddr });
-    }).then(function(rsp) {
+    }).then(rsp => {
         // rsp: { srcaddr, status, nwkaddr, activeepcount, activeeplist }
         devInfo.epList = bufToArray(rsp.activeeplist, 'uint8');
         return devInfo;
@@ -76,16 +74,14 @@ query.device = function (ieeeAddr, nwkAddr, callback) {
 query.endpoint = function (nwkAddr, epId, callback) {
     proving.number(nwkAddr, 'nwkAddr should be a number.');
 
-    return controller.request('ZDO', 'simpleDescReq', { dstaddr: nwkAddr, nwkaddrofinterest: nwkAddr, endpoint: epId }).then(function (rsp) {
-        // rsp: { ..., endpoint, profileid, deviceid, deviceversion, numinclusters, inclusterlist, numoutclusters, outclusterlist }
-        return {
-            profId: rsp.profileid || 0,
-            epId: rsp.endpoint,
-            devId: rsp.deviceid || 0,
-            inClusterList: bufToArray(rsp.inclusterlist, 'uint16'),
-            outClusterList: bufToArray(rsp.outclusterlist, 'uint16')
-        };
-    }).nodeify(callback);
+    return controller.request('ZDO', 'simpleDescReq', { dstaddr: nwkAddr, nwkaddrofinterest: nwkAddr, endpoint: epId }).then(rsp => // rsp: { ..., endpoint, profileid, deviceid, deviceversion, numinclusters, inclusterlist, numoutclusters, outclusterlist }
+    ({
+        profId: rsp.profileid || 0,
+        epId: rsp.endpoint,
+        devId: rsp.deviceid || 0,
+        inClusterList: bufToArray(rsp.inclusterlist, 'uint16'),
+        outClusterList: bufToArray(rsp.outclusterlist, 'uint16')
+    })).nodeify(callback);
 };
 
 query.deviceWithEndpoints = function (nwkAddr, ieeeAddr, callback) {
@@ -93,26 +89,24 @@ query.deviceWithEndpoints = function (nwkAddr, ieeeAddr, callback) {
     const epQueries = [];
     let fullDev;
 
-    query.device(ieeeAddr, nwkAddr).then(function (devInfo) {
+    query.device(ieeeAddr, nwkAddr).then(devInfo => {
         fullDev = devInfo;
 
-        _.forEach(fullDev.epList, function (epId) {
+        _.forEach(fullDev.epList, epId => {
             const epQuery = {func: query.endpoint, nwkAddr: nwkAddr, epId: epId};
             epQueries.push(epQuery);
         });
 
         let result = Q();
         const resultArray = [];
-        epQueries.forEach(function (f) {
-            result = result.then(function(){
-                return f.func(f.nwkAddr, f.epId).then(res => resultArray.push(res));
-            });
+        epQueries.forEach(f => {
+            result = result.then(() => f.func(f.nwkAddr, f.epId).then(res => resultArray.push(res)));
         });
         return result.then(() => resultArray);
-    }).then(function (epInfos) {
+    }).then(epInfos => {
         fullDev.endpoints = epInfos;
         deferred.resolve(fullDev);
-    }).fail(function (err) {
+    }).fail(err => {
         deferred.reject(err);
     }).done();
 
@@ -157,9 +151,9 @@ query.setBindingEntry = function (bindMode, srcEp, cId, dstEpOrGrpId, callback, 
 
     (function performReq(retryAttempts) {
         if (typeof retryAttempts === 'undefined') retryAttempts = 0;
-        req().then(function (rsp) {
+        req().then(rsp => {
             deferred.resolve();
-        }).fail(function (err) {
+        }).fail(err => {
             if(retryAttempts >= 4) return deferred.reject(err);
             else performReq(++retryAttempts);
         }).done();
@@ -174,12 +168,12 @@ query.setBindingEntry = function (bindMode, srcEp, cId, dstEpOrGrpId, callback, 
 query._network = function (param, callback) {
     const prop = ZSC.SAPI.zbDeviceInfo[param];
 
-    return Q.fcall(function () {
+    return Q.fcall(() => {
         if (_.isNil(prop))
             return Q.reject(new Error('Unknown network property.'));
         else
             return controller.request('SAPI', 'getDeviceInfo', { param: prop });
-    }).then(function (rsp) {
+    }).then(rsp => {
         switch (param) {
             case 'DEV_STATE':
             case 'CHANNEL':
@@ -215,18 +209,14 @@ query._networkAll = function (callback) {
 
     const steps = [];
 
-    _.forEach(paramsInfo, function (paramInfo) {
-        steps.push(function (net) {
-            return query._network(paramInfo.param).then(function (value) {
-                net[paramInfo.name] = value;
-                return net;
-            });
-        });
+    _.forEach(paramsInfo, paramInfo => {
+        steps.push(net => query._network(paramInfo.param).then(value => {
+            net[paramInfo.name] = value;
+            return net;
+        }));
     });
 
-    return steps.reduce(function (soFar, fn) {
-        return soFar.then(fn);
-    }, Q(net)).nodeify(callback);
+    return steps.reduce((soFar, fn) => soFar.then(fn), Q(net)).nodeify(callback);
 };
 
 function devType(type) {
@@ -279,7 +269,7 @@ function bufToArray(buf, nip) {
         }
     }
 
-    return nipArr.sort(function (a, b) { return a - b; });
+    return nipArr.sort((a, b) => a - b);
 }
 
 module.exports = function (cntl) {

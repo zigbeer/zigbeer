@@ -25,7 +25,7 @@ function Device(devInfo) {
 Device.prototype.dump = function () {
     const dumpOfEps = {};
 
-    _.forEach(this.endpoints, function (ep, epId) {
+    _.forEach(this.endpoints, (ep, epId) => {
         dumpOfEps[epId] = ep.dump();
     });
 
@@ -65,7 +65,7 @@ Device.prototype.update = function (info) {
     const self = this;
     const infoKeys = [ 'type', 'ieeeAddr', 'nwkAddr','manufId', 'epList', 'status', 'joinTime', 'manufName', 'modelId', 'powerSource' ];
 
-    _.forEach(info, function (val, key) {
+    _.forEach(info, (val, key) => {
         if (_.includes(infoKeys, key))
             self[key] = val;
     });

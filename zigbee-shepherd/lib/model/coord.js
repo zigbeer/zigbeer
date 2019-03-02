@@ -16,9 +16,7 @@ function Coordinator(devInfo) {
 util.inherits(Coordinator, Device);
 
 Coordinator.prototype.getDelegator = function (profId) {
-    return _.find(this.endpoints, function (ep) {
-        return ep.isDelegator() && (ep.getProfId() === profId);
-    });
+    return _.find(this.endpoints, ep => ep.isDelegator() && ep.getProfId() === profId);
 };
 
 module.exports = Coordinator;

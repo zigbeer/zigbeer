@@ -117,12 +117,12 @@ Endpoint.prototype.getOutClusterList = function () {
 Endpoint.prototype.getClusterList = function () {
     const clusterList = this.getInClusterList();
 
-    this.getOutClusterList().forEach(function (cId) {
+    this.getOutClusterList().forEach(cId => {
         if (!_.includes(clusterList, cId)) 
             clusterList.push(cId);
     });
 
-    return clusterList.sort(function (a, b) { return a - b; });
+    return clusterList.sort((a, b) => a - b);
 };
 
 Endpoint.prototype.getClusters = function () {
@@ -137,7 +137,7 @@ Endpoint.prototype.update = function (simpleDesc) {
     const self = this;
     const descKeys = [ 'profId', 'epId', 'devId','inClusterList', 'outClusterList' ];
 
-    _.forEach(simpleDesc, function (val, key) {
+    _.forEach(simpleDesc, (val, key) => {
         if (_.includes(descKeys, key))
             self[key] = val;
     });

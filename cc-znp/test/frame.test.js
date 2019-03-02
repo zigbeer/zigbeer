@@ -20,13 +20,13 @@ ru.clause('dynbuffer', function(name) {
     this.buffer(name, 6);
 });
 
-describe('#.frame', function() {
-    zmeta.Subsys.enums.forEach(function(subsysObj) {
+describe('#.frame', () => {
+    zmeta.Subsys.enums.forEach(subsysObj => {
         const Subsys = subsysObj.key;
 
         if (Subsys === 'RES0' || Subsys === 'NWK') return;
 
-        zmeta[Subsys].enums.forEach(function(zpiObject) {
+        zmeta[Subsys].enums.forEach(zpiObject => {
             const cmd = zpiObject.key;
             let argObj;
             let reqParams;
@@ -39,7 +39,7 @@ describe('#.frame', function() {
             if (argObj.type === 'SREQ') {
                 reqParams = zmeta.getReqParams(Subsys, cmd);
 
-                reqParams.forEach(function(arg) {
+                reqParams.forEach(arg => {
                     arg.value = randomArgForFrame(arg.type);
                     args[arg.name] = arg.value;
                 });
@@ -47,8 +47,8 @@ describe('#.frame', function() {
                 argObj.args = reqParams;
                 payload = argObj.frame();
 
-                argObj.parser(payload, function(err, result) {
-                    it(argObj.cmd + ' framer check', function() {
+                argObj.parser(payload, (err, result) => {
+                    it(argObj.cmd + ' framer check', () => {
                         expect(result).to.eql(args);
                     });
                 });
@@ -101,7 +101,7 @@ function parser(zBuf, callback) {
 
     // [ { name, type }, ... ]
     if (rspParams) {
-        rspParams.forEach(function(arg) {
+        rspParams.forEach(arg => {
             let rule = ru[arg.type];
             if (rule) {
                 rule = rule(arg.name, 6);
@@ -122,7 +122,7 @@ function parser(zBuf, callback) {
 
         parser = DChunks().join(chunkRules).compile();
 
-        parser.once('parsed', function(result) {
+        parser.once('parsed', result => {
             parser = null;
             callback(null, result);
         });

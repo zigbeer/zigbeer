@@ -88,24 +88,24 @@ function Controller(shepherd, cfg) {
     /***************************************************/
     /*** Event Handlers                              ***/
     /***************************************************/
-    znp.on('ready', function () {
-        init.setupCoord(self).then(function () {
+    znp.on('ready', () => {
+        init.setupCoord(self).then(() => {
             self.emit('ZNP:INIT');
-        }).fail(function (err) {
+        }).fail(err => {
             self.emit('ZNP:INIT', err);
             debug.init('Coordinator initialize had an error:', err);
         }).done();
     });
 
-    znp.on('close', function () {
+    znp.on('close', () => {
         self.emit('ZNP:CLOSE');
     });
 
-    znp.on('AREQ', function (msg) {
+    znp.on('AREQ', msg => {
         bridge._areqEventBridge(self, msg);
     });
 
-    this.on('ZDO:tcDeviceInd', function (tcData) {
+    this.on('ZDO:tcDeviceInd', tcData => {
         if(tcData.parentaddr == 0){
             return
         }
@@ -123,7 +123,7 @@ function Controller(shepherd, cfg) {
         }
     });
 
-    this.on('ZDO:endDeviceAnnceInd', function (data) {
+    this.on('ZDO:endDeviceAnnceInd', data => {
         debug.shepherd('spinlock:', self._spinLock, self._joinQueue);
         if (self._spinLock) {
             // Check if joinQueue already has this device
@@ -172,7 +172,7 @@ Controller.prototype.getNetInfo = function () {
 Controller.prototype.setNetInfo = function (netInfo) {
     const self = this;
 
-    _.forEach(netInfo, function (val, key) {
+    _.forEach(netInfo, (val, key) => {
         if (_.has(self._net, key))
             self._net[key] = val;
     });
@@ -192,7 +192,7 @@ Controller.prototype.start = function (callback) {
 
     this.once('ZNP:INIT', readyLsn);
 
-    Q.ninvoke(znp, 'init', this._cfg).fail(function (err) {
+    Q.ninvoke(znp, 'init', this._cfg).fail(err => {
         self.removeListener('ZNP:INIT', readyLsn);
         deferred.reject(err);
     }).done();
@@ -211,7 +211,7 @@ Controller.prototype.close = function (callback) {
 
     this.once('ZNP:CLOSE', closeLsn);
 
-    Q.ninvoke(znp, 'close').fail(function (err) {
+    Q.ninvoke(znp, 'close').fail(err => {
         self.removeListener('ZNP:CLOSE', closeLsn);
         deferred.reject(err);
     }).done();
@@ -226,7 +226,7 @@ Controller.prototype.reset = function (mode, callback) {
 
     proving.stringOrNumber(mode, 'mode should be a number or a string.');
 
-    Q.fcall(function () {
+    Q.fcall(() => {
         if (mode === 'soft' || mode === 1) {
             debug.shepherd('Starting a software reset...');
             self._resetting = true;
@@ -251,31 +251,26 @@ Controller.prototype.reset = function (mode, callback) {
                 function () { return self.request('SAPI', 'writeConfiguration', nvParams.precfgkeysEnable).delay(10); },
                 function () { return self.request('SYS', 'osalNvWrite', nvParams.securityMode).delay(10); },
                 function () { return self.request('SAPI', 'writeConfiguration', nvParams.zdoDirectCb).delay(10); },
-                function () { return self.request('SYS', 'osalNvItemInit', nvParams.znpCfgItem).delay(10).fail(function (err) {
-                    return (err.message === 'rsp error: 9') ? null : Q.reject(err);  // Success, item created and initialized
-                }); },
+                function () { return self.request('SYS', 'osalNvItemInit', nvParams.znpCfgItem).delay(10).fail(err => // Success, item created and initialized
+                err.message === 'rsp error: 9' ? null : Q.reject(err)); },
                 function () { return self.request('SYS', 'osalNvWrite', nvParams.znpHasConfigured).delay(10); }
             ];
 
-            return steps.reduce(function (soFar, fn) {
-                return soFar.then(fn);
-            }, Q(0));
+            return steps.reduce((soFar, fn) => soFar.then(fn), Q(0));
         } else {
             return Q.reject(new Error('Unknown reset mode.'));
         }
-    }).then(function () {
+    }).then(() => {
         self._resetting = false;
         if (self._nvChanged) {
             nvParams.startupOption.value[0] = startupOption;
             self._nvChanged = false;
             deferred.resolve();
         } else {
-            self.once('_reset', function (err) {
-                return err ? deferred.reject(err) : deferred.resolve();
-            });
+            self.once('_reset', err => err ? deferred.reject(err) : deferred.resolve());
             self.emit('SYS:resetInd', '_reset');
         }
-    }).fail(function (err) {
+    }).fail(err => {
         deferred.reject(err);
     }).done();
 
@@ -335,7 +330,7 @@ Controller.prototype.permitJoin = function (time, type, callback) {
     proving.number(time, 'time should be a number.');
     proving.stringOrNumber(type, 'type should be a number or a string.');
 
-    return Q.fcall(function () {
+    return Q.fcall(() => {
         if (type === 0 || type === 'coord') {
             addrmode = 0x02;
             dstaddr = 0x0000;
@@ -348,19 +343,21 @@ Controller.prototype.permitJoin = function (time, type, callback) {
         } else {
             return Q.reject(new Error('Not a valid type.'));
         }
-    }).then(function () {
+    }).then(() => {
         if (time > 0xff || time < 0)
             return Q.reject(new Error('Jointime can only range from  0 to 0xff.'));
         else
             self._permitJoinTime = Math.floor(time);
-    }).then(function () {
-        return self.request('ZDO', 'mgmtPermitJoinReq', { addrmode: addrmode, dstaddr: dstaddr , duration: time, tcsignificance: 0 });
-    }).then(function (rsp) {
+    }).then(() => self.request(
+        'ZDO',
+        'mgmtPermitJoinReq',
+        { addrmode: addrmode, dstaddr: dstaddr , duration: time, tcsignificance: 0 }
+    )).then(rsp => {
         self.emit('permitJoining', self._permitJoinTime, dstaddr);
 
         if (time !== 0 && time !== 0xff) {
             clearInterval(self._permitJoinInterval);
-            self._permitJoinInterval = setInterval(function () {
+            self._permitJoinInterval = setInterval(() => {
                 if (self.permitJoinCountdown() === 0)
                     clearInterval(self._permitJoinInterval);
                 self.emit('permitJoining', self._permitJoinTime, dstaddr);
@@ -394,7 +391,7 @@ Controller.prototype.remove = function (dev, cfg, callback) {
         removechildren_rejoin: rmChildren_reJoin
     };
 
-    return this.request('ZDO', 'mgmtLeaveReq', reqArgObj).then(function (rsp) {
+    return this.request('ZDO', 'mgmtLeaveReq', reqArgObj).then(rsp => {
         if (rsp.status !== 0 && rsp.status !== 'SUCCESS')
             return Q.reject(rsp.status);
     }).nodeify(callback);
@@ -406,11 +403,7 @@ Controller.prototype.registerEp = function (loEp, callback) {
     if (!(loEp instanceof Coordpoint))
         throw new TypeError('loEp should be an instance of Coordpoint class.');
 
-    return this.request('AF', 'register', makeRegParams(loEp)).then(function (rsp) {
-        return rsp;
-    }).fail(function (err) {
-        return (err.message === 'rsp error: 184') ? self.reRegisterEp(loEp) : Q.reject(err);
-    }).nodeify(callback);
+    return this.request('AF', 'register', makeRegParams(loEp)).then(rsp => rsp).fail(err => err.message === 'rsp error: 184' ? self.reRegisterEp(loEp) : Q.reject(err)).nodeify(callback);
 };
 
 Controller.prototype.deregisterEp = function (loEp, callback) {
@@ -420,12 +413,12 @@ Controller.prototype.deregisterEp = function (loEp, callback) {
     if (!(loEp instanceof Coordpoint))
         throw new TypeError('loEp should be an instance of Coordpoint class.');
 
-    return Q.fcall(function () {
+    return Q.fcall(() => {
         if (!_.includes(coordEps, loEp))
             return Q.reject(new Error('Endpoint not maintained by Coordinator, cannot be removed.'));
         else
             return self.request('AF', 'delete', { endpoint: loEp.getEpId() });
-    }).then(function (rsp) {
+    }).then(rsp => {
         delete coordEps[loEp.getEpId()];
         return rsp;
     }).nodeify(callback);
@@ -434,9 +427,7 @@ Controller.prototype.deregisterEp = function (loEp, callback) {
 Controller.prototype.reRegisterEp = function (loEp, callback) {
     const self = this;
 
-    return this.deregisterEp(loEp).then(function () {
-        return self.request('AF', 'register', makeRegParams(loEp));
-    }).nodeify(callback);
+    return this.deregisterEp(loEp).then(() => self.request('AF', 'register', makeRegParams(loEp))).nodeify(callback);
 };
 
 Controller.prototype.simpleDescReq = function (nwkAddr, ieeeAddr, callback) {
@@ -460,7 +451,7 @@ Controller.prototype.setNvParams = function (net) {
     net = net || {};
     proving.object(net, 'opts.net should be an object.');
 
-    _.forEach(net, function (val, param) {
+    _.forEach(net, (val, param) => {
         switch (param) {
             case 'panId':
                 proving.number(val, 'net.panId should be a number.');
@@ -490,7 +481,7 @@ Controller.prototype.setNvParams = function (net) {
                 proving.array(val, 'net.channelList should be an array.');
                 let chList = 0;
 
-                _.forEach(val, function (ch) {
+                _.forEach(val, ch => {
                     if (ch >= 11 && ch <= 26)
                         chList = chList | ZSC.ZDO.channelMask['CH' + ch];
                 });
@@ -518,29 +509,27 @@ Controller.prototype.checkNvParams = function (callback) {
     }
 
     steps = [
-        function () { return self.request('SYS', 'osalNvRead', nvParams.znpHasConfigured).delay(10).then(function (rsp) {
+        function () { return self.request('SYS', 'osalNvRead', nvParams.znpHasConfigured).delay(10).then(rsp => {
             if (!_.isEqual(bufToArray(rsp.value), nvParams.znpHasConfigured.value)) return Q.reject('reset');
         }); },
-        function () { return self.request('SAPI', 'readConfiguration', nvParams.panId).delay(10).then(function (rsp) {
+        function () { return self.request('SAPI', 'readConfiguration', nvParams.panId).delay(10).then(rsp => {
             if (!_.isEqual(bufToArray(rsp.value), nvParams.panId.value)) return Q.reject('reset');
         }); },
-        function () { return self.request('SAPI', 'readConfiguration', nvParams.extPanId).delay(10).then(function (rsp) {
+        function () { return self.request('SAPI', 'readConfiguration', nvParams.extPanId).delay(10).then(rsp => {
             if (!_.isEqual(bufToArray(rsp.value), nvParams.extPanId.value)) return Q.reject('reset');
         }); },
-        function () { return self.request('SAPI', 'readConfiguration', nvParams.channelList).delay(10).then(function (rsp) {
+        function () { return self.request('SAPI', 'readConfiguration', nvParams.channelList).delay(10).then(rsp => {
             if (!_.isEqual(bufToArray(rsp.value), nvParams.channelList.value)) return Q.reject('reset');
         }); },
-        function () { return self.request('SAPI', 'readConfiguration', nvParams.precfgkey).delay(10).then(function (rsp) {
+        function () { return self.request('SAPI', 'readConfiguration', nvParams.precfgkey).delay(10).then(rsp => {
             if (!_.isEqual(bufToArray(rsp.value), nvParams.precfgkey.value)) return Q.reject('reset');
         }); },
-        function () { return self.request('SAPI', 'readConfiguration', nvParams.precfgkeysEnable).delay(10).then(function (rsp) {
+        function () { return self.request('SAPI', 'readConfiguration', nvParams.precfgkeysEnable).delay(10).then(rsp => {
             if (!_.isEqual(bufToArray(rsp.value), nvParams.precfgkeysEnable.value)) return Q.reject('reset');
         }); }
     ];
 
-    return steps.reduce(function (soFar, fn) {
-        return soFar.then(fn);
-    }, Q(0)).fail(function (err) {
+    return steps.reduce((soFar, fn) => soFar.then(fn), Q(0)).fail(err => {
         if (err === 'reset' || err.message === 'rsp error: 2') {
             self._nvChanged = true;
             debug.init('Non-Volatile memory is changed.');
@@ -557,18 +546,14 @@ Controller.prototype.checkOnline = function (dev, callback) {
     const ieeeAddr = dev.getIeeeAddr();
     const deferred = Q.defer();
 
-    Q.fcall(function () {
-        return self.request('ZDO', 'nodeDescReq', { dstaddr: nwkAddr, nwkaddrofinterest: nwkAddr }).timeout(5000).fail(function () {
-            return self.request('ZDO', 'nodeDescReq', { dstaddr: nwkAddr, nwkaddrofinterest: nwkAddr }).timeout(5000);
-        });
-    }).then(function () {
+    Q.fcall(() => self.request('ZDO', 'nodeDescReq', { dstaddr: nwkAddr, nwkaddrofinterest: nwkAddr }).timeout(5000).fail(
+        () => self.request('ZDO', 'nodeDescReq', { dstaddr: nwkAddr, nwkaddrofinterest: nwkAddr }).timeout(5000)
+    )).then(() => {
         if (dev.status === 'offline') {
             self.emit('ZDO:endDeviceAnnceInd', { srcaddr: nwkAddr, nwkaddr: nwkAddr, ieeeaddr: ieeeAddr, capabilities: {} });
         }
         return deferred.resolve();
-    }).fail(function (err) {
-        return deferred.reject(err);
-    }).done();
+    }).fail(err => deferred.reject(err)).done();
 
     return deferred.promise.nodeify(callback);
 };
@@ -587,7 +572,7 @@ Controller.prototype.endDeviceAnnceHdlr = function (data) {
 
             if (next) {
                 debug.shepherd('next item in joinqueue');
-                setImmediate(function () {
+                setImmediate(() => {
                     next.func();
                 });
             } else {
@@ -601,7 +586,7 @@ Controller.prototype.endDeviceAnnceHdlr = function (data) {
         return;
     }
 
-    joinTimeout = setTimeout(function () {
+    joinTimeout = setTimeout(() => {
         if (self.listenerCount(joinEvent)) {
             self.emit(joinEvent, '__timeout__');
             self._shepherd.emit('joining', { type: 'timeout', ieeeAddr: data.ieeeaddr });
@@ -610,7 +595,7 @@ Controller.prototype.endDeviceAnnceHdlr = function (data) {
         joinTimeout = null;
     }, 30000);
 
-    this.once(joinEvent, function () {
+    this.once(joinEvent, () => {
         if (joinTimeout) {
             clearTimeout(joinTimeout);
             joinTimeout = null;
@@ -620,7 +605,7 @@ Controller.prototype.endDeviceAnnceHdlr = function (data) {
             const next = self._joinQueue.shift();
 
             if (next){
-                setImmediate(function () {
+                setImmediate(() => {
                     next.func();
                 });
             } else {
@@ -633,11 +618,7 @@ Controller.prototype.endDeviceAnnceHdlr = function (data) {
 
     this._shepherd.emit('joining', { type: 'associating', ieeeAddr: data.ieeeaddr });
 
-    this.simpleDescReq(data.nwkaddr, data.ieeeaddr).then(function (devInfo) {
-        return devInfo;
-    }).fail(function () {
-        return self.simpleDescReq(data.nwkaddr, data.ieeeaddr);
-    }).then(function (devInfo) {
+    this.simpleDescReq(data.nwkaddr, data.ieeeaddr).then(devInfo => devInfo).fail(() => self.simpleDescReq(data.nwkaddr, data.ieeeaddr)).then(devInfo => {
         // Now that we have the simple description of the device clear joinTimeout
         if (joinTimeout) {
             clearTimeout(joinTimeout);
@@ -648,9 +629,9 @@ Controller.prototype.endDeviceAnnceHdlr = function (data) {
         const processIncoming = Q.defer();
         self.emit('ZDO:devIncoming', devInfo, processIncoming.resolve, processIncoming.reject);
         return processIncoming.promise;
-    }).then(function () {
+    }).then(() => {
         self.emit(joinEvent, '__timeout__');
-    }).fail(function (err) {
+    }).fail(err => {
         self._shepherd.emit('error', 'Cannot get the Node Descriptor of the Device: ' + data.ieeeaddr + ' ('+err+')');
         self._shepherd.emit('joining', { type: 'error', ieeeAddr: data.ieeeaddr });
         self.emit(joinEvent, '__timeout__');
