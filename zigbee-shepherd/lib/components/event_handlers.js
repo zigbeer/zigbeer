@@ -1,25 +1,26 @@
 /* jshint node: true */
 'use strict';
 
-var Q = require('q'),
-    EventEmitter = require('events'),
-    _ = require('busyman'),
-    Ziee = require('ziee'),
-    ZSC = require('zstack-constants'),
-    debug = {
-        shepherd: require('debug')('zigbee-shepherd'),
-        init: require('debug')('zigbee-shepherd:init'),
-        request: require('debug')('zigbee-shepherd:request'),
-    };
+const Q = require('q');
+const EventEmitter = require('events');
+const _ = require('busyman');
+const Ziee = require('ziee');
+const ZSC = require('zstack-constants');
 
-var Device = require('../model/device'),
-    Endpoint = require('../model/endpoint');
+const debug = {
+    shepherd: require('debug')('zigbee-shepherd'),
+    init: require('debug')('zigbee-shepherd:init'),
+    request: require('debug')('zigbee-shepherd:request'),
+};
 
-var handlers = {};
+const Device = require('../model/device');
+const Endpoint = require('../model/endpoint');
+
+const handlers = {};
 
 handlers.attachEventHandlers = function (shepherd) {
-    var controller = shepherd.controller,
-        hdls = {};
+    const controller = shepherd.controller;
+    const hdls = {};
 
     _.forEach(handlers, function (hdl, key) {
         if (key !== 'attachEventHandlers')
@@ -57,7 +58,7 @@ handlers.attachEventHandlers = function (shepherd) {
 /*** Event Handlers                                                                            ***/
 /*************************************************************************************************/
 handlers.resetInd = function (msg) {
-    var self = this;
+    const self = this;
 
     if (this.controller.isResetting()) return;
 
@@ -81,13 +82,14 @@ handlers.resetInd = function (msg) {
 
 handlers.devIncoming = function (devInfo, resolve) {
     // devInfo: { type, ieeeAddr, nwkAddr, manufId, epList, endpoints: [ simpleDesc, ... ] }
-    var self = this,
-        dev = this._findDevByAddr(devInfo.ieeeAddr),
-        clustersReqs = [];
+    const self = this;
+
+    let dev = this._findDevByAddr(devInfo.ieeeAddr);
+    const clustersReqs = [];
 
     function syncEndpoints(dev) {
         devInfo.endpoints.forEach(function (simpleDesc) {
-            var ep = dev.getEndpoint(simpleDesc.epId);
+            let ep = dev.getEndpoint(simpleDesc.epId);
 
             if (ep) {
                 ep.update(simpleDesc);
@@ -100,7 +102,7 @@ handlers.devIncoming = function (devInfo, resolve) {
         });
     }
 
-    var processDev = Q.fcall(function () {
+    const processDev = Q.fcall(function () {
         if (dev) {
             dev.update(devInfo);
             dev.update({ status: 'online', joinTime: Math.floor(Date.now()/1000) });
@@ -119,13 +121,13 @@ handlers.devIncoming = function (devInfo, resolve) {
 
         // Try genBasic interview, not certain if it works for all devices
         try {
-            var attrMap = {
+            const attrMap = {
                 4: 'manufName',
                 5: 'modelId',
                 7: 'powerSource'
             };
 
-            var powerSourceMap = {
+            const powerSourceMap = {
                 0: 'Unknown',
                 1: 'Mains (single phase)',
                 2: 'Mains (3 phase)',
@@ -136,11 +138,11 @@ handlers.devIncoming = function (devInfo, resolve) {
             };
 
             // Loop all endpoints to find genBasic cluster, and get basic endpoint if possible
-            var basicEpInst;
+            let basicEpInst;
 
-            for (var i in dev.endpoints) {
-                var ep = dev.getEndpoint(i),
-                    clusterList = ep.getClusterList();
+            for (const i in dev.endpoints) {
+                const ep = dev.getEndpoint(i);
+                const clusterList = ep.getClusterList();
 
                 if (_.isArray(clusterList) && clusterList.indexOf(0) > -1) {
                     // genBasic found
@@ -153,7 +155,7 @@ handlers.devIncoming = function (devInfo, resolve) {
 
             // Get manufName, modelId and powerSource information
             return self.af.zclFoundation(basicEpInst, basicEpInst, 0, 'read', [{ attrId: 4 }, { attrId: 5 }, { attrId: 7 }]).then(function (readStatusRecsRsp) {
-                var data = {};
+                const data = {};
                 if (readStatusRecsRsp && _.isArray(readStatusRecsRsp.payload)) {
                     readStatusRecsRsp.payload.forEach(function(item){  // { attrId, status, dataType, attrData }
                         if (item && item.hasOwnProperty('attrId') && item.hasOwnProperty('attrData')) {
@@ -181,9 +183,9 @@ handlers.devIncoming = function (devInfo, resolve) {
             return dev;
         }
     }).then(function (dev) {
-        var numberOfEndpoints = _.keys(dev.endpoints).length;
+        const numberOfEndpoints = _.keys(dev.endpoints).length;
 
-        var interviewEvents = new EventEmitter();
+        const interviewEvents = new EventEmitter();
         interviewEvents.on('ind:interview', function(status) {
             if (status && status.endpoint) status.endpoint.total = numberOfEndpoints;
             self.emit('ind:interview', dev.ieeeAddr, status);
@@ -206,7 +208,7 @@ handlers.devIncoming = function (devInfo, resolve) {
         }, Q(0));
     }).then(function () {
         if (_.isFunction(self.acceptDevIncoming)) {
-            var info = {
+            const info = {
                 ieeeAddr: dev.getIeeeAddr(),
                 endpoints: []
             };
@@ -245,11 +247,11 @@ handlers.devIncoming = function (devInfo, resolve) {
 
 handlers.leaveInd = function (msg) {
     // { srcaddr, extaddr, request, removechildren, rejoin }
-    var dev = this._findDevByAddr(msg.extaddr);
+    const dev = this._findDevByAddr(msg.extaddr);
 
     if (dev) {
-        var ieeeAddr = dev.getIeeeAddr(),
-            epList = _.cloneDeep(dev.epList);
+        const ieeeAddr = dev.getIeeeAddr();
+        const epList = _.cloneDeep(dev.epList);
 
         if (msg.request)    // request
             this._unregisterDev(dev);
@@ -266,7 +268,7 @@ handlers.stateChangeInd = function (msg) {
     if (!msg.hasOwnProperty('nwkaddr'))
         return;
 
-    var devStates = msg.state;
+    let devStates = msg.state;
 
     _.forEach(ZSC.ZDO.devStates, function (statesCode, states) {
         if (msg.state === statesCode)

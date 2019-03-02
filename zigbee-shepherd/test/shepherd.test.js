@@ -1,21 +1,20 @@
 'use strict';
-var Q = require('q'),
-    fs = require('fs'),
-    path = require('path'),
-    Zive = require('zive'),
-    Ziee = require('ziee'),
-    chai = require('chai'),
-    sinon = require('sinon'),
-    sinonChai = require('sinon-chai'),
-    expect = chai.expect;
-
-var Shepherd = require('../index.js'),
-    Coord  = require('../lib/model/coord'),
-    Device  = require('../lib/model/device')
+const Q = require('q');
+const fs = require('fs');
+const path = require('path');
+const Zive = require('zive');
+const Ziee = require('ziee');
+const chai = require('chai');
+const sinon = require('sinon');
+const sinonChai = require('sinon-chai');
+const expect = chai.expect;
+const Shepherd = require('../index.js');
+const Coord  = require('../lib/model/coord');
+const Device  = require('../lib/model/device');
 
 chai.use(sinonChai);
 
-var coordinator = new Coord({
+const coordinator = new Coord({
     type: 0,
     ieeeAddr: '0x00124b00019c2ee9',
     nwkAddr: 0,
@@ -23,7 +22,7 @@ var coordinator = new Coord({
     epList: [ 1, 2]
 });
 
-var dev1 = new Device({
+const dev1 = new Device({
     type: 1,
     ieeeAddr: '0x00137a00000161f2',
     nwkAddr: 100,
@@ -31,12 +30,12 @@ var dev1 = new Device({
     epList: [ 1 ]
 });
 
-var zApp = new Zive({ profId: 0x0104, devId: 6 }, new Ziee());
+const zApp = new Zive({ profId: 0x0104, devId: 6 }, new Ziee());
 
 describe('Top Level of Tests', function () {
     before(function (done) {
-        var unlink1 = false,
-            unlink2 = false;
+        let unlink1 = false;
+        let unlink2 = false;
 
         fs.stat('./test/database/dev.db', function (err, stats) {
             if (err) {
@@ -91,7 +90,7 @@ describe('Top Level of Tests', function () {
         const dbPath = __dirname + '/database/dev.db'
         const justDbPath = { dbPath }
 
-        var shepherd;
+        let shepherd;
         before(function () {
             shepherd = new Shepherd('/dev/ttyUSB0', justDbPath);
         });
@@ -126,7 +125,7 @@ describe('Top Level of Tests', function () {
     });
 
     describe('Signature Check', function () {
-        var shepherd;
+        let shepherd;
         before(function () {
             shepherd = new Shepherd('/dev/ttyUSB0', { dbPath: __dirname + '/database/dev.db' });
             shepherd._enabled = true;
@@ -199,12 +198,12 @@ describe('Top Level of Tests', function () {
     });
 
     describe.skip('Functional Check', function () {
-        var shepherd;
+        let shepherd;
         before(function () {
             shepherd = new Shepherd('/dev/ttyUSB0', { dbPath: __dirname + '/database/dev1.db' });
 
             shepherd.controller.request = function (subsys, cmdId, valObj, callback) {
-                var deferred = Q.defer();
+                const deferred = Q.defer();
 
                 process.nextTick(function () {
                     deferred.resolve({ status: 0 });
@@ -237,22 +236,23 @@ describe('Top Level of Tests', function () {
             this.timeout(6000);
 
             it('should start ok, _ready and ready should be fired, _enabled,', function (done) {
-                var _readyCbCalled = false,
-                    readyCbCalled = false,
-                    startCbCalled = false,
-                    startStub = sinon.stub(shepherd, 'start').callsFake(function (callback) {
-                        var deferred = Q.defer();
+                let _readyCbCalled = false;
+                let readyCbCalled = false;
+                let startCbCalled = false;
 
-                        shepherd._enabled = true;
-                        shepherd.controller._coord = coordinator;
-                        deferred.resolve();
+                const startStub = sinon.stub(shepherd, 'start').callsFake(function (callback) {
+                    const deferred = Q.defer();
 
-                        setTimeout(function () {
-                            shepherd.emit('_ready');
-                        }, 50);
+                    shepherd._enabled = true;
+                    shepherd.controller._coord = coordinator;
+                    deferred.resolve();
 
-                        return deferred.promise.nodeify(callback);
-                    });
+                    setTimeout(function () {
+                        shepherd.emit('_ready');
+                    }, 50);
+
+                    return deferred.promise.nodeify(callback);
+                });
 
                 function leave () {
                     if (_readyCbCalled && readyCbCalled && startCbCalled && shepherd._enabled)
@@ -281,7 +281,7 @@ describe('Top Level of Tests', function () {
 
         describe('#.info', function () {
             it('should get correct info about the shepherd', function () {
-                var getNwkInfoStub = sinon.stub(shepherd.controller, 'getNetInfo').returns({
+                const getNwkInfoStub = sinon.stub(shepherd.controller, 'getNetInfo').returns({
                         state: 'Coordinator',
                         channel: 11,
                         panId: '0x7c71',
@@ -289,8 +289,9 @@ describe('Top Level of Tests', function () {
                         ieeeAddr: '0x00124b0001709887',
                         nwkAddr: 0,
                         joinTimeLeft: 49
-                    }),
-                    shpInfo = shepherd.info();
+                    });
+
+                const shpInfo = shepherd.info();
 
                 expect(shpInfo.enabled).to.be.true;
                 expect(shpInfo.net).to.be.deep.equal({ state: 'Coordinator', channel: 11, panId: '0x7c71', extPanId: '0xdddddddddddddddd', ieeeAddr: '0x00124b0001709887', nwkAddr: 0 });
@@ -301,12 +302,13 @@ describe('Top Level of Tests', function () {
 
         describe('#.mount', function () {
             it('should mount zApp', function (done) {
-                var coordStub = sinon.stub(shepherd.controller.query, 'coordInfo').callsFake(function (callback) {
-                        return Q({}).nodeify(callback);
-                    }),
-                    syncStub = sinon.stub(shepherd._devbox, 'sync').callsFake(function (id, callback) {
+                const coordStub = sinon.stub(shepherd.controller.query, 'coordInfo').callsFake(function (callback) {
                         return Q({}).nodeify(callback);
                     });
+
+                const syncStub = sinon.stub(shepherd._devbox, 'sync').callsFake(function (id, callback) {
+                    return Q({}).nodeify(callback);
+                });
 
                 shepherd.mount(zApp, function (err, epId) {
                     if (!err) {
@@ -323,7 +325,7 @@ describe('Top Level of Tests', function () {
 
             it('should list one devices', function (done) {
                 shepherd._registerDev(dev1).then(function () {
-                    var devList = shepherd.list();
+                    const devList = shepherd.list();
                     expect(devList.length).to.be.equal(1);
                     expect(devList[0].type).to.be.equal(1);
                     expect(devList[0].ieeeAddr).to.be.equal('0x00137a00000161f2');
@@ -346,8 +348,8 @@ describe('Top Level of Tests', function () {
 
         describe('#.lqi', function () {
             it('should get lqi of the device', function (done) {
-                var requestStub = sinon.stub(shepherd.controller, 'request').callsFake(function (subsys, cmdId, valObj, callback) {
-                    var deferred = Q.defer();
+                const requestStub = sinon.stub(shepherd.controller, 'request').callsFake(function (subsys, cmdId, valObj, callback) {
+                    const deferred = Q.defer();
 
                     process.nextTick(function () {
                         deferred.resolve({
@@ -388,8 +390,8 @@ describe('Top Level of Tests', function () {
 
         describe('#.remove', function () {
             it('should remove the device', function (done) {
-                var requestStub = sinon.stub(shepherd.controller, 'request').callsFake(function (subsys, cmdId, valObj, callback) {
-                    var deferred = Q.defer();
+                const requestStub = sinon.stub(shepherd.controller, 'request').callsFake(function (subsys, cmdId, valObj, callback) {
+                    const deferred = Q.defer();
 
                     process.nextTick(function () {
                         deferred.resolve({ srcaddr: 100, status: 0 });
@@ -411,9 +413,9 @@ describe('Top Level of Tests', function () {
             this.timeout(60000);
 
             it('should fire incoming message and get a new device', function (done) {
-                var acceptDevIncomingStub = sinon.stub(shepherd, 'acceptDevIncoming').callsFake(function (devInfo, cb) {
+                const acceptDevIncomingStub = sinon.stub(shepherd, 'acceptDevIncoming').callsFake(function (devInfo, cb) {
                     setTimeout(function () {
-                        var accepted = true;
+                        const accepted = true;
                         cb(null, accepted);
                     }, 6000);
                 });
@@ -438,16 +440,17 @@ describe('Top Level of Tests', function () {
         describe('#.reset', function () {
             this.timeout(20000);
             it('should reset - soft', function (done) {
-                var stopStub = sinon.stub(shepherd, 'stop').callsFake(function (callback) {
-                        var deferred = Q.defer();
-                        deferred.resolve();
-                        return deferred.promise.nodeify(callback);
-                    }),
-                    startStub = sinon.stub(shepherd, 'start').callsFake(function (callback) {
-                        var deferred = Q.defer();
+                const stopStub = sinon.stub(shepherd, 'stop').callsFake(function (callback) {
+                        const deferred = Q.defer();
                         deferred.resolve();
                         return deferred.promise.nodeify(callback);
                     });
+
+                const startStub = sinon.stub(shepherd, 'start').callsFake(function (callback) {
+                    const deferred = Q.defer();
+                    deferred.resolve();
+                    return deferred.promise.nodeify(callback);
+                });
 
                 shepherd.controller.once('SYS:resetInd', function () {
                     setTimeout(function () {
@@ -461,16 +464,17 @@ describe('Top Level of Tests', function () {
             });
 
             it('should reset - hard', function (done) {
-                var stopStub = sinon.stub(shepherd, 'stop').callsFake(function (callback) {
-                        var deferred = Q.defer();
-                        deferred.resolve();
-                        return deferred.promise.nodeify(callback);
-                    }),
-                    startStub = sinon.stub(shepherd, 'start').callsFake(function (callback) {
-                        var deferred = Q.defer();
+                const stopStub = sinon.stub(shepherd, 'stop').callsFake(function (callback) {
+                        const deferred = Q.defer();
                         deferred.resolve();
                         return deferred.promise.nodeify(callback);
                     });
+
+                const startStub = sinon.stub(shepherd, 'start').callsFake(function (callback) {
+                    const deferred = Q.defer();
+                    deferred.resolve();
+                    return deferred.promise.nodeify(callback);
+                });
 
                 shepherd.controller.once('SYS:resetInd', function () {
                     setTimeout(function () {
@@ -486,15 +490,16 @@ describe('Top Level of Tests', function () {
 
         describe('#.stop', function () {
             it('should stop ok, permitJoin 0 should be fired, _enabled should be false', function (done) {
-                var joinFired = false,
-                    stopCalled = false,
-                    closeStub = sinon.stub(shepherd.controller, 'close').callsFake(function (callback) {
-                        var deferred = Q.defer();
+                let joinFired = false;
+                let stopCalled = false;
 
-                        deferred.resolve();
+                const closeStub = sinon.stub(shepherd.controller, 'close').callsFake(function (callback) {
+                    const deferred = Q.defer();
 
-                        return deferred.promise.nodeify(callback);
-                    });
+                    deferred.resolve();
+
+                    return deferred.promise.nodeify(callback);
+                });
 
                 shepherd.once('permitJoining', function (joinTime) {
                     joinFired = true;

@@ -1,7 +1,7 @@
 /* jshint node: true */
 'use strict';
 
-var _ = require('busyman');
+const _ = require('busyman');
 
 function Device(devInfo) {
     // devInfo = { type, ieeeAddr, nwkAddr, manufId, manufName, powerSource, modelId, epList }
@@ -23,7 +23,7 @@ function Device(devInfo) {
 }
 
 Device.prototype.dump = function () {
-    var dumpOfEps = {};
+    const dumpOfEps = {};
 
     _.forEach(this.endpoints, function (ep, epId) {
         dumpOfEps[epId] = ep.dump();
@@ -62,8 +62,8 @@ Device.prototype.getManufId = function () {
 };
 
 Device.prototype.update = function (info) {
-    var self = this,
-        infoKeys = [ 'type', 'ieeeAddr', 'nwkAddr','manufId', 'epList', 'status', 'joinTime', 'manufName', 'modelId', 'powerSource' ];
+    const self = this;
+    const infoKeys = [ 'type', 'ieeeAddr', 'nwkAddr','manufId', 'epList', 'status', 'joinTime', 'manufName', 'modelId', 'powerSource' ];
 
     _.forEach(info, function (val, key) {
         if (_.includes(infoKeys, key))

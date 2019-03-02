@@ -1,7 +1,7 @@
 'use strict';
 const ccznp = require('../index.js');
 
-var spCfg = {
+const spCfg = {
     path: "/dev/ttyACM0",
     options: {
         baudRate: 115200,

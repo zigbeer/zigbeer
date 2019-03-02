@@ -1,14 +1,14 @@
 /* jshint node: true */
 'use strict';
 
-var _ = require('busyman'),
-    proving = require('proving');
+const _ = require('busyman');
+const proving = require('proving');
 
-var zutils = {};
+const zutils = {};
 
 zutils.toHexString = function (val, type) {
-    var string,
-        niplen = parseInt(type.slice(4)) / 4;
+    let string;
+    const niplen = parseInt(type.slice(4)) / 4;
 
     string = val.toString(16);
 
@@ -20,7 +20,7 @@ zutils.toHexString = function (val, type) {
 };
 
 zutils.toLongAddrString = function (addr) {
-    var longAddr;
+    let longAddr;
 
     if (_.isString(addr))
         longAddr = (_.startsWith(addr, '0x') || _.startsWith(addr, '0X')) ? addr.slice(2, addr.length).toLowerCase() : addr.toLowerCase();
@@ -29,7 +29,7 @@ zutils.toLongAddrString = function (addr) {
     else
         throw new TypeError('Address can only be a number or a string.');
 
-    for (var i = longAddr.length; i < 16; i++) {
+    for (let i = longAddr.length; i < 16; i++) {
         longAddr = '0' + longAddr;
     }
 
@@ -51,16 +51,16 @@ zutils.dotPath = function (path) {
 };
 
 zutils.buildPathValuePairs = function (rootPath, obj) {
-    var result = {};
+    let result = {};
     rootPath = zutils.dotPath(rootPath);
 
     if (obj && typeof obj === 'object') {
         if (rootPath !== undefined && rootPath !== '' && rootPath !== '.' && rootPath !== '/')
             rootPath = rootPath + '.';
 
-        for (var key in obj) {
+        for (const key in obj) {
             if (obj.hasOwnProperty(key)) {
-                var n = obj[key];
+                const n = obj[key];
 
                 if (n && typeof n === 'object')
                     result = Object.assign(result, zutils.buildPathValuePairs(rootPath + key, n));
@@ -76,8 +76,8 @@ zutils.buildPathValuePairs = function (rootPath, obj) {
 };
 
 zutils.objectDiff = function (oldObj, newObj) {
-    var pvp = zutils.buildPathValuePairs('/', newObj),
-        diff = {};
+    const pvp = zutils.buildPathValuePairs('/', newObj);
+    const diff = {};
 
     _.forEach(pvp, function (val, path) {
         if (!_.has(oldObj, path) || _.get(oldObj, path) !== val)

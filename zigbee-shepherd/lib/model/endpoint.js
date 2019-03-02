@@ -1,7 +1,7 @@
 /* jshint node: true */
 'use strict';
 
-var _ = require('busyman');
+const _ = require('busyman');
 
 function Endpoint(device, simpleDesc) { 
     // simpleDesc = { profId, epId, devId, inClusterList, outClusterList }
@@ -60,7 +60,7 @@ Endpoint.prototype.getNwkAddr = function () {
 };
 
 Endpoint.prototype.dump = function () {
-    var dumped = this.getSimpleDesc();
+    const dumped = this.getSimpleDesc();
 
     dumped.clusters = this.clusters.dumpSync();
 
@@ -78,7 +78,7 @@ Endpoint.prototype.dump = function () {
 /*** Protected Methods                                                                         ***/
 /*************************************************************************************************/
 Endpoint.prototype.isZclSupported = function () {
-    var zclSupport = false;
+    let zclSupport = false;
 
     if (this.profId < 0x8000 && this.devId < 0xc000)
         zclSupport = true;
@@ -115,7 +115,7 @@ Endpoint.prototype.getOutClusterList = function () {
 };
 
 Endpoint.prototype.getClusterList = function () {
-    var clusterList = this.getInClusterList();
+    const clusterList = this.getInClusterList();
 
     this.getOutClusterList().forEach(function (cId) {
         if (!_.includes(clusterList, cId)) 
@@ -134,8 +134,8 @@ Endpoint.prototype.getManufId = function () {
 };
 
 Endpoint.prototype.update = function (simpleDesc) {
-    var self = this,
-        descKeys = [ 'profId', 'epId', 'devId','inClusterList', 'outClusterList' ];
+    const self = this;
+    const descKeys = [ 'profId', 'epId', 'devId','inClusterList', 'outClusterList' ];
 
     _.forEach(simpleDesc, function (val, key) {
         if (_.includes(descKeys, key))

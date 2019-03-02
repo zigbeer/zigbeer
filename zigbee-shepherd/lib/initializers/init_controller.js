@@ -1,15 +1,14 @@
 /* jshint node: true */
 'use strict';
 
-var Q = require('q'),
-    _ = require('busyman'),
-    Ziee = require('ziee'),
-    debug = require('debug')('zigbee-shepherd:init');
+const Q = require('q');
+const _ = require('busyman');
+const Ziee = require('ziee');
+const debug = require('debug')('zigbee-shepherd:init');
+const Coordinator = require('../model/coord');
+const Coordpoint = require('../model/coordpoint');
 
-var Coordinator = require('../model/coord'),
-    Coordpoint = require('../model/coordpoint');
-
-var init = {};
+const init = {};
 
 /*************************************************************************************************/
 /*** Public APIs                                                                               ***/
@@ -49,8 +48,8 @@ init._bootCoordFromApp = function (controller) {
 };
 
 init._startupCoord = function (controller) {
-    var deferred = Q.defer(),
-        stateChangeHdlr;
+    const deferred = Q.defer();
+    let stateChangeHdlr;
 
     stateChangeHdlr = function (data) {
         if (data.state === 9) {
@@ -66,14 +65,15 @@ init._startupCoord = function (controller) {
 };
 
 init._registerDelegators = function (controller, netInfo) {
-    var coord = controller._coord,
-        dlgInfos =  [
-            { profId: 0x0104, epId: 1 }, { profId: 0x0101, epId: 2 }, { profId: 0x0105, epId: 3 },
-            { profId: 0x0107, epId: 4 }, { profId: 0x0108, epId: 5 }, { profId: 0x0109, epId: 6 }
-        ];
+    let coord = controller._coord;
+
+    const dlgInfos =  [
+        { profId: 0x0104, epId: 1 }, { profId: 0x0101, epId: 2 }, { profId: 0x0105, epId: 3 },
+        { profId: 0x0107, epId: 4 }, { profId: 0x0108, epId: 5 }, { profId: 0x0109, epId: 6 }
+    ];
 
     return controller.simpleDescReq(0, netInfo.ieeeAddr).then(function (devInfo) {
-        var deregisterEps = [];
+        const deregisterEps = [];
 
         _.forEach(devInfo.epList, function (epId) {
             if (epId > 10) {
@@ -95,7 +95,7 @@ init._registerDelegators = function (controller, netInfo) {
             });
         }
     }).then(function (devInfo) {
-        var registerDlgs = [];
+        const registerDlgs = [];
 
         if (!coord)
             coord = controller._coord = new Coordinator(devInfo);
@@ -103,9 +103,9 @@ init._registerDelegators = function (controller, netInfo) {
             coord.endpoints = {};
 
         _.forEach(dlgInfos, function (dlgInfo) {
-            var dlgDesc = { profId: dlgInfo.profId, epId: dlgInfo.epId, devId: 0x0005, inClusterList: [], outClusterList: [] },
-                dlgEp = new Coordpoint(coord, dlgDesc, true),
-                simpleDesc;
+            const dlgDesc = { profId: dlgInfo.profId, epId: dlgInfo.epId, devId: 0x0005, inClusterList: [], outClusterList: [] };
+            const dlgEp = new Coordpoint(coord, dlgDesc, true);
+            let simpleDesc;
 
             dlgEp.clusters = new Ziee();
             coord.endpoints[dlgEp.getEpId()] = dlgEp;

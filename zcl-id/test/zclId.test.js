@@ -56,8 +56,8 @@ describe("Module Methods Check", function() {
   describe("#.profile", function() {
     it("should get right item by profId string", function() {
       profIdKeys.forEach(function(pkey) {
-        const hitA = zclId.profile(pkey),
-          hitB = zclId.profileId.get(pkey)
+        const hitA = zclId.profile(pkey);
+        const hitB = zclId.profileId.get(pkey);
 
         expect(hitA).not.toBeUndefined()
         expect(hitA.key).toEqual(hitB.key)
@@ -67,8 +67,8 @@ describe("Module Methods Check", function() {
 
     it("should get right item by profId number", function() {
       profIdVals.forEach(function(pval) {
-        const hitA = zclId.profile(pval),
-          hitB = zclId.profileId.get(pval)
+        const hitA = zclId.profile(pval);
+        const hitB = zclId.profileId.get(pval);
 
         expect(hitA).not.toBeUndefined()
         expect(hitA.key).toEqual(hitB.key)
@@ -88,8 +88,8 @@ describe("Module Methods Check", function() {
         if (!devIdKeys[pkey]) return
 
         devIdKeys[pkey].forEach(function(dkey) {
-          const hitA = zclId.device(pkey, dkey),
-            hitB = zclId.deviceId[pkey].get(dkey)
+          const hitA = zclId.device(pkey, dkey);
+          const hitB = zclId.deviceId[pkey].get(dkey);
 
           expect(hitA).not.toBeUndefined()
           expect(hitA.key).toEqual(hitB.key)
@@ -103,8 +103,8 @@ describe("Module Methods Check", function() {
         if (!devIdKeys[pkey]) return
 
         devIdVals[pkey].forEach(function(dval) {
-          const hitA = zclId.device(pkey, dval),
-            hitB = zclId.deviceId[pkey].get(dval)
+          const hitA = zclId.device(pkey, dval);
+          const hitB = zclId.deviceId[pkey].get(dval);
 
           expect(hitA).not.toBeUndefined()
           expect(hitA.key).toEqual(hitB.key)
@@ -120,8 +120,8 @@ describe("Module Methods Check", function() {
         if (!devIdKeys[profId.key]) return
 
         devIdKeys[profId.key].forEach(function(dkey) {
-          const hitA = zclId.device(pval, dkey),
-            hitB = zclId.deviceId[profId.key].get(dkey)
+          const hitA = zclId.device(pval, dkey);
+          const hitB = zclId.deviceId[profId.key].get(dkey);
 
           expect(hitA).not.toBeUndefined()
           expect(hitA.key).toEqual(hitB.key)
@@ -137,8 +137,8 @@ describe("Module Methods Check", function() {
         if (!devIdKeys[profId.key]) return
 
         devIdVals[profId.key].forEach(function(dval) {
-          const hitA = zclId.device(pval, dval),
-            hitB = zclId.deviceId[profId.key].get(dval)
+          const hitA = zclId.device(pval, dval);
+          const hitB = zclId.deviceId[profId.key].get(dval);
 
           expect(hitA).not.toBeUndefined()
           expect(hitA.key).toEqual(hitB.key)
@@ -165,8 +165,8 @@ describe("Module Methods Check", function() {
   describe("#.cluster", function() {
     it("should get right item by cId string", function() {
       cIdKeys.forEach(function(ckey) {
-        const hitA = zclId.cluster(ckey),
-          hitB = zclId.clusterId.get(ckey)
+        const hitA = zclId.cluster(ckey);
+        const hitB = zclId.clusterId.get(ckey);
 
         expect(hitA).not.toBeUndefined()
         expect(hitA.key).toEqual(hitB.key)
@@ -176,8 +176,8 @@ describe("Module Methods Check", function() {
 
     it("should get right item by cId number", function() {
       cIdVals.forEach(function(cval) {
-        const hitA = zclId.cluster(cval),
-          hitB = zclId.clusterId.get(cval)
+        const hitA = zclId.cluster(cval);
+        const hitB = zclId.clusterId.get(cval);
 
         expect(hitA).not.toBeUndefined()
         expect(hitA.key).toEqual(hitB.key)
@@ -194,8 +194,8 @@ describe("Module Methods Check", function() {
   describe("#.foundation", function() {
     it("should get right item by cmdId string", function() {
       foundKeys.forEach(function(fkey) {
-        const hitA = zclId.foundation(fkey),
-          hitB = zclId.foundationId.get(fkey)
+        const hitA = zclId.foundation(fkey);
+        const hitB = zclId.foundationId.get(fkey);
 
         expect(hitA).not.toBeUndefined()
         expect(hitA.key).toEqual(hitB.key)
@@ -205,8 +205,8 @@ describe("Module Methods Check", function() {
 
     it("should get right item by cmdId number", function() {
       foundVals.forEach(function(fval) {
-        const hitA = zclId.foundation(fval),
-          hitB = zclId.foundationId.get(fval)
+        const hitA = zclId.foundation(fval);
+        const hitB = zclId.foundationId.get(fval);
 
         expect(hitA).not.toBeUndefined()
         expect(hitA.key).toEqual(hitB.key)
@@ -232,8 +232,8 @@ describe("Module Methods Check", function() {
         }
 
         cmdIdKeys.forEach(function(cmdkey) {
-          const hitA = zclId.functional(ckey, cmdkey),
-            hitB = zclId._getCluster(ckey).cmd.get(cmdkey)
+          const hitA = zclId.functional(ckey, cmdkey);
+          const hitB = zclId._getCluster(ckey).cmd.get(cmdkey);
 
           expect(hitA).not.toBeUndefined()
           expect(hitA.key).toEqual(hitB.key)
@@ -253,8 +253,8 @@ describe("Module Methods Check", function() {
         }
 
         cmdIdVals.forEach(function(cmdval) {
-          const hitA = zclId.functional(ckey, cmdval),
-            hitB = zclId._getCluster(ckey).cmd.get(cmdval)
+          const hitA = zclId.functional(ckey, cmdval);
+          const hitB = zclId._getCluster(ckey).cmd.get(cmdval);
 
           expect(hitA).not.toBeUndefined()
           expect(hitA.key).toEqual(hitB.key)
@@ -276,8 +276,8 @@ describe("Module Methods Check", function() {
         }
 
         cmdIdKeys.forEach(function(cmdkey) {
-          const hitA = zclId.functional(cval, cmdkey),
-            hitB = zclId._getCluster(cId.key).cmd.get(cmdkey)
+          const hitA = zclId.functional(cval, cmdkey);
+          const hitB = zclId._getCluster(cId.key).cmd.get(cmdkey);
 
           expect(hitA).not.toBeUndefined()
           expect(hitA.key).toEqual(hitB.key)
@@ -299,8 +299,8 @@ describe("Module Methods Check", function() {
         }
 
         cmdIdVals.forEach(function(cmdval) {
-          const hitA = zclId.functional(cval, cmdval),
-            hitB = zclId._getCluster(cId.key).cmd.get(cmdval)
+          const hitA = zclId.functional(cval, cmdval);
+          const hitB = zclId._getCluster(cId.key).cmd.get(cmdval);
 
           expect(hitA).not.toBeUndefined()
           expect(hitA.key).toEqual(hitB.key)
@@ -336,8 +336,8 @@ describe("Module Methods Check", function() {
         }
 
         cmdIdKeys.forEach(function(cmdkey) {
-          const hitA = zclId.getCmdRsp(ckey, cmdkey),
-            hitB = zclId._getCluster(ckey).cmdRsp.get(cmdkey)
+          const hitA = zclId.getCmdRsp(ckey, cmdkey);
+          const hitB = zclId._getCluster(ckey).cmdRsp.get(cmdkey);
 
           expect(hitA).not.toBeUndefined()
           expect(hitA.key).toEqual(hitB.key)
@@ -357,8 +357,8 @@ describe("Module Methods Check", function() {
         }
 
         cmdIdVals.forEach(function(cmdval) {
-          const hitA = zclId.getCmdRsp(ckey, cmdval),
-            hitB = zclId._getCluster(ckey).cmdRsp.get(cmdval)
+          const hitA = zclId.getCmdRsp(ckey, cmdval);
+          const hitB = zclId._getCluster(ckey).cmdRsp.get(cmdval);
 
           expect(hitA).not.toBeUndefined()
           expect(hitA.key).toEqual(hitB.key)
@@ -380,8 +380,8 @@ describe("Module Methods Check", function() {
         }
 
         cmdIdKeys.forEach(function(cmdkey) {
-          const hitA = zclId.getCmdRsp(cval, cmdkey),
-            hitB = zclId._getCluster(cId.key).cmdRsp.get(cmdkey)
+          const hitA = zclId.getCmdRsp(cval, cmdkey);
+          const hitB = zclId._getCluster(cId.key).cmdRsp.get(cmdkey);
 
           expect(hitA).not.toBeUndefined()
           expect(hitA.key).toEqual(hitB.key)
@@ -403,8 +403,8 @@ describe("Module Methods Check", function() {
         }
 
         cmdIdVals.forEach(function(cmdval) {
-          const hitA = zclId.getCmdRsp(cval, cmdval),
-            hitB = zclId._getCluster(cId.key).cmdRsp.get(cmdval)
+          const hitA = zclId.getCmdRsp(cval, cmdval);
+          const hitB = zclId._getCluster(cId.key).cmdRsp.get(cmdval);
 
           expect(hitA).not.toBeUndefined()
           expect(hitA.key).toEqual(hitB.key)
@@ -440,8 +440,8 @@ describe("Module Methods Check", function() {
         }
 
         attrIdKeys.forEach(function(akey) {
-          const hitA = zclId.attr(ckey, akey),
-            hitB = zclId._getCluster(ckey).attr.get(akey)
+          const hitA = zclId.attr(ckey, akey);
+          const hitB = zclId._getCluster(ckey).attr.get(akey);
 
           expect(hitA).not.toBeUndefined()
           expect(hitA.key).toEqual(hitB.key)
@@ -461,8 +461,8 @@ describe("Module Methods Check", function() {
         }
 
         attrIdVals.forEach(function(aval) {
-          const hitA = zclId.attr(ckey, aval),
-            hitB = zclId._getCluster(ckey).attr.get(aval)
+          const hitA = zclId.attr(ckey, aval);
+          const hitB = zclId._getCluster(ckey).attr.get(aval);
 
           expect(hitA).not.toBeUndefined()
           expect(hitA.key).toEqual(hitB.key)
@@ -484,8 +484,8 @@ describe("Module Methods Check", function() {
         }
 
         attrIdKeys.forEach(function(akey) {
-          const hitA = zclId.attr(cval, akey),
-            hitB = zclId._getCluster(cId.key).attr.get(akey)
+          const hitA = zclId.attr(cval, akey);
+          const hitB = zclId._getCluster(cId.key).attr.get(akey);
 
           expect(hitA).not.toBeUndefined()
           expect(hitA.key).toEqual(hitB.key)
@@ -507,8 +507,8 @@ describe("Module Methods Check", function() {
         }
 
         attrIdVals.forEach(function(aval) {
-          const hitA = zclId.attr(cval, aval),
-            hitB = zclId._getCluster(cId.key).attr.get(aval)
+          const hitA = zclId.attr(cval, aval);
+          const hitB = zclId._getCluster(cId.key).attr.get(aval);
 
           expect(hitA).not.toBeUndefined()
           expect(hitA.key).toEqual(hitB.key)
@@ -544,9 +544,9 @@ describe("Module Methods Check", function() {
         }
 
         attrIdKeys.forEach(function(akey) {
-          const dataType = zclId._getCluster(ckey).attrType.get(akey),
-            hitA = zclId.attrType(ckey, akey),
-            hitB = zclId.dataType(dataType.value)
+          const dataType = zclId._getCluster(ckey).attrType.get(akey);
+          const hitA = zclId.attrType(ckey, akey);
+          const hitB = zclId.dataType(dataType.value);
 
           expect(hitA).not.toBeUndefined()
           expect(hitA.key).toEqual(hitB.key)
@@ -566,10 +566,10 @@ describe("Module Methods Check", function() {
         }
 
         attrIdVals.forEach(function(aval) {
-          const attrId = zclId.attr(ckey, aval),
-            dataType = zclId._getCluster(ckey).attrType.get(attrId.key),
-            hitA = zclId.attrType(ckey, aval),
-            hitB = zclId.dataType(dataType.value)
+          const attrId = zclId.attr(ckey, aval);
+          const dataType = zclId._getCluster(ckey).attrType.get(attrId.key);
+          const hitA = zclId.attrType(ckey, aval);
+          const hitB = zclId.dataType(dataType.value);
 
           expect(hitA).not.toBeUndefined()
           expect(hitA.key).toEqual(hitB.key)
@@ -591,9 +591,9 @@ describe("Module Methods Check", function() {
         }
 
         attrIdKeys.forEach(function(akey) {
-          const dataType = zclId._getCluster(cId.key).attrType.get(akey),
-            hitA = zclId.attrType(cval, akey),
-            hitB = zclId.dataType(dataType.value)
+          const dataType = zclId._getCluster(cId.key).attrType.get(akey);
+          const hitA = zclId.attrType(cval, akey);
+          const hitB = zclId.dataType(dataType.value);
 
           expect(hitA).not.toBeUndefined()
           expect(hitA.key).toEqual(hitB.key)
@@ -615,10 +615,10 @@ describe("Module Methods Check", function() {
         }
 
         attrIdVals.forEach(function(aval) {
-          const attrId = zclId.attr(cval, aval),
-            dataType = zclId._getCluster(cId.key).attrType.get(attrId.key),
-            hitA = zclId.attrType(cval, aval),
-            hitB = zclId.dataType(dataType.value)
+          const attrId = zclId.attr(cval, aval);
+          const dataType = zclId._getCluster(cId.key).attrType.get(attrId.key);
+          const hitA = zclId.attrType(cval, aval);
+          const hitB = zclId.dataType(dataType.value);
 
           expect(hitA).not.toBeUndefined()
           expect(hitA.key).toEqual(hitB.key)
@@ -645,8 +645,8 @@ describe("Module Methods Check", function() {
   describe("#.dataType", function() {
     it("should get right item by type string", function() {
       dataTypeKeys.forEach(function(dkey) {
-        const hitA = zclId.dataType(dkey),
-          hitB = zclId.dataTypeId.get(dkey)
+        const hitA = zclId.dataType(dkey);
+        const hitB = zclId.dataTypeId.get(dkey);
 
         expect(hitA).not.toBeUndefined()
         expect(hitA.key).toEqual(hitB.key)
@@ -656,8 +656,8 @@ describe("Module Methods Check", function() {
 
     it("should get right item by type number", function() {
       dataTypeVals.forEach(function(dval) {
-        const hitA = zclId.dataType(dval),
-          hitB = zclId.dataTypeId.get(dval)
+        const hitA = zclId.dataType(dval);
+        const hitB = zclId.dataTypeId.get(dval);
 
         expect(hitA).not.toBeUndefined()
         expect(hitA.key).toEqual(hitB.key)
@@ -674,8 +674,8 @@ describe("Module Methods Check", function() {
   describe("#.status", function() {
     it("should get right item by type string", function() {
       statusKeys.forEach(function(dkey) {
-        const hitA = zclId.status(dkey),
-          hitB = zclId.statusId.get(dkey)
+        const hitA = zclId.status(dkey);
+        const hitB = zclId.statusId.get(dkey);
 
         expect(hitA).not.toBeUndefined()
         expect(hitA.key).toEqual(hitB.key)
@@ -685,8 +685,8 @@ describe("Module Methods Check", function() {
 
     it("should get right item by type number", function() {
       statusVals.forEach(function(dval) {
-        const hitA = zclId.status(dval),
-          hitB = zclId.statusId.get(dval)
+        const hitA = zclId.status(dval);
+        const hitB = zclId.statusId.get(dval);
 
         expect(hitA).not.toBeUndefined()
         expect(hitA.key).toEqual(hitB.key)

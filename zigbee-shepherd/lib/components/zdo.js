@@ -1,12 +1,12 @@
 /* jshint node: true */
 'use strict';
 
-var Q = require('q'),
-    Areq = require('areq'),
-    znp = require('cc-znp'),
-    ZSC = require('zstack-constants');
+const Q = require('q');
+const Areq = require('areq');
+const znp = require('cc-znp');
+const ZSC = require('zstack-constants');
 
-var zdoHelper = require('./zdo_helper');
+const zdoHelper = require('./zdo_helper');
 
 function Zdo(controller) {
     this._areq = new Areq(controller, 10000);
@@ -16,7 +16,7 @@ function Zdo(controller) {
 /*** Public APIs                                                                               ***/
 /*************************************************************************************************/
 Zdo.prototype.request = function (apiName, valObj, callback) {
-    var requestType = zdoHelper.getRequestType(apiName);
+    const requestType = zdoHelper.getRequestType(apiName);
 
     if (requestType === 'rspless')
         return this._rsplessRequest(apiName, valObj, callback);
@@ -34,10 +34,10 @@ Zdo.prototype.request = function (apiName, valObj, callback) {
 /*** Protected Methods                                                                         ***/
 /*************************************************************************************************/
 Zdo.prototype._sendZdoRequestViaZnp = function (apiName, valObj, callback) {
-    var zdoRequest = znp.zdoRequest.bind(znp); // bind zdo._sendZdoRequestViaZnp() to znp.zdoRequest()
+    const zdoRequest = znp.zdoRequest.bind(znp); // bind zdo._sendZdoRequestViaZnp() to znp.zdoRequest()
 
     return zdoRequest(apiName, valObj, function (err, rsp) {
-        var error = null;
+        let error = null;
 
         if (err)
             error = err;
@@ -53,9 +53,9 @@ Zdo.prototype._rsplessRequest = function (apiName, valObj, callback) {
 };
 
 Zdo.prototype._genericRequest = function (apiName, valObj, callback) {
-    var deferred = Q.defer(),
-        areq = this._areq,
-        areqEvtKey = zdoHelper.generateEventOfRequest(apiName, valObj);
+    const deferred = Q.defer();
+    const areq = this._areq;
+    const areqEvtKey = zdoHelper.generateEventOfRequest(apiName, valObj);
 
     if (areqEvtKey)
         areq.register(areqEvtKey, deferred, function (payload) {
@@ -122,29 +122,31 @@ Zdo.prototype._concatRequest = function (apiName, valObj, callback) {
 };
 
 Zdo.prototype._concatAddrRequest = function (apiName, valObj, callback) {
-    var self = this,
-        totalToGet = null,
-        accum = 0,
-        nextIndex = valObj.startindex,
-        reqObj = {
-            reqtype: valObj.reqtype,
-            startindex: valObj.startindex    // start from 0
-        },
-        finalRsp = {
-            status: null,
-            ieeeaddr: null,
-            nwkaddr: null,
-            startindex: valObj.startindex,
-            numassocdev: null,
-            assocdevlist: []
-        };
+    const self = this;
+    let totalToGet = null;
+    let accum = 0;
+    let nextIndex = valObj.startindex;
+
+    const reqObj = {
+        reqtype: valObj.reqtype,
+        startindex: valObj.startindex    // start from 0
+    };
+
+    const finalRsp = {
+        status: null,
+        ieeeaddr: null,
+        nwkaddr: null,
+        startindex: valObj.startindex,
+        numassocdev: null,
+        assocdevlist: []
+    };
 
     if (apiName === 'nwkAddrReq')
         reqObj.ieeeaddr = valObj.ieeeaddr;
     else
         reqObj.shortaddr = valObj.shortaddr;
 
-    var recursiveRequest = function () {
+    const recursiveRequest = function () {
         self._genericRequest(apiName, reqObj, function (err, rsp) {
             if (err) {
                 callback(err, finalRsp);
@@ -177,21 +179,24 @@ Zdo.prototype._concatAddrRequest = function (apiName, valObj, callback) {
 Zdo.prototype._concatListRequest = function (apiName, valObj, listKeys, callback) {
     // valObj = { dstaddr[, scanchannels, scanduration], startindex }
     // listKeys = { entries: 'networkcount', listcount: 'networklistcount', list: 'networklist' };
-    var self = this,
-        totalToGet = null,
-        accum = 0,
-        nextIndex = valObj.startindex,
-        reqObj = {
-            dstaddr: valObj.dstaddr,
-            scanchannels: valObj.scanchannels,
-            scanduration: valObj.scanduration,
-            startindex: valObj.startindex    // starts from 0
-        },
-        finalRsp = {
-            srcaddr: null,
-            status: null,
-            startindex: valObj.startindex
-        };
+    const self = this;
+
+    let totalToGet = null;
+    let accum = 0;
+    let nextIndex = valObj.startindex;
+
+    const reqObj = {
+        dstaddr: valObj.dstaddr,
+        scanchannels: valObj.scanchannels,
+        scanduration: valObj.scanduration,
+        startindex: valObj.startindex    // starts from 0
+    };
+
+    const finalRsp = {
+        srcaddr: null,
+        status: null,
+        startindex: valObj.startindex
+    };
 
     finalRsp[listKeys.entries] = null;       // finalRsp.networkcount = null
     finalRsp[listKeys.listcount] = null;     // finalRsp.networklistcount = null
@@ -202,7 +207,7 @@ Zdo.prototype._concatListRequest = function (apiName, valObj, listKeys, callback
         reqObj.scanduration = valObj.scanduration;
     }
 
-    var recursiveRequest = function () {
+    const recursiveRequest = function () {
         self._genericRequest(apiName, reqObj, function (err, rsp) {
             if (err) {
                 callback(err, finalRsp);

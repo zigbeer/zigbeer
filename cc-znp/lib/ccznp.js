@@ -11,8 +11,8 @@ const logAreq = require('debug')('cc-znp:AREQ');
 
 Serialport.Binding=require('@serialport/bindings');
 
-const zmeta = require('./zmeta'),
-    ZpiObject = require('./zpiObject');
+const zmeta = require('./zmeta');
+const ZpiObject = require('./zpiObject');
 
 const MT = {
     CMDTYPE: zmeta.CmdType,

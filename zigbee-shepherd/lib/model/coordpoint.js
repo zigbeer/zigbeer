@@ -1,8 +1,8 @@
 /* jshint node: true */
 'use strict';
 
-var util = require('util'),
-    Endpoint = require('./endpoint');
+const util = require('util');
+const Endpoint = require('./endpoint');
 
 function Coordpoint(coord, simpleDesc, isDelegator) {
     // simpleDesc = { profId, epId, devId, inClusterList, outClusterList }

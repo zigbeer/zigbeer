@@ -153,15 +153,16 @@ describe('Functional Check', function() {
             }
         });
         ccznp.on('SRSP:SYS:version', function (result) {
-            let flag = true,
-                parsedResult = {
-                    transportrev: 0,
-                    product: 1,
-                    majorrel: 2,
-                    minorrel: 3,
-                    maintrel: 4,
-                    revision: 5
-                };
+            let flag = true;
+
+            let parsedResult = {
+                transportrev: 0,
+                product: 1,
+                majorrel: 2,
+                minorrel: 3,
+                maintrel: 4,
+                revision: 5
+            };
 
             for (const key in result) {
                 if (parsedResult[key] !== result[key])

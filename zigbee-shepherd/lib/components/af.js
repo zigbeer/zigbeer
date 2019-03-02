@@ -1,51 +1,51 @@
 /* jshint node: true */
 'use strict';
 
-var EventEmitter = require('events');
+const EventEmitter = require('events');
 
-var Q = require('q'),
-    _ = require('busyman'),
-    Areq = require('areq'),
-    proving = require('proving'),
-    ZSC = require('zstack-constants');
-
-var zclFactory = require('./zcl'),
-    zutils = require('./zutils'),
-    Endpoint = require('../model/endpoint'),
-    Coordpoint = require('../model/coordpoint'),
-    Group = require('../model/group'),
-    seqNumber = 0,
-    rebornDevs = {};  // { nwkAddr: [ { type, msg } ], ... };
+const Q = require('q');
+const _ = require('busyman');
+const Areq = require('areq');
+const proving = require('proving');
+const ZSC = require('zstack-constants');
+const zclFactory = require('./zcl');  // { nwkAddr: [ { type, msg } ], ... };
+const zutils = require('./zutils');
+const Endpoint = require('../model/endpoint');
+const Coordpoint = require('../model/coordpoint');
+const Group = require('../model/group');
+let seqNumber = 0;
+const rebornDevs = {};
 
 function afFactory(zclId) {
 
     const zcl = zclFactory(zclId);
 
-    var af = {
+    const af = {
         controller: null,
         areq: null,
         _seq: 0
     };
 
-    var debug = require('debug')('zigbee-shepherd:af');
+    const debug = require('debug')('zigbee-shepherd:af');
 
     af.send = function (srcEp, dstEp, cId, rawPayload, opt, callback) {
         // srcEp maybe a local app ep, or a remote ep
-        var deferred = Q.defer(),
-            controller = af.controller,
-            areq = af.areq,
-            areqTimeout,
-            profId = srcEp.getProfId(),
-            afParams,
-            afEventCnf,
-            apsAck = false,
-            senderEp;
+        const deferred = Q.defer();
+
+        const controller = af.controller;
+        const areq = af.areq;
+        let areqTimeout;
+        const profId = srcEp.getProfId();
+        let afParams;
+        let afEventCnf;
+        let apsAck = false;
+        let senderEp;
 
         if (!((srcEp instanceof Endpoint) || (srcEp instanceof Coordpoint)))
             throw new TypeError('srcEp should be an instance of Endpoint class.');
 
         if (_.isString(cId)) {
-            var cIdItem = zclId.cluster(cId);
+            const cIdItem = zclId.cluster(cId);
             if (_.isUndefined(cIdItem)) {
                 deferred.reject(new Error('Invalid cluster id: ' + cId + '.'));
                 return deferred.promise.nodeify(callback);
@@ -90,7 +90,7 @@ function afFactory(zclId) {
         }
 
         areq.register(afEventCnf, deferred, function (cnf) {
-            var errText = 'AF data request fails, status code: ';
+            const errText = 'AF data request fails, status code: ';
 
             if (cnf.status === 0 || cnf.status === 'SUCCESS')   // success
                 areq.resolve(afEventCnf, cnf);
@@ -120,14 +120,15 @@ function afFactory(zclId) {
 
     af.sendExt = function (srcEp, addrMode, dstAddrOrGrpId, cId, rawPayload, opt, callback) {
         // srcEp must be a local ep
-        var deferred = Q.defer(),
-            controller = af.controller,
-            areq = af.areq,
-            areqTimeout,
-            afParamsExt,
-            afEventCnf,
-            apsAck = false,
-            senderEp = srcEp;
+        const deferred = Q.defer();
+
+        const controller = af.controller;
+        const areq = af.areq;
+        let areqTimeout;
+        let afParamsExt;
+        let afEventCnf;
+        let apsAck = false;
+        const senderEp = srcEp;
 
         if (!((srcEp instanceof Endpoint) || (srcEp instanceof Coordpoint)  || (srcEp instanceof Group)))
             throw new TypeError('srcEp should be an instance of Endpoint or Group class.');
@@ -140,7 +141,7 @@ function afFactory(zclId) {
             proving.string(dstAddrOrGrpId, 'Af dstAddrOrGrpId should be a string for long address.');
 
         if (_.isString(cId)) {
-            var cIdItem = zclId.cluster(cId);
+            const cIdItem = zclId.cluster(cId);
             if (_.isUndefined(cIdItem)) {
                 deferred.reject(new Error('Invalid cluster id: ' + cId + '.'));
                 return deferred.promise.nodeify(callback);
@@ -197,7 +198,7 @@ function afFactory(zclId) {
             }
 
             areq.register(afEventCnf, deferred, function (cnf) {
-                var errText = 'AF data request fails, status code: ';
+                const errText = 'AF data request fails, status code: ';
 
                 if (cnf.status === 0 || cnf.status === 'SUCCESS')   // success
                     areq.resolve(afEventCnf, cnf);
@@ -228,14 +229,15 @@ function afFactory(zclId) {
 
     af.zclFoundation = function (srcEp, dstEp, cId, cmd, zclData, cfg, callback) {
         // callback(err[, rsp])
-        var deferred = Q.defer(),
-            areq = af.areq,
-            dir = (srcEp === dstEp) ? 0 : 1,    // 0: client-to-server, 1: server-to-client
-            manufCode = 0,
-            frameCntl,
-            seqNum,
-            zclBuffer,
-            mandatoryEvent;
+        const deferred = Q.defer();
+
+        const areq = af.areq;
+        const dir = (srcEp === dstEp) ? 0 : 1;    // 0: client-to-server, 1: server-to-client
+        let manufCode = 0;
+        let frameCntl;
+        let seqNum;
+        let zclBuffer;
+        let mandatoryEvent;
 
         if (_.isFunction(cfg)) {
             if (!_.isFunction(callback)) {
@@ -301,14 +303,15 @@ function afFactory(zclId) {
 
     af.zclFunctional = function (srcEp, dstEp, cId, cmd, zclData, cfg, callback) {
         // callback(err[, rsp])
-        var deferred = Q.defer(),
-            areq = af.areq,
-            dir = (srcEp === dstEp) ? 0 : 1,    // 0: client-to-server, 1: server-to-client
-            manufCode = 0,
-            seqNum,
-            frameCntl,
-            zclBuffer,
-            mandatoryEvent;
+        const deferred = Q.defer();
+
+        const areq = af.areq;
+        const dir = (srcEp === dstEp) ? 0 : 1;    // 0: client-to-server, 1: server-to-client
+        let manufCode = 0;
+        let seqNum;
+        let frameCntl;
+        let zclBuffer;
+        let mandatoryEvent;
 
         if (_.isFunction(cfg)) {
             if (!_.isFunction(callback)) {
@@ -401,14 +404,15 @@ function afFactory(zclId) {
     /*************************************************************************************************/
     /*** ZCL Cluster and Attribute Requests                                                        ***/
     /*************************************************************************************************/
-    af.zclClustersReq = function (dstEp, eventEmitter, callback) {    // callback(err, clusters)
-    // clusters: {
-    //    genBasic: { dir: 1, attrs: { x1: 0, x2: 3, ... } },   // dir => 0: 'unknown', 1: 'in', 2: 'out'
-    //    fooClstr: { dir: 1, attrs: { x1: 0, x2: 3, ... } },
-    //    ...
-    // }
+    af.zclClustersReq = function (dstEp, eventEmitter, callback) {
+        // callback(err, clusters)
+        // clusters: {
+        //    genBasic: { dir: 1, attrs: { x1: 0, x2: 3, ... } },   // dir => 0: 'unknown', 1: 'in', 2: 'out'
+        //    fooClstr: { dir: 1, attrs: { x1: 0, x2: 3, ... } },
+        //    ...
+        // }
 
-        var epId;
+        let epId;
         try {
             epId = dstEp.getEpId();
         } catch (err){
@@ -418,18 +422,19 @@ function afFactory(zclId) {
         // If event emitter is function, consider it callback (legacy)
         if (typeof eventEmitter === 'function') callback = eventEmitter;
 
-        var deferred = Q.defer(),
-            clusters = {},
-            clusterList = dstEp.getClusterList(),       // [ 1, 2, 3, 4, 5 ]
-            inClusterList = dstEp.getInClusterList(),   // [ 1, 2, 3 ]
-            outClusterList = dstEp.getOutClusterList(), // [ 1, 3, 4, 5 ]
-            clusterAttrsReqs = [];  // functions
-            // clusterAttrsRsps = [];  // { attr1: x }, ...
+        const deferred = Q.defer();  // functions
+        // clusterAttrsRsps = [];  // { attr1: x }, ...
 
-        var i = 0;
+        const clusters = {};
+        const clusterList = dstEp.getClusterList();       // [ 1, 2, 3, 4, 5 ]
+        const inClusterList = dstEp.getInClusterList();   // [ 1, 2, 3 ]
+        const outClusterList = dstEp.getOutClusterList(); // [ 1, 3, 4, 5 ]
+        const clusterAttrsReqs = [];
+
+        let i = 0;
         // each request
         _.forEach(clusterList, function (cId) {
-            var cIdString = zclId.cluster(cId);
+            let cIdString = zclId.cluster(cId);
             cIdString = cIdString ? cIdString.key : cId;
 
             clusterAttrsReqs.push(function (clusters) {
@@ -474,7 +479,7 @@ function afFactory(zclId) {
         });
 
         // all clusters
-        var allReqs = clusterAttrsReqs.reduce(function (soFar, f) {
+        const allReqs = clusterAttrsReqs.reduce(function (soFar, f) {
             return soFar.then(f);
         }, Q(clusters));
 
@@ -488,19 +493,19 @@ function afFactory(zclId) {
     };
 
     af.zclClusterAttrsReq = function (dstEp, cId, callback) {
-        var deferred = Q.defer();
+        const deferred = Q.defer();
 
         af.zclClusterAttrIdsReq(dstEp, cId).then(function (attrIds) {
-            var readReq = [],
-                attrsReqs = [],
-                attributes = [],
-                attrIdsLen = attrIds.length;
+            let readReq = [];
+            const attrsReqs = [];
+            let attributes = [];
+            let attrIdsLen = attrIds.length;
 
             _.forEach(attrIds, function (id) {
                 readReq.push({ attrId: id });
 
                 if (readReq.length === 5 || readReq.length === attrIdsLen) {
-                    var req = _.cloneDeep(readReq);
+                    const req = _.cloneDeep(readReq);
                     attrsReqs.push(function (attributes) {
                         return af.zclFoundation(dstEp, dstEp, cId, 'read', req).then(function (readStatusRecsRsp) {
                             attributes = _.concat(attributes, readStatusRecsRsp.payload);
@@ -516,9 +521,9 @@ function afFactory(zclId) {
                 return soFar.then(f);
             }, Q(attributes));
         }).then(function (attributes) {
-            var attrs = {};
+            const attrs = {};
             _.forEach(attributes, function (rec) {  // { attrId, status, dataType, attrData }
-                var attrIdString = zclId.attr(cId, rec.attrId);
+                let attrIdString = zclId.attr(cId, rec.attrId);
 
                 attrIdString = attrIdString ? attrIdString.key : rec.attrId;
 
@@ -539,22 +544,23 @@ function afFactory(zclId) {
     };
 
     af.zclClusterAttrIdsReq = function (dstEp, cId, callback) {
-        var deferred = Q.defer(),
-            attrsToRead = [];
+        const deferred = Q.defer();
+        const attrsToRead = [];
 
         if (!((dstEp instanceof Endpoint) || (dstEp instanceof Coordpoint)))
             throw new TypeError('dstEp should be an instance of Endpoint class.');
 
-        var discAttrs = function (startAttrId, defer) {
+        const discAttrs = function (startAttrId, defer) {
             af.zclFoundation(dstEp, dstEp, cId, 'discover', {
                 startAttrId: startAttrId,
                 maxAttrIds: 240
             }).then(function (discoverRsp) {
                 // discoverRsp.payload: { discComplete, attrInfos: [ { attrId, dataType }, ... ] }
-                var payload = discoverRsp.payload,
-                    discComplete = payload.discComplete,
-                    attrInfos = payload.attrInfos,
-                    nextReqIndex;
+                const payload = discoverRsp.payload;
+
+                const discComplete = payload.discComplete;
+                const attrInfos = payload.attrInfos;
+                let nextReqIndex;
 
                 _.forEach(attrInfos, function (info) {
                     if (_.indexOf(attrsToRead, info.attrId) === -1)
@@ -582,13 +588,15 @@ function afFactory(zclId) {
     /*************************************************************************************************/
     // 4 types of message: dataConfirm, reflectError, incomingMsg, incomingMsgExt, zclIncomingMsg
     function dispatchIncomingMsg(type, msg) {
-        var targetEp,       // remote ep, or a local ep (maybe a delegator)
-            remoteEp,
-            dispatchTo,     // which callback on targetEp
-            zclHeader,
-            frameType,      // check whether the msg is foundation(0) or functional(1)
-            mandatoryEvent; // bridged event
-        var coord = af.controller._coord;
+        let // remote ep, or a local ep (maybe a delegator)
+        targetEp; // bridged event
+
+        let remoteEp;
+        let dispatchTo;     // which callback on targetEp
+        let zclHeader;
+        let frameType;      // check whether the msg is foundation(0) or functional(1)
+        let mandatoryEvent;
+        const coord = af.controller._coord;
 
         debug(`dispatchIncomingMsg(): type: ${type}, msg: ${msg}`);
 
@@ -605,7 +613,7 @@ function afFactory(zclId) {
                 if (targetEp.isDelegator()) {  // delegator, pass message to remote endpoint
                     targetEp = remoteEp;
                 } else if (!remoteEp) {        // local zApp not found, get ieeeaddr and emit fake 'endDeviceAnnceInd' msg
-                    var msgBuffer = rebornDevs[msg.srcaddr];
+                    let msgBuffer = rebornDevs[msg.srcaddr];
 
                     if (_.isArray(msgBuffer)) {
                         msgBuffer.push({ type: type, msg: msg });
@@ -664,8 +672,8 @@ function afFactory(zclId) {
                     if (!targetEp.isDelegator())
                         mandatoryEvent = 'ZCL:incomingMsg:' + msg.srcaddr + ':' + msg.srcendpoint + ':' + msg.dstendpoint + ':' + msg.zclMsg.seqNum;
                 } else {
-                    var localEp = af.controller.findEndpoint(0, msg.dstendpoint),
-                        toLocalApp = false;
+                    const localEp = af.controller.findEndpoint(0, msg.dstendpoint);
+                    let toLocalApp = false;
 
                     if (localEp)
                         toLocalApp = localEp.isLocal() ? !localEp.isDelegator() : false;
@@ -747,7 +755,7 @@ function afFactory(zclId) {
     /*** Private Functions                                                                         ***/
     /*************************************************************************************************/
     function zclIncomingParsedMsgEmitter(msg, zclData) {        // after zcl packet parsed, re-emit it
-        var parsedMsg = _.cloneDeep(msg);
+        const parsedMsg = _.cloneDeep(msg);
         parsedMsg.zclMsg = zclData;
 
         setImmediate(function () {
@@ -766,18 +774,20 @@ function afFactory(zclId) {
         if (opt.hasOwnProperty('radius'))
             proving.number(opt.radius, 'opt.radius should be a number.');
 
-        var afOptions = ZSC.AF.options.ACK_REQUEST | ZSC.AF.options.DISCV_ROUTE,    // ACK_REQUEST (0x10), DISCV_ROUTE (0x20)
-            afParams = {
-                dstaddr: dstEp.getNwkAddr(),
-                destendpoint: dstEp.getEpId(),
-                srcendpoint: loEp.getEpId(),
-                clusterid: cId,
-                transid: af.controller ? af.controller.nextTransId() : null,
-                options: opt.hasOwnProperty('options') ? opt.options : afOptions,
-                radius: opt.hasOwnProperty('radius') ? opt.radius : ZSC.AF_DEFAULT_RADIUS,
-                len: rawPayload.length,
-                data: rawPayload
-            };
+        const // ACK_REQUEST (0x10), DISCV_ROUTE (0x20)
+        afOptions = ZSC.AF.options.ACK_REQUEST | ZSC.AF.options.DISCV_ROUTE;
+
+        const afParams = {
+            dstaddr: dstEp.getNwkAddr(),
+            destendpoint: dstEp.getEpId(),
+            srcendpoint: loEp.getEpId(),
+            clusterid: cId,
+            transid: af.controller ? af.controller.nextTransId() : null,
+            options: opt.hasOwnProperty('options') ? opt.options : afOptions,
+            radius: opt.hasOwnProperty('radius') ? opt.radius : ZSC.AF_DEFAULT_RADIUS,
+            len: rawPayload.length,
+            data: rawPayload
+        };
 
         return afParams;
     }
@@ -795,20 +805,21 @@ function afFactory(zclId) {
         if (opt.hasOwnProperty('radius'))
             proving.number(opt.radius, 'opt.radius should be a number.');
 
-        var afOptions = ZSC.AF.options.DISCV_ROUTE,
-            afParamsExt = {
-                dstaddrmode: addrMode,
-                dstaddr: zutils.toLongAddrString(dstAddrOrGrpId),
-                destendpoint: 0xFF,
-                dstpanid: opt.hasOwnProperty('dstPanId') ? opt.dstPanId : 0,
-                srcendpoint: loEp.getEpId(),
-                clusterid: cId,
-                transid: af.controller ? af.controller.nextTransId() : null,
-                options: opt.hasOwnProperty('options') ? opt.options : afOptions,
-                radius: opt.hasOwnProperty('radius') ? opt.radius : ZSC.AF_DEFAULT_RADIUS,
-                len: rawPayload.length,
-                data: rawPayload
-            };
+        const afOptions = ZSC.AF.options.DISCV_ROUTE;
+
+        let afParamsExt = {
+            dstaddrmode: addrMode,
+            dstaddr: zutils.toLongAddrString(dstAddrOrGrpId),
+            destendpoint: 0xFF,
+            dstpanid: opt.hasOwnProperty('dstPanId') ? opt.dstPanId : 0,
+            srcendpoint: loEp.getEpId(),
+            clusterid: cId,
+            transid: af.controller ? af.controller.nextTransId() : null,
+            options: opt.hasOwnProperty('options') ? opt.options : afOptions,
+            radius: opt.hasOwnProperty('radius') ? opt.radius : ZSC.AF_DEFAULT_RADIUS,
+            len: rawPayload.length,
+            data: rawPayload
+        };
 
         switch (addrMode) {
             case ZSC.AF.addressMode.ADDR_NOT_PRESENT:
@@ -846,7 +857,7 @@ function afFactory(zclId) {
     /*** module.exports                                                                            ***/
     /*************************************************************************************************/
     function afConstructor (controller) {
-        var msgHandlers = [
+        const msgHandlers = [
             { evt: 'AF:dataConfirm', hdlr: dataConfirmHandler },
             { evt: 'AF:reflectError', hdlr: reflectErrorHandler },
             { evt: 'AF:incomingMsg', hdlr: incomingMsgHandler },
@@ -861,8 +872,8 @@ function afFactory(zclId) {
         af.areq = new Areq(controller);
 
         function isAttached(evt, lsn) {
-            var has = false,
-                lsns = af.controller.listeners(evt);
+            let has = false;
+            const lsns = af.controller.listeners(evt);
 
             if (_.isArray(lsns) && lsns.length) {
                 has = _.find(lsns, function (n) {
