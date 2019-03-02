@@ -111,7 +111,7 @@ controller.findEndpoint = function (srcaddr, srcendpoint) {
 function fireFakeCnf(status, epid, transid) {
     const afEventCnf = 'AF:dataConfirm:' + epid + ':' + transid;
     setTimeout(() => {
-        controller.emit(afEventCnf, { status: status, endpoint: epid, transid: transid  });
+        controller.emit(afEventCnf, { status, endpoint: epid, transid  });
     });
 }
 
@@ -238,7 +238,7 @@ describe('APIs Arguments Check for Throwing Error', () => {
                 rmEp1,
                 3,
                 new Buffer([ 1, 2 ]),
-                { options: function () {} },
+                { options() {} },
                 () => {}
             )).to.throw(TypeError);
             expect(() => af.send(rmEp1, rmEp1, 3, new Buffer([ 1, 2 ]), { options: NaN }, () => {})).to.throw(TypeError);
@@ -255,7 +255,7 @@ describe('APIs Arguments Check for Throwing Error', () => {
                 rmEp1,
                 3,
                 new Buffer([ 1, 2 ]),
-                { radius: function () {} },
+                { radius() {} },
                 () => {}
             )).to.throw(TypeError);
             expect(() => af.send(rmEp1, rmEp1, 3, new Buffer([ 1, 2 ]), { radius: NaN }, () => {})).to.throw(TypeError);
@@ -272,7 +272,7 @@ describe('APIs Arguments Check for Throwing Error', () => {
                 rmEp1,
                 3,
                 new Buffer([ 1, 2 ]),
-                { timeout: function () {} },
+                { timeout() {} },
                 () => {}
             )).to.throw(TypeError);
             expect(() => af.send(rmEp1, rmEp1, 3, new Buffer([ 1, 2 ]), { timeout: NaN }, () => {})).to.throw(TypeError);
@@ -425,7 +425,7 @@ describe('APIs Arguments Check for Throwing Error', () => {
                 3,
                 12,
                 new Buffer([ 1, 2 ]),
-                { options: function () {} },
+                { options() {} },
                 () => {}
             )).to.throw(TypeError);
             expect(() => af.sendExt(loEp8, 2, 3, 12, new Buffer([ 1, 2 ]), { options: NaN }, () => {})).to.throw(TypeError);
@@ -443,7 +443,7 @@ describe('APIs Arguments Check for Throwing Error', () => {
                 3,
                 12,
                 new Buffer([ 1, 2 ]),
-                { radius: function () {} },
+                { radius() {} },
                 () => {}
             )).to.throw(TypeError);
             expect(() => af.sendExt(loEp8, 2, 3, 12, new Buffer([ 1, 2 ]), { radius: NaN }, () => {})).to.throw(TypeError);
@@ -461,7 +461,7 @@ describe('APIs Arguments Check for Throwing Error', () => {
                 3,
                 12,
                 new Buffer([ 1, 2 ]),
-                { timeout: function () {} },
+                { timeout() {} },
                 () => {}
             )).to.throw(TypeError);
             expect(() => af.sendExt(loEp8, 2, 3, 12, new Buffer([ 1, 2 ]), { timeout: NaN }, () => {})).to.throw(TypeError);

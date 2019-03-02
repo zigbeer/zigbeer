@@ -112,7 +112,7 @@ function Controller(shepherd, cfg) {
         const data = {srcaddr: tcData.nwkaddr, nwkaddr: tcData.nwkaddr, ieeeaddr: tcData.extaddr, capabilities: {}};
         if (self._spinLock) {
             self._joinQueue.push({
-                func: function () {
+                func() {
                     self.endDeviceAnnceHdlr(data);
                 },
                 ieeeAddr: data.ieeeaddr
@@ -135,7 +135,7 @@ function Controller(shepherd, cfg) {
             }
 
             self._joinQueue.push({
-                func: function () {
+                func() {
                     self.endDeviceAnnceHdlr(data);
                 },
                 ieeeAddr: data.ieeeaddr
@@ -351,7 +351,7 @@ Controller.prototype.permitJoin = function (time, type, callback) {
     }).then(() => self.request(
         'ZDO',
         'mgmtPermitJoinReq',
-        { addrmode: addrmode, dstaddr: dstaddr , duration: time, tcsignificance: 0 }
+        { addrmode, dstaddr , duration: time, tcsignificance: 0 }
     )).then(rsp => {
         self.emit('permitJoining', self._permitJoinTime, dstaddr);
 
