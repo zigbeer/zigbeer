@@ -423,7 +423,7 @@ ZShepherd.prototype.lqiScan = function (ieeeAddr) {
                 let dev = self._findDevByAddr(ieeeAddr);
                 devinfo.parent = parent;
                 devinfo.status = dev ? dev.status : "offline";
-                const dedupKey = parent + '|' + ieeeAddr;
+                const dedupKey = `${parent}|${ieeeAddr}`;
                 if (dev && dev.type == "Router" && !noDuplicate[dedupKey]) {
                     chain = chain.then(() => self.lqi(ieeeAddr).then(processResponse(ieeeAddr)));
                 }
@@ -547,7 +547,7 @@ ZShepherd.prototype._attachZclMethods = function (ep) {
                 if (rec.status === 0)
                     deferred.resolve(rec.attrData);
                 else
-                    deferred.reject(new Error('request unsuccess: ' + rec.status));
+                    deferred.reject(new Error(`request unsuccess: ${rec.status}`));
             }).catch(err => {
                 deferred.reject(err);
             });
@@ -565,7 +565,7 @@ ZShepherd.prototype._attachZclMethods = function (ep) {
                 if (rec.status === 0)
                     deferred.resolve(data);
                 else
-                    deferred.reject(new Error('request unsuccess: ' + rec.status));
+                    deferred.reject(new Error(`request unsuccess: ${rec.status}`));
             }).catch(err => {
                 deferred.reject(err);
             });
@@ -613,7 +613,7 @@ ZShepherd.prototype._attachZclMethods = function (ep) {
                             });
                     });
                 } else {
-                    return Q.reject(new Error('Profile: ' + ep.getProfId() + ' is not supported.'));
+                    return Q.reject(new Error(`Profile: ${ep.getProfId()} is not supported.`));
                 }
             }).then(() => {
                 deferred.resolve();

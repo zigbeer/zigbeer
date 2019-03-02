@@ -13,10 +13,10 @@ zutils.toHexString = function (val, type) {
     string = val.toString(16);
 
     while (string.length !== niplen) {
-        string = '0' + string;
+        string = `0${string}`;
     }
 
-    return '0x' + string;
+    return `0x${string}`;
 };
 
 zutils.toLongAddrString = function (addr) {
@@ -30,10 +30,10 @@ zutils.toLongAddrString = function (addr) {
         throw new TypeError('Address can only be a number or a string.');
 
     for (let i = longAddr.length; i < 16; i++) {
-        longAddr = '0' + longAddr;
+        longAddr = `0${longAddr}`;
     }
 
-    return '0x' + longAddr;
+    return `0x${longAddr}`;
 };
 
 zutils.dotPath = function (path) {
@@ -56,7 +56,7 @@ zutils.buildPathValuePairs = function (rootPath, obj) {
 
     if (obj && typeof obj === 'object') {
         if (rootPath !== undefined && rootPath !== '' && rootPath !== '.' && rootPath !== '/')
-            rootPath = rootPath + '.';
+            rootPath = `${rootPath}.`;
 
         for (const key in obj) {
             if (obj.hasOwnProperty(key)) {

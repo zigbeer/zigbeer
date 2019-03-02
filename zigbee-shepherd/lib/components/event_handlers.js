@@ -216,7 +216,7 @@ handlers.devIncoming = function (devInfo, resolve) {
 
             self.emit('ind:incoming', dev);
             self.emit('ind:status', dev, 'online');
-            self.controller.emit('ind:incoming' + ':' + dev.getIeeeAddr());
+            self.controller.emit(`ind:incoming:${dev.getIeeeAddr()}`);
         } else {
             self.remove(dev.getIeeeAddr(), { reJoin: false }).then(() => {
                 Q.ninvoke(self._devbox, 'remove', dev._getId());

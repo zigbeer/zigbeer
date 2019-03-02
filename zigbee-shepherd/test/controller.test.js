@@ -856,7 +856,7 @@ describe('Functional Check', () => {
             let dev_2;
 
             controller.on('ZDO:devIncoming', devInfo => {
-                controller.emit('ind:incoming' + ':' + devInfo.ieeeaddr);
+                controller.emit(`ind:incoming:${devInfo.ieeeaddr}`);
 
                 if (devInfo.ieeeaddr === '0x123456789abcdef')
                     dev_1 = true;

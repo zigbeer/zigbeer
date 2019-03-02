@@ -47,7 +47,7 @@ function afFactory(zclId) {
         if (_.isString(cId)) {
             const cIdItem = zclId.cluster(cId);
             if (_.isUndefined(cIdItem)) {
-                deferred.reject(new Error('Invalid cluster id: ' + cId + '.'));
+                deferred.reject(new Error(`Invalid cluster id: ${cId}.`));
                 return deferred.promise.nodeify(callback);
             } else {
                 cId = cIdItem.value;
@@ -81,12 +81,12 @@ function afFactory(zclId) {
         // }
 
         afParams = makeAfParams(senderEp, dstEp, cId, rawPayload, opt);
-        afEventCnf = 'AF:dataConfirm:' + senderEp.getEpId() + ':' + afParams.transid;
+        afEventCnf = `AF:dataConfirm:${senderEp.getEpId()}:${afParams.transid}`;
         apsAck = afParams.options & ZSC.AF.options.ACK_REQUEST;
 
         while (areq.isEventPending(afEventCnf)) {
             afParams.transid = controller.nextTransId();
-            afEventCnf = 'AF:dataConfirm:' + senderEp.getEpId() + ':' + afParams.transid;
+            afEventCnf = `AF:dataConfirm:${senderEp.getEpId()}:${afParams.transid}`;
         }
 
         areq.register(afEventCnf, deferred, cnf => {
@@ -95,20 +95,20 @@ function afFactory(zclId) {
             if (cnf.status === 0 || cnf.status === 'SUCCESS')   // success
                 areq.resolve(afEventCnf, cnf);
             else if (cnf.status === 0xcd || cnf.status === 'NWK_NO_ROUTE')
-                areq.reject(afEventCnf, new Error(errText + '205. No network route. Please confirm that the device has (re)joined the network.'));
+                areq.reject(afEventCnf, new Error(`${errText}205. No network route. Please confirm that the device has (re)joined the network.`));
             else if (cnf.status === 0xe9 || cnf.status === 'MAC_NO_ACK')
-                areq.reject(afEventCnf, new Error(errText + '233. MAC no ack.'));
+                areq.reject(afEventCnf, new Error(`${errText}233. MAC no ack.`));
             else if (cnf.status === 0xb7 || cnf.status === 'APS_NO_ACK')                // ZApsNoAck period is 20 secs
-                areq.reject(afEventCnf, new Error(errText + '183. APS no ack.'));
+                areq.reject(afEventCnf, new Error(`${errText}183. APS no ack.`));
             else if (cnf.status === 0xf0 || cnf.status === 'MAC_TRANSACTION_EXPIRED')   // ZMacTransactionExpired is 8 secs
-                areq.reject(afEventCnf, new Error(errText + '240. MAC transaction expired.'));
+                areq.reject(afEventCnf, new Error(`${errText}240. MAC transaction expired.`));
             else
                 areq.reject(afEventCnf, new Error(errText + cnf.status));
         }, areqTimeout);
 
         controller.request('AF', 'dataRequest', afParams).then(rsp => {
             if (rsp.status !== 0 && rsp.status !== 'SUCCESS' )  // unsuccessful
-                areq.reject(afEventCnf, new Error('AF data request failed, status code: ' + rsp.status + '.'));
+                areq.reject(afEventCnf, new Error(`AF data request failed, status code: ${rsp.status}.`));
             else if (!apsAck)
                 areq.resolve(afEventCnf, rsp);
         }).fail(err => {
@@ -143,7 +143,7 @@ function afFactory(zclId) {
         if (_.isString(cId)) {
             const cIdItem = zclId.cluster(cId);
             if (_.isUndefined(cIdItem)) {
-                deferred.reject(new Error('Invalid cluster id: ' + cId + '.'));
+                deferred.reject(new Error(`Invalid cluster id: ${cId}.`));
                 return deferred.promise.nodeify(callback);
             } else {
                 cId = cIdItem.value;
@@ -181,7 +181,7 @@ function afFactory(zclId) {
             // no ack
             controller.request('AF', 'dataRequestExt', afParamsExt).then(rsp => {
                 if (rsp.status !== 0 && rsp.status !== 'SUCCESS')   // unsuccessful
-                    deferred.reject(new Error('AF data extend request failed, status code: ' + rsp.status + '.'));
+                    deferred.reject(new Error(`AF data extend request failed, status code: ${rsp.status}.`));
                 else
                     deferred.resolve(rsp);  // Broadcast (or Groupcast) has no AREQ confirm back, just resolve this transaction.
             }).fail(err => {
@@ -189,12 +189,12 @@ function afFactory(zclId) {
             }).done();
 
         } else {
-            afEventCnf = 'AF:dataConfirm:' + senderEp.getEpId() + ':' + afParamsExt.transid;
+            afEventCnf = `AF:dataConfirm:${senderEp.getEpId()}:${afParamsExt.transid}`;
             apsAck = afParamsExt.options & ZSC.AF.options.ACK_REQUEST;
 
             while (areq.isEventPending(afEventCnf)) {
                 afParamsExt.transid = controller.nextTransId();
-                afEventCnf = 'AF:dataConfirm:' + senderEp.getEpId() + ':' + afParamsExt.transid;
+                afEventCnf = `AF:dataConfirm:${senderEp.getEpId()}:${afParamsExt.transid}`;
             }
 
             areq.register(afEventCnf, deferred, cnf => {
@@ -203,20 +203,20 @@ function afFactory(zclId) {
                 if (cnf.status === 0 || cnf.status === 'SUCCESS')   // success
                     areq.resolve(afEventCnf, cnf);
                 else if (cnf.status === 0xcd || cnf.status === 'NWK_NO_ROUTE')
-                    areq.reject(afEventCnf, new Error(errText + '205. No network route. Please confirm that the device has (re)joined the network.'));
+                    areq.reject(afEventCnf, new Error(`${errText}205. No network route. Please confirm that the device has (re)joined the network.`));
                 else if (cnf.status === 0xe9 || cnf.status === 'MAC_NO_ACK')
-                    areq.reject(afEventCnf, new Error(errText + '233. MAC no ack.'));
+                    areq.reject(afEventCnf, new Error(`${errText}233. MAC no ack.`));
                 else if (cnf.status === 0xb7 || cnf.status === 'APS_NO_ACK')                // ZApsNoAck period is 20 secs
-                    areq.reject(afEventCnf, new Error(errText + '183. APS no ack.'));
+                    areq.reject(afEventCnf, new Error(`${errText}183. APS no ack.`));
                 else if (cnf.status === 0xf0 || cnf.status === 'MAC_TRANSACTION_EXPIRED')   // ZMacTransactionExpired is 8 secs
-                    areq.reject(afEventCnf, new Error(errText + '240. MAC transaction expired.'));
+                    areq.reject(afEventCnf, new Error(`${errText}240. MAC transaction expired.`));
                 else
                     areq.reject(afEventCnf, new Error(errText + cnf.status));
             }, areqTimeout);
 
             controller.request('AF', 'dataRequestExt', afParamsExt).then(rsp => {
                 if (rsp.status !== 0 && rsp.status !== 'SUCCESS')   // unsuccessful
-                    areq.reject(afEventCnf, new Error('AF data request failed, status code: ' + rsp.status + '.'));
+                    areq.reject(afEventCnf, new Error(`AF data request failed, status code: ${rsp.status}.`));
                 else if (!apsAck)
                     areq.resolve(afEventCnf, rsp);
             }).fail(err => {
@@ -278,9 +278,9 @@ function afFactory(zclId) {
         if (frameCntl.direction === 0) {    // client-to-server, thus require getting the feedback response
 
             if (srcEp === dstEp)    // from remote to remote itself
-                mandatoryEvent = 'ZCL:incomingMsg:' + dstEp.getNwkAddr() + ':' + dstEp.getEpId() + ':' + seqNum;
+                mandatoryEvent = `ZCL:incomingMsg:${dstEp.getNwkAddr()}:${dstEp.getEpId()}:${seqNum}`;
             else                    // from local ep to remote ep
-                mandatoryEvent = 'ZCL:incomingMsg:' + dstEp.getNwkAddr() + ':' + dstEp.getEpId() + ':' + srcEp.getEpId() + ':' + seqNum;
+                mandatoryEvent = `ZCL:incomingMsg:${dstEp.getNwkAddr()}:${dstEp.getEpId()}:${srcEp.getEpId()}:${seqNum}`;
 
             areq.register(mandatoryEvent, deferred, msg => {
                 // { groupid, clusterid, srcaddr, srcendpoint, dstendpoint, wasbroadcast, linkquality, securityuse, timestamp, transseqnumber, zclMsg }
@@ -365,9 +365,9 @@ function afFactory(zclId) {
         if (frameCntl.direction === 0 && !(srcEp instanceof Group)) {
 
             if (srcEp === dstEp)    // from remote to remote itself
-                mandatoryEvent = 'ZCL:incomingMsg:' + dstEp.getNwkAddr() + ':' + dstEp.getEpId() + ':' + seqNum;
+                mandatoryEvent = `ZCL:incomingMsg:${dstEp.getNwkAddr()}:${dstEp.getEpId()}:${seqNum}`;
             else                    // from local ep to remote ep
-                mandatoryEvent = 'ZCL:incomingMsg:' + dstEp.getNwkAddr() + ':' + dstEp.getEpId() + ':' + srcEp.getEpId() + ':' + seqNum;
+                mandatoryEvent = `ZCL:incomingMsg:${dstEp.getNwkAddr()}:${dstEp.getEpId()}:${srcEp.getEpId()}:${seqNum}`;
 
             areq.register(mandatoryEvent, deferred, msg => {
                 // { groupid, clusterid, srcaddr, srcendpoint, dstendpoint, wasbroadcast, linkquality, securityuse, timestamp, transseqnumber, zclMsg }
@@ -614,7 +614,7 @@ function afFactory(zclId) {
 
                         af.controller.request('ZDO', 'ieeeAddrReq', { shortaddr: msg.srcaddr, reqtype: 0, startindex:0 }).then(rsp => {
                             // rsp: { status, ieeeaddr, nwkaddr, startindex, numassocdev, assocdevlist }
-                            af.controller.once('ind:incoming' + ':' + rsp.ieeeaddr, () => {
+                            af.controller.once(`ind:incoming:${rsp.ieeeaddr}`, () => {
                                 if (af.controller.findEndpoint(msg.srcaddr, msg.srcendpoint) && _.isArray(msgBuffer))
                                     _.forEach(msgBuffer, item => {
                                         dispatchIncomingMsg(item.type, item.msg);
@@ -639,12 +639,12 @@ function afFactory(zclId) {
         switch (type) {
             case 'dataConfirm':
                 // msg: { status, endpoint, transid }
-                mandatoryEvent = 'AF:dataConfirm:' + msg.endpoint + ':' + msg.transid;  // sender(loEp) is listening, see af.send() and af.sendExt()
+                mandatoryEvent = `AF:dataConfirm:${msg.endpoint}:${msg.transid}`;  // sender(loEp) is listening, see af.send() and af.sendExt()
                 dispatchTo = targetEp.onAfDataConfirm;
                 break;
             case 'reflectError':
                 // msg: { status, endpoint, transid, dstaddrmode, dstaddr }
-                mandatoryEvent = 'AF:reflectError:' + msg.endpoint + ':' + msg.transid;
+                mandatoryEvent = `AF:reflectError:${msg.endpoint}:${msg.transid}`;
                 dispatchTo = targetEp.onAfReflectError;
                 break;
             case 'incomingMsg':
@@ -662,7 +662,7 @@ function afFactory(zclId) {
                 if (targetEp.isLocal()) {
                     // to local app ep, receive zcl command or zcl command response. see af.zclFoudation() and af.zclFunctional()
                     if (!targetEp.isDelegator())
-                        mandatoryEvent = 'ZCL:incomingMsg:' + msg.srcaddr + ':' + msg.srcendpoint + ':' + msg.dstendpoint + ':' + msg.zclMsg.seqNum;
+                        mandatoryEvent = `ZCL:incomingMsg:${msg.srcaddr}:${msg.srcendpoint}:${msg.dstendpoint}:${msg.zclMsg.seqNum}`;
                 } else {
                     const localEp = af.controller.findEndpoint(0, msg.dstendpoint);
                     let toLocalApp = false;
@@ -671,10 +671,10 @@ function afFactory(zclId) {
                         toLocalApp = localEp.isLocal() ? !localEp.isDelegator() : false;
 
                     if (toLocalApp) {
-                        mandatoryEvent = 'ZCL:incomingMsg:' + msg.srcaddr + ':' + msg.srcendpoint + ':' + msg.dstendpoint + ':' + msg.zclMsg.seqNum;
+                        mandatoryEvent = `ZCL:incomingMsg:${msg.srcaddr}:${msg.srcendpoint}:${msg.dstendpoint}:${msg.zclMsg.seqNum}`;
                     } else {
                         // to remote ep, receive the zcl command response
-                        mandatoryEvent = 'ZCL:incomingMsg:' + msg.srcaddr + ':' + msg.srcendpoint + ':' + msg.zclMsg.seqNum;
+                        mandatoryEvent = `ZCL:incomingMsg:${msg.srcaddr}:${msg.srcendpoint}:${msg.zclMsg.seqNum}`;
                     }
                 }
 

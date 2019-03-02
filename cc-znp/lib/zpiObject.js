@@ -99,7 +99,7 @@ ZpiObject.prototype.parse = function(type, bufLen, zBuf, callback) {
                 rule = rule(arg.name, bufLen);
                 chunkRules.push(rule);
             } else {
-                err = new Error('Parsing rule for ' + arg.type + ' is not found.');
+                err = new Error(`Parsing rule for ${arg.type} is not found.`);
             }
         });
     } else {
@@ -490,7 +490,7 @@ function addrBuf2Str(buf) {
     for (let i = 0; i < bufLen; i += 1) {
         val = buf.readUInt8(bufLen - i - 1);
         if (val <= 15) {
-            strChunk += '0' + val.toString(16);
+            strChunk += `0${val.toString(16)}`;
         } else {
             strChunk += val.toString(16);
         }

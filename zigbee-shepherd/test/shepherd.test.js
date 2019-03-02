@@ -87,7 +87,7 @@ describe('Top Level of Tests', function () {
     });
 
     describe('Constructor Check', () => {
-        const dbPath = __dirname + '/database/dev.db'
+        const dbPath = `${__dirname}/database/dev.db`
         const justDbPath = { dbPath }
 
         let shepherd;
@@ -127,7 +127,7 @@ describe('Top Level of Tests', function () {
     describe('Signature Check', () => {
         let shepherd;
         before(() => {
-            shepherd = new Shepherd('/dev/ttyUSB0', { dbPath: __dirname + '/database/dev.db' });
+            shepherd = new Shepherd('/dev/ttyUSB0', { dbPath: `${__dirname}/database/dev.db` });
             shepherd._enabled = true;
         });
 
@@ -200,7 +200,7 @@ describe('Top Level of Tests', function () {
     describe.skip('Functional Check', function () {
         let shepherd;
         before(() => {
-            shepherd = new Shepherd('/dev/ttyUSB0', { dbPath: __dirname + '/database/dev1.db' });
+            shepherd = new Shepherd('/dev/ttyUSB0', { dbPath: `${__dirname}/database/dev1.db` });
 
             shepherd.controller.request = function (subsys, cmdId, valObj, callback) {
                 const deferred = Q.defer();
