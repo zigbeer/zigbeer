@@ -1,3 +1,4 @@
+'use strict';
 const Enum = require('enum');
 
 const zpiMeta = require('./defs/zpi_meta.json');

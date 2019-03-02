@@ -1,3 +1,4 @@
+'use strict';
 var Q = require('q'),
     sinon = require('sinon'),
     expect = require('chai').expect,

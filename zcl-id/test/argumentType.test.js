@@ -1,3 +1,4 @@
+'use strict';
 const { zclId } = require("./zclId")
 
 describe("#._getCluster", function() {

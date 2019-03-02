@@ -1,3 +1,4 @@
+'use strict';
 var EventEmitter = require('events'),
     controller = new EventEmitter();
 
@@ -1458,7 +1459,8 @@ describe('Module Methods Check', function() {
             var fakeZclMsg,
                 seqNum1,
                 seqNum2,
-                seqNum3;
+                seqNum3,
+                seqNum4;
 
             af.zclClusterAttrsReq(rmEp1, 6, function (err, rsp) {
                 if (!err)
