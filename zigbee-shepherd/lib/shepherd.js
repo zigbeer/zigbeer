@@ -13,7 +13,6 @@ const zutils = require('./components/zutils');
 const Controller = require('./components/controller');
 const eventHandlers = require('./components/event_handlers');
 const Device = require('./model/device');
-const Coordinator = require('./model/coord');
 const Group = require('./model/group');
 const Coordpoint = require('./model/coordpoint');
 
@@ -458,7 +457,7 @@ ZShepherd.prototype._registerDev = function (dev, callback) {
     const devbox = this._devbox;
     let oldDev;
 
-    if (!(dev instanceof Device) && !(dev instanceof Coordinator))
+    if (!(dev instanceof Device))
         throw new TypeError('dev should be an instance of Device class.');
 
     oldDev = _.isNil(dev._getId()) ? undefined : devbox.get(dev._getId());
@@ -579,7 +578,6 @@ ZShepherd.prototype._attachZclMethods = function (ep) {
             let cfgRpt = true;
             let cfgRptRec;
             let attrIdVal;
-            let attrTypeVal;
 
             if (arguments.length === 1) {
                 cfgRpt = false;
