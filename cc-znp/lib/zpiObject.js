@@ -5,77 +5,78 @@ const Concentrate = Unpi.Concentrate;
 const DChunks = Unpi.DChunks;
 const ru = DChunks().Rule();
 
-/*
-    ZpiObject Class
-        1. Provides command framer (SREQ)
-        2. Provides parser (SRSP, AREQ)
-*/
-// args is optional, and can be an array or a value-object if given
-function ZpiObject(subsys, cmd, args) {
-    const subsystem = zmeta.Subsys.get(subsys);
-    let command;
-    let reqParams;
+/**
+ * 1. Provides command framer (SREQ)
+ * 2. Provides parser (SRSP, AREQ)
+ * 
+ * args is optional, and can be an array or a value-object if given
+ */
+class ZpiObject {
+    constructor(subsys, cmd, args) {
+        const subsystem = zmeta.Subsys.get(subsys);
+        let command;
+        let reqParams;
 
-    // string after assgined
-    this.type = undefined;
-    // string after assigned
-    this.subsys = undefined;
-    // string after assigned
-    this.cmd = undefined;
-    // number after assigned
-    this.cmdId = undefined;
-    // array after assigned: [ { name, type, value }, ... ]
-    this.args = undefined;
+        // string after assgined
+        this.type = undefined;
+        // string after assigned
+        this.subsys = undefined;
+        // string after assigned
+        this.cmd = undefined;
+        // number after assigned
+        this.cmdId = undefined;
+        // array after assigned: [ { name, type, value }, ... ]
+        this.args = undefined;
 
-    if (!subsystem) {
-        throw new Error('Unrecognized subsystem');
-    }
-
-    this.subsys = subsystem.key;
-    command = zmeta[this.subsys].get(cmd);
-
-    if (!command) {
-        throw new Error('Unrecognized command');
-    }
-
-    this.cmd = command.key;
-    this.cmdId = command.value;
-
-    this.type = zmeta.getType(this.subsys, this.cmd);
-
-    if (!this.type) {
-        throw new Error('Unrecognized type');
-    }
-
-    // if args is given, this is for REQ transmission
-    // otherwise, maybe just for parsing RSP packet
-    if (args) {
-        // [ { name, type }, ... ]
-        reqParams = zmeta.getReqParams(this.subsys, this.cmd);
-    }
-
-    if (reqParams) {
-        if (Array.isArray(args)) {
-            // arg: { name, type } -> { name, type, value }
-            reqParams.forEach((arg, idx) => {
-                arg.value = args[idx];
-            });
-        } else if (typeof args === 'object') {
-            reqParams.forEach((arg, idx) => {
-                if (!args.hasOwnProperty(arg.name)) {
-                    throw new Error('The argument object has incorrect properties');
-                } else {
-                    arg.value = args[arg.name];
-                }
-            });
+        if (!subsystem) {
+            throw new Error('Unrecognized subsystem');
         }
 
-        // [ { name, type, value }, ... ]
-        this.args = reqParams;
-    }
-}
+        this.subsys = subsystem.key;
+        command = zmeta[this.subsys].get(cmd);
 
-ZpiObject.prototype.parse = function(type, bufLen, zBuf, callback) {
+        if (!command) {
+            throw new Error('Unrecognized command');
+        }
+
+        this.cmd = command.key;
+        this.cmdId = command.value;
+
+        this.type = zmeta.getType(this.subsys, this.cmd);
+
+        if (!this.type) {
+            throw new Error('Unrecognized type');
+        }
+
+        // if args is given, this is for REQ transmission
+        // otherwise, maybe just for parsing RSP packet
+        if (args) {
+            // [ { name, type }, ... ]
+            reqParams = zmeta.getReqParams(this.subsys, this.cmd);
+        }
+
+        if (reqParams) {
+            if (Array.isArray(args)) {
+                // arg: { name, type } -> { name, type, value }
+                reqParams.forEach((arg, idx) => {
+                    arg.value = args[idx];
+                });
+            } else if (typeof args === 'object') {
+                reqParams.forEach((arg, idx) => {
+                    if (!args.hasOwnProperty(arg.name)) {
+                        throw new Error('The argument object has incorrect properties');
+                    } else {
+                        arg.value = args[arg.name];
+                    }
+                });
+            }
+
+            // [ { name, type, value }, ... ]
+            this.args = reqParams;
+        }
+    }
+
+    parse(type, bufLen, zBuf, callback) {
     const chunkRules = [];
     let err;
     let rspParams;
@@ -144,9 +145,9 @@ ZpiObject.prototype.parse = function(type, bufLen, zBuf, callback) {
     } else {
         parser.end(zBuf);
     }
-};
+    }
 
-ZpiObject.prototype.frame = function() {
+    frame() {
     // no args, cannot build frame
     if (!Array.isArray(this.args)) {
         return null;
@@ -195,7 +196,8 @@ ZpiObject.prototype.frame = function() {
     });
 
     return dataBuf.result();
-};
+    }
+}
 
 /*
     Add Parsing Rules to DChunks
