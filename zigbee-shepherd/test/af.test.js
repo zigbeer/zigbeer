@@ -1503,13 +1503,12 @@ describe('Module Methods Check', () => {
 
     describe('#.zclFoundation - by delegator', () => {
         test('zcl good send', done => {
-            let fakeZclMsg;
             af.zclFoundation(rmEp1, rmEp1, 3, 'read', [ { attrId: 0 }, { attrId: 1 }, { attrId: 3 } ], (err, zclMsg) => {
                 if (!err && (zclMsg === fakeZclMsg))
                     done();
             });
 
-            fakeZclMsg = {
+            const fakeZclMsg = {
                 seqNum: af._seq,
                 frameCntl: {
                     frameType: 0,  // Command acts across the entire profile (foundation)
@@ -1539,13 +1538,12 @@ describe('Module Methods Check', () => {
 
     describe('#.zclFoundation - by loEp8', () => {
         test('zcl good send', done => {
-            let fakeZclMsg;
             af.zclFoundation(loEp8, rmEp1, 3, 'read', [ { attrId: 0 }, { attrId: 1 }, { attrId: 3 } ], { direction: 0 }, (err, zclMsg) => {
                 if (!err && (zclMsg === fakeZclMsg))
                     done();
             });
 
-            fakeZclMsg = {
+            const fakeZclMsg = {
                 seqNum: af._seq,
                 frameCntl: {
                     frameType: 0,  // Command acts across the entire profile (foundation)
@@ -1560,7 +1558,6 @@ describe('Module Methods Check', () => {
         });
 
         test('zcl good send - rsp, no listen', done => {
-            let fakeZclMsg;
             af.zclFoundation(loEp8, rmEp1, 3, 'readRsp', [ { attrId: 0 }, { attrId: 1 }, { attrId: 3 } ], { direction: 1 }, (err, msg) => {
                 if (!err && (msg.status === 0))
                     done();
@@ -1586,14 +1583,13 @@ describe('Module Methods Check', () => {
 
     describe('#.zclFunctional - by delegator', () => {
         test('zcl good send', done => {
-            let fakeZclMsg;
 
             af.zclFunctional(rmEp1, rmEp1, 5, 'removeAll', { groupid: 1 }, { direction: 0 }, (err, zclMsg) => {
                 if (!err && (zclMsg === fakeZclMsg))
                     done();
             });
 
-            fakeZclMsg = {
+            const fakeZclMsg = {
                 seqNum: af._seq,
                 frameCntl: {
                     frameType: 1,
@@ -1623,14 +1619,13 @@ describe('Module Methods Check', () => {
 
     describe('#.zclFunctional - by loEp8', () => {
         test('zcl good send', done => {
-            let fakeZclMsg;
 
             af.zclFunctional(loEp8, rmEp1, 5, 'removeAll', { groupid: 1 }, { direction: 0 }, (err, zclMsg) => {
                 if (!err && (zclMsg === fakeZclMsg))
                     done();
             });
 
-            fakeZclMsg = {
+            const fakeZclMsg = {
                 seqNum: af._seq,
                 frameCntl: {
                     frameType: 1,
@@ -1645,7 +1640,6 @@ describe('Module Methods Check', () => {
 
 
         test('zcl good send - rsp, no listen', done => {
-            let fakeZclMsg;
 
             af.zclFunctional(loEp8, rmEp1, 5, 'removeAllRsp', { status: 0, groupid: 1 }, { direction: 1 }, (err, zclMsg) => {
                 if (!err )
@@ -1672,53 +1666,49 @@ describe('Module Methods Check', () => {
 
     describe('#.zclFoundation - by delegator - rawZclRsp', () => {
         test('zcl good send', done => {
-            let fakeZclRaw;
             af.zclFoundation(rmEp1, rmEp1, 3, 'read', [ { attrId: 0 }, { attrId: 1 }, { attrId: 3 } ], (err, zclMsg) => {
                 if (!err)
                     done();
             });
 
-            fakeZclRaw = Buffer.from([ 8, af._seq, 0, 10, 10]);
+            const fakeZclRaw = Buffer.from([ 8, af._seq, 0, 10, 10]);
             fireFakeZclRawRsp(rmEp1.getNwkAddr(), rmEp1.getEpId(), null, fakeZclRaw);
         });
     });
 
     describe('#.zclFoundation - by loEp8', () => {
         test('zcl good send', done => {
-            let fakeZclRaw;
             af.zclFoundation(loEp8, rmEp1, 3, 'read', [ { attrId: 0 }, { attrId: 1 }, { attrId: 3 } ], { direction: 0 }, (err, zclMsg) => {
                 if (!err)
                     done();
             });
 
-            fakeZclRaw = Buffer.from([ 8, af._seq, 0, 10, 10]);
+            const fakeZclRaw = Buffer.from([ 8, af._seq, 0, 10, 10]);
             fireFakeZclRawRsp(rmEp1.getNwkAddr(), rmEp1.getEpId(), loEp8.getEpId(), fakeZclRaw);
         });
     });
 
     describe('#.zclFunctional - by delegator', () => {
         test('zcl good send', done => {
-            let fakeZclRaw;
 
             af.zclFunctional(rmEp1, rmEp1, 5, 'removeAll', { groupid: 1 }, { direction: 0 }, (err, zclMsg) => {
                 if (!err)
                     done();
             });
 
-            fakeZclRaw = Buffer.from([ 9, af._seq, 3, 10, 10, 10]);
+            const fakeZclRaw = Buffer.from([ 9, af._seq, 3, 10, 10, 10]);
             fireFakeZclRawRsp(rmEp1.getNwkAddr(), rmEp1.getEpId(), null, fakeZclRaw, 5);
         });
     });
 
     describe('#.zclFunctional - by loEp8', () => {
         test('zcl good send', done => {
-            let fakeZclRaw;
 
             af.zclFunctional(loEp8, rmEp1, 5, 'removeAll', { groupid: 1 }, { direction: 0 }, (err, zclMsg) => {
                 if (!err)
                     done();
             });
-            fakeZclRaw = Buffer.from([ 9, af._seq, 3, 10, 10, 10]);
+            const fakeZclRaw = Buffer.from([ 9, af._seq, 3, 10, 10, 10]);
             fireFakeZclRawRsp(rmEp1.getNwkAddr(), rmEp1.getEpId(), loEp8.getEpId(), fakeZclRaw, 5);
         });
     });
@@ -1726,13 +1716,12 @@ describe('Module Methods Check', () => {
 
     describe('#.zclClusterAttrIdsReq', () => {
         test('zcl good send - only 1 rsp', done => {
-            let fakeZclMsg;
             af.zclClusterAttrIdsReq(rmEp1, 6, (err, rsp) => {
                 if (!err)
                     done();
             });
 
-            fakeZclMsg = {
+            const fakeZclMsg = {
                 seqNum: af._seq,
                 frameCntl: {
                     frameType: 0,  // Command acts across the entire profile (foundation)
@@ -1751,21 +1740,16 @@ describe('Module Methods Check', () => {
 
 
         test('zcl good send - 3 rsps', done => {
-            let fakeZclMsg;
-            let seqNum1;
-            let seqNum2;
-            let seqNum3;
-
             af.zclClusterAttrIdsReq(rmEp1, 6, (err, rsp) => {
                 if (!err)
                     done();
             });
 
-            seqNum1 = af._seq;
-            seqNum2 = af._seq + 1;
-            seqNum3 = af._seq + 2;
+            const seqNum1 = af._seq;
+            const seqNum2 = af._seq + 1;
+            const seqNum3 = af._seq + 2;
 
-            fakeZclMsg = {
+            const fakeZclMsg = {
                 seqNum: seqNum1,
                 frameCntl: {
                     frameType: 0,  // Command acts across the entire profile (foundation)
@@ -1799,13 +1783,12 @@ describe('Module Methods Check', () => {
 
     describe('#.zclClusterAttrsReq', () => {
         test('zcl good send - only 1 rsp', done => {
-            let fakeZclMsg;
             af.zclClusterAttrsReq(rmEp1, 6, (err, rsp) => {
                 if (!err)
                     done();
             });
 
-            fakeZclMsg = {
+            const fakeZclMsg = {
                 seqNum: af._seq,
                 frameCntl: {
                     frameType: 0,  // Command acts across the entire profile (foundation)
@@ -1831,23 +1814,17 @@ describe('Module Methods Check', () => {
 
 
         test('zcl good send - 3 rsps', done => {
-            let fakeZclMsg;
-            let seqNum1;
-            let seqNum2;
-            let seqNum3;
-            let seqNum4;
-
             af.zclClusterAttrsReq(rmEp1, 6, (err, rsp) => {
                 if (!err)
                     done();
             });
 
-            seqNum1 = af._seq;
-            seqNum2 = af._seq + 1;
-            seqNum3 = af._seq + 2;
-            seqNum4 = af._seq + 3;
+            const seqNum1 = af._seq;
+            const seqNum2 = af._seq + 1;
+            const seqNum3 = af._seq + 2;
+            const seqNum4 = af._seq + 3;
 
-            fakeZclMsg = {
+            const fakeZclMsg = {
                 seqNum: seqNum1,
                 frameCntl: {
                     frameType: 0,  // Command acts across the entire profile (foundation)
@@ -1889,48 +1866,51 @@ describe('Module Methods Check', () => {
     });
 
     describe('#.zclClustersReq', () => {
-       test('should resove for sequentially requests', done => {
-           const rmEp1GetClusterListStub = jest.spyOn(rmEp1, 'getClusterList').mockReturnValue([ 1, 2, 3, 4, 5 ]);
-           const rmEp1GetInClusterListStub = jest.spyOn(rmEp1, 'getInClusterList').mockReturnValue([ 1, 2, 3 ]);
-           const rmEp1GetOutClusterListStub = jest.spyOn(rmEp1, 'getOutClusterList').mockReturnValue([ 1, 3, 4, 5 ]);
+        test('should resove for sequentially requests', done => {
+            const rmEp1GetClusterListStub = jest.spyOn(rmEp1, 'getClusterList').mockReturnValue([ 1, 2, 3, 4, 5 ]);
+            const rmEp1GetInClusterListStub = jest.spyOn(rmEp1, 'getInClusterList').mockReturnValue([ 1, 2, 3 ]);
+            const rmEp1GetOutClusterListStub = jest.spyOn(rmEp1, 'getOutClusterList').mockReturnValue([ 1, 3, 4, 5 ]);
 
-           const requestStub = jest.spyOn(af, 'zclClusterAttrsReq').mockImplementation((dstEp, cId, callback) => {
-                   const deferred = Q.defer();
-                   setTimeout(() => {
-                       deferred.resolve({
-                           x1: { value: 'hello' },
-                           x2: { value: 'world' }
-                       });
-                   }, 10);
-                   return deferred.promise.nodeify(callback);
-           });
+            const requestStub = jest.spyOn(af, 'zclClusterAttrsReq').mockImplementation((dstEp, cId, callback) => {
+                    const deferred = Q.defer();
+                    setTimeout(() => {
+                        deferred.resolve({
+                            x1: { value: 'hello' },
+                            x2: { value: 'world' }
+                        });
+                    }, 10);
+                    return deferred.promise.nodeify(callback);
+            });
 
-           af.zclClustersReq(rmEp1, (err, data) => {
-               rmEp1GetClusterListStub.mockReturnValue();
-               rmEp1GetInClusterListStub.mockReturnValue();
-               rmEp1GetOutClusterListStub.mockReturnValue();
-               requestStub.mockRestore();
+            af.zclClustersReq(rmEp1, (err, data) => {
+                rmEp1GetClusterListStub.mockRestore();
+                rmEp1GetInClusterListStub.mockRestore();
+                rmEp1GetOutClusterListStub.mockRestore();
+                requestStub.mockRestore();
 
-               let good = false;
-               if (data.genPowerCfg.dir === 3 && data.genPowerCfg.attrs.x1.value === 'hello' && data.genPowerCfg.attrs.x2.value === 'world' )
-                   good = true;
+                expect(data.genPowerCfg.dir).toBe(3);
+                expect(data.genPowerCfg.attrs.x1.value).toBe('hello');
+                expect(data.genPowerCfg.attrs.x2.value).toBe('world');
 
-               if (data.genDeviceTempCfg.dir === 1 && data.genDeviceTempCfg.attrs.x1.value === 'hello' && data.genDeviceTempCfg.attrs.x2.value === 'world' )
-                   good = good && true;
+                expect(data.genDeviceTempCfg.dir).toBe(1);
+                expect(data.genDeviceTempCfg.attrs.x1.value).toBe('hello');
+                expect(data.genDeviceTempCfg.attrs.x2.value).toBe('world');
 
-               if (data.genIdentify.dir === 3 && data.genIdentify.attrs.x1.value === 'hello' && data.genIdentify.attrs.x2.value === 'world' )
-                   good = good && true;
+                expect(data.genIdentify.dir).toBe(3);
+                expect(data.genIdentify.attrs.x1.value).toBe('hello');
+                expect(data.genIdentify.attrs.x2.value).toBe('world');
 
-               if (data.genGroups.dir === 2 && data.genGroups.attrs.x1.value === 'hello' && data.genGroups.attrs.x2.value === 'world' )
-                   good = good && true;
+                expect(data.genGroups.dir).toBe(2);
+                expect(data.genGroups.attrs.x1.value).toBe('hello');
+                expect(data.genGroups.attrs.x2.value).toBe('world');
 
-               if (data.genScenes.dir === 2 && data.genScenes.attrs.x1.value === 'hello' && data.genScenes.attrs.x2.value === 'world' )
-                   good = good && true;
+                expect(data.genScenes.dir).toBe(2);
+                expect(data.genScenes.attrs.x1.value).toBe('hello');
+                expect(data.genScenes.attrs.x2.value).toBe('world');
 
-               if (good)
-                   done();
-           });
-       });
+                done();
+            });
+        });
 
        // it('should reject for sequentially requests when receiver bad', function (done) {
        //      var rmEp1GetClusterListStub = jest.spyOn(rmEp1, 'getClusterList').mockReturnValue([ 1, 2, 3, 4, 5 ]),
