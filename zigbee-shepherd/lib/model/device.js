@@ -3,7 +3,8 @@
 
 const _ = require('busyman');
 
-function Device(devInfo) {
+class Device {
+constructor(devInfo) {
     // devInfo = { type, ieeeAddr, nwkAddr, manufId, manufName, powerSource, modelId, epList }
 
     this._id = null;
@@ -22,7 +23,7 @@ function Device(devInfo) {
     this.endpoints = {};        // key is epId in number, { epId: epInst, epId: epInst, ... }
 }
 
-Device.prototype.dump = function () {
+dump() {
     const dumpOfEps = {};
 
     _.forEach(this.endpoints, (ep, epId) => {
@@ -45,23 +46,23 @@ Device.prototype.dump = function () {
     };
 };
 
-Device.prototype.getEndpoint = function (epId) {
+getEndpoint(epId) {
     return this.endpoints[epId];
 };
 
-Device.prototype.getIeeeAddr = function () {
+getIeeeAddr() {
     return this.ieeeAddr;
 };
 
-Device.prototype.getNwkAddr = function () {
+getNwkAddr() {
     return this.nwkAddr;
 };
 
-Device.prototype.getManufId = function () {
+getManufId() {
     return this.manufId;
 };
 
-Device.prototype.update = function (info) {
+update(info) {
     const self = this;
     const infoKeys = [ 'type', 'ieeeAddr', 'nwkAddr','manufId', 'epList', 'status', 'joinTime', 'manufName', 'modelId', 'powerSource' ];
 
@@ -71,7 +72,7 @@ Device.prototype.update = function (info) {
     });
 };
 
-Device.prototype._recoverFromRecord = function (rec) {
+_recoverFromRecord(rec) {
     this._recovered = true;
     this.status = 'offline';
     this._setId(rec.id);
@@ -79,12 +80,14 @@ Device.prototype._recoverFromRecord = function (rec) {
     return this;
 };
 
-Device.prototype._setId = function (id) {
+_setId(id) {
     this._id = id;
 };
 
-Device.prototype._getId = function () {
+_getId() {
     return this._id;
 };
+
+}
 
 module.exports = Device;

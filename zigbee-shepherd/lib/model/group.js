@@ -1,7 +1,8 @@
 /* jshint node: true */
 'use strict';
 
-function Group(groupID) {
+class Group {
+constructor(groupID) {
     this.groupID = groupID;
 
     this.isLocal = function () {
@@ -11,6 +12,8 @@ function Group(groupID) {
     this.getEpId = function () {
         return 1;
     };
+}
+
 }
 
 module.exports = Group;

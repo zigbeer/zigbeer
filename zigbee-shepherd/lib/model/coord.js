@@ -2,21 +2,21 @@
 'use strict';
 
 const _ = require('busyman');
-const util = require('util');
 const Device = require('./device');
 
-function Coordinator(devInfo) {
+class Coordinator extends Device {
+constructor(devInfo) {
     // devInfo = { type, ieeeAddr, nwkAddr, manufId, epList }
 
-    Device.call(this, devInfo);
+    super(devInfo);
 
     this.status = 'online';
 }
 
-util.inherits(Coordinator, Device);
-
-Coordinator.prototype.getDelegator = function (profId) {
+getDelegator(profId) {
     return _.find(this.endpoints, ep => ep.isDelegator() && ep.getProfId() === profId);
 };
+
+}
 
 module.exports = Coordinator;

@@ -1,16 +1,16 @@
 /* jshint node: true */
 'use strict';
 
-const util = require('util');
 const Endpoint = require('./endpoint');
 
-function Coordpoint(coord, simpleDesc, isDelegator) {
+class Coordpoint extends Endpoint {
+constructor (coord, simpleDesc, isDelegator) {
     // simpleDesc = { profId, epId, devId, inClusterList, outClusterList }
 
     // coordpoint is a endpoint, but a 'LOCAL' endpoint
     // This class is used to create delegators, local applications
 
-    Endpoint.call(this, coord, simpleDesc);
+    super(coord, simpleDesc);
 
     this.isLocal = function () {
         return true;                      // this is a local endpoint, always return true
@@ -21,6 +21,6 @@ function Coordpoint(coord, simpleDesc, isDelegator) {
     };
 }
 
-util.inherits(Coordpoint, Endpoint);
+}
 
 module.exports = Coordpoint;

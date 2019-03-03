@@ -3,7 +3,8 @@
 
 const _ = require('busyman');
 
-function Endpoint(device, simpleDesc) { 
+class Endpoint {
+constructor(device, simpleDesc) {
     // simpleDesc = { profId, epId, devId, inClusterList, outClusterList }
 
     this.isLocal = function () {
@@ -41,7 +42,7 @@ function Endpoint(device, simpleDesc) {
 /*************************************************************************************************/
 /*** Public Methods                                                                            ***/
 /*************************************************************************************************/
-Endpoint.prototype.getSimpleDesc = function () {
+getSimpleDesc() {
     return {
         profId: this.profId,
         epId: this.epId,
@@ -51,15 +52,15 @@ Endpoint.prototype.getSimpleDesc = function () {
     };
 };
 
-Endpoint.prototype.getIeeeAddr = function () {
+getIeeeAddr() {
     return this.getDevice().getIeeeAddr();
 };
 
-Endpoint.prototype.getNwkAddr = function () {
+getNwkAddr() {
     return this.getDevice().getNwkAddr();
 };
 
-Endpoint.prototype.dump = function () {
+dump() {
     const dumped = this.getSimpleDesc();
 
     dumped.clusters = this.clusters.dumpSync();
@@ -77,7 +78,7 @@ Endpoint.prototype.dump = function () {
 /*************************************************************************************************/
 /*** Protected Methods                                                                         ***/
 /*************************************************************************************************/
-Endpoint.prototype.isZclSupported = function () {
+isZclSupported() {
     let zclSupport = false;
 
     if (this.profId < 0x8000 && this.devId < 0xc000)
@@ -90,31 +91,31 @@ Endpoint.prototype.isZclSupported = function () {
     return zclSupport;
 };
 
-Endpoint.prototype.getDevice = function () {
+getDevice() {
     return this.device;
 };
 
-Endpoint.prototype.getProfId = function () {
+getProfId() {
     return this.profId;
 };
 
-Endpoint.prototype.getEpId = function () {
+getEpId() {
     return this.epId;
 };
 
-Endpoint.prototype.getDevId = function () {
+getDevId() {
     return this.devId;
 };
 
-Endpoint.prototype.getInClusterList = function () {
+getInClusterList() {
     return _.cloneDeep(this.inClusterList);
 };
 
-Endpoint.prototype.getOutClusterList = function () {
+getOutClusterList() {
     return _.cloneDeep(this.outClusterList);
 };
 
-Endpoint.prototype.getClusterList = function () {
+getClusterList() {
     const clusterList = this.getInClusterList();
 
     this.getOutClusterList().forEach(cId => {
@@ -125,15 +126,15 @@ Endpoint.prototype.getClusterList = function () {
     return clusterList.sort((a, b) => a - b);
 };
 
-Endpoint.prototype.getClusters = function () {
+getClusters() {
     return this.clusters;
 };
 
-Endpoint.prototype.getManufId = function () {
+getManufId() {
     return this.getDevice().getManufId();
 };
 
-Endpoint.prototype.update = function (simpleDesc) {
+update(simpleDesc) {
     const self = this;
     const descKeys = [ 'profId', 'epId', 'devId','inClusterList', 'outClusterList' ];
 
@@ -142,5 +143,7 @@ Endpoint.prototype.update = function (simpleDesc) {
             self[key] = val;
     });
 };
+
+}
 
 module.exports = Endpoint;
