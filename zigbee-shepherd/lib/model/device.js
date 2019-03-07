@@ -1,7 +1,7 @@
 /* jshint node: true */
 'use strict';
 
-const _ = require('busyman');
+const {cloneDeep} = require('busyman');
 
 class Device {
 constructor(devInfo) {
@@ -26,7 +26,7 @@ constructor(devInfo) {
 dump() {
     const dumpOfEps = {};
 
-    _.forEach(this.endpoints, (ep, epId) => {
+    Object.entries(this.endpoints).forEach(([epId, ep]) => {
         dumpOfEps[epId] = ep.dump();
     });
 
@@ -39,7 +39,7 @@ dump() {
         manufName: this.manufName,
         powerSource: this.powerSource,
         modelId: this.modelId,
-        epList: _.cloneDeep(this.epList),
+        epList: cloneDeep(this.epList),
         status: this.status,
         joinTime: this.joinTime,
         endpoints: dumpOfEps
@@ -66,8 +66,8 @@ update(info) {
     const self = this;
     const infoKeys = [ 'type', 'ieeeAddr', 'nwkAddr','manufId', 'epList', 'status', 'joinTime', 'manufName', 'modelId', 'powerSource' ];
 
-    _.forEach(info, (val, key) => {
-        if (_.includes(infoKeys, key))
+    Object.entries(info).forEach(([key, val]) => {
+        if (infoKeys.includes(key))
             self[key] = val;
     });
 };

@@ -1,7 +1,7 @@
 /* jshint node: true */
 'use strict';
 
-const _ = require('busyman');
+const {has, get, set} = require('busyman');
 const proving = require('proving');
 
 const zutils = {};
@@ -22,9 +22,9 @@ zutils.toHexString = function (val, type) {
 zutils.toLongAddrString = function (addr) {
     let longAddr;
 
-    if (_.isString(addr))
-        longAddr = (_.startsWith(addr, '0x') || _.startsWith(addr, '0X')) ? addr.slice(2, addr.length).toLowerCase() : addr.toLowerCase();
-    else if (_.isNumber(addr))
+    if (typeof addr === "string")
+        longAddr = (addr.startsWith('0x') || addr.startsWith('0X')) ? addr.slice(2, addr.length).toLowerCase() : addr.toLowerCase();
+    else if (typeof addr === "number")
         longAddr = addr.toString(16);
     else
         throw new TypeError('Address can only be a number or a string.');
@@ -79,9 +79,9 @@ zutils.objectDiff = function (oldObj, newObj) {
     const pvp = zutils.buildPathValuePairs('/', newObj);
     const diff = {};
 
-    _.forEach(pvp, (val, path) => {
-        if (!_.has(oldObj, path) || _.get(oldObj, path) !== val)
-            _.set(diff, path, val);
+    Object.entries(pvp).forEach(([path, val]) => {
+        if (!has(oldObj, path) || get(oldObj, path) !== val)
+            set(diff, path, val);
     });
 
     return diff;
