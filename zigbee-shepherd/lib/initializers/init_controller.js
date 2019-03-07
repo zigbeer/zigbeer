@@ -2,7 +2,7 @@
 'use strict';
 
 const Q = require('q');
-const _ = require('busyman');
+const {isEqual} = require('busyman');
 const Ziee = require('ziee');
 const debug = require('debug')('zigbee-shepherd:init');
 const Coordinator = require('../model/coord');
@@ -67,7 +67,7 @@ init._registerDelegators = function (controller, netInfo) {
     return controller.simpleDescReq(0, netInfo.ieeeAddr).then(devInfo => {
         const deregisterEps = [];
 
-        _.forEach(devInfo.epList, epId => {
+        devInfo.epList.forEach(epId => {
             if (epId > 10) {
                 deregisterEps.push(() => controller.request('AF', 'delete', { endpoint: epId }).delay(10).then(() => {
                     debug('Deregister endpoint, epId: %s', epId);
@@ -88,7 +88,7 @@ init._registerDelegators = function (controller, netInfo) {
         else
             coord.endpoints = {};
 
-        _.forEach(dlgInfos, dlgInfo => {
+        dlgInfos.forEach(dlgInfo => {
             const dlgDesc = { profId: dlgInfo.profId, epId: dlgInfo.epId, devId: 0x0005, inClusterList: [], outClusterList: [] };
             const dlgEp = new Coordpoint(coord, dlgDesc, true);
             let simpleDesc;
@@ -96,9 +96,9 @@ init._registerDelegators = function (controller, netInfo) {
             dlgEp.clusters = new Ziee();
             coord.endpoints[dlgEp.getEpId()] = dlgEp;
 
-            simpleDesc = _.find(devInfo.endpoints, ep => ep.epId === dlgInfo.epId);
+            simpleDesc = devInfo.endpoints.find(ep => ep.epId === dlgInfo.epId);
 
-            if (!_.isEqual(dlgDesc, simpleDesc)) {
+            if (!isEqual(dlgDesc, simpleDesc)) {
                 registerDlgs.push(() => controller.registerEp(dlgEp).delay(10).then(() => {
                     debug('Register delegator, epId: %s, profId: %s ', dlgEp.getEpId(), dlgEp.getProfId());
                 }));

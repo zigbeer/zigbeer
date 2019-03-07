@@ -1,7 +1,7 @@
 /* jshint node: true */
 'use strict';
 
-const _ = require('busyman');
+const {cloneDeep} = require('busyman');
 
 class Endpoint {
 constructor(device, simpleDesc) {
@@ -47,8 +47,8 @@ getSimpleDesc() {
         profId: this.profId,
         epId: this.epId,
         devId: this.devId,
-        inClusterList: _.cloneDeep(this.inClusterList),
-        outClusterList: _.cloneDeep(this.outClusterList),
+        inClusterList: cloneDeep(this.inClusterList),
+        outClusterList: cloneDeep(this.outClusterList),
     };
 };
 
@@ -108,18 +108,18 @@ getDevId() {
 };
 
 getInClusterList() {
-    return _.cloneDeep(this.inClusterList);
+    return cloneDeep(this.inClusterList);
 };
 
 getOutClusterList() {
-    return _.cloneDeep(this.outClusterList);
+    return cloneDeep(this.outClusterList);
 };
 
 getClusterList() {
     const clusterList = this.getInClusterList();
 
     this.getOutClusterList().forEach(cId => {
-        if (!_.includes(clusterList, cId)) 
+        if (!clusterList.includes(cId)) 
             clusterList.push(cId);
     });
 
@@ -138,8 +138,8 @@ update(simpleDesc) {
     const self = this;
     const descKeys = [ 'profId', 'epId', 'devId','inClusterList', 'outClusterList' ];
 
-    _.forEach(simpleDesc, (val, key) => {
-        if (_.includes(descKeys, key))
+    Object.entries(simpleDesc).forEach(([key, val]) => {
+        if (descKeys.includes(key))
             self[key] = val;
     });
 };

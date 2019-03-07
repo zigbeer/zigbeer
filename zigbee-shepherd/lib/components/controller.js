@@ -1,10 +1,10 @@
 /* jshint node: true */
 'use strict';
 
-const util = require('util');
 const EventEmitter = require('events');
 const Q = require('q');
 const _ = require('busyman');
+const {isPlainObject, cloneDeep, isEqual} = _;
 const znp = require('cc-znp');
 const proving = require('proving');
 const ZSC = require('zstack-constants');
@@ -32,7 +32,7 @@ class Controller extends EventEmitter {
 
         let transId = 0;
 
-        if (!_.isPlainObject(cfg))
+        if (!isPlainObject(cfg))
             throw new TypeError('cfg should be an object.');
 
         /***************************************************/
@@ -151,13 +151,13 @@ class Controller extends EventEmitter {
     /*** Public ZigBee Utility APIs                                                                ***/
     /*************************************************************************************************/
     getFirmwareInfo() {
-        const firmware = _.cloneDeep(this._firmware);
+        const firmware = cloneDeep(this._firmware);
 
         return firmware;
     };
 
     getNetInfo() {
-        const net = _.cloneDeep(this._net);
+        const net = cloneDeep(this._net);
 
         if (net.state === ZSC.ZDO.devStates.ZB_COORD)
             net.state = 'Coordinator';
@@ -170,8 +170,8 @@ class Controller extends EventEmitter {
     setNetInfo(netInfo) {
         const self = this;
 
-        _.forEach(netInfo, (val, key) => {
-            if (_.has(self._net, key))
+        Object.entries(netInfo).forEach(([key, val]) => {
+            if (self._net.hasOwnProperty(key))
                 self._net[key] = val;
         });
     };
@@ -282,10 +282,10 @@ class Controller extends EventEmitter {
         proving.stringOrNumber(subsys, 'subsys should be a number or a string.');
         proving.stringOrNumber(cmdId, 'cmdId should be a number or a string.');
 
-        if (!_.isPlainObject(valObj) && !_.isArray(valObj))
+        if (!isPlainObject(valObj) && !Array.isArray(valObj))
             throw new TypeError('valObj should be an object or an array.');
 
-        if (_.isString(subsys))
+        if (typeof subsys === "string")
             subsys = subsys.toUpperCase();
 
         rspHdlr = function (err, rsp) {
@@ -374,7 +374,7 @@ class Controller extends EventEmitter {
 
         if (!(dev instanceof Device))
             throw new TypeError('dev should be an instance of Device class.');
-        else if (!_.isPlainObject(cfg))
+        else if (!isPlainObject(cfg))
             throw new TypeError('cfg should be an object.');
 
         cfg.reJoin = cfg.hasOwnProperty('reJoin') ? !!cfg.reJoin : true;               // defaults to true
@@ -412,7 +412,7 @@ class Controller extends EventEmitter {
             throw new TypeError('loEp should be an instance of Coordpoint class.');
 
         return Q.fcall(() => {
-            if (!_.includes(coordEps, loEp))
+            if (!Object.values(coordEps).includes(loEp))
                 return Q.reject(new Error('Endpoint not maintained by Coordinator, cannot be removed.'));
             else
                 return self.request('AF', 'delete', { endpoint: loEp.getEpId() });
@@ -449,21 +449,21 @@ class Controller extends EventEmitter {
         net = net || {};
         proving.object(net, 'opts.net should be an object.');
 
-        _.forEach(net, (val, param) => {
+        Object.entries(net).forEach(([param, val]) => {
             switch (param) {
                 case 'panId':
                     proving.number(val, 'net.panId should be a number.');
                     nvParams.panId.value = [ val & 0xFF, (val >> 8) & 0xFF ];
                     break;
                 case 'extPanId':
-                    if (val && (!_.isArray(val) || val.length !== 8))
+                    if (val && (!Array.isArray(val) || val.length !== 8))
                         throw new TypeError('net.extPanId should be an array with 8 uint8 integers.');
                     if (val) {
                         nvParams.extPanId.value = val;
                     }
                     break;
                 case 'precfgkey':
-                    if (!_.isArray(val) || val.length !== 16)
+                    if (!Array.isArray(val) || val.length !== 16)
                         throw new TypeError('net.precfgkey should be an array with 16 uint8 integers.');
                     nvParams.precfgkey.value = val;
                     break;
@@ -479,7 +479,7 @@ class Controller extends EventEmitter {
                     proving.array(val, 'net.channelList should be an array.');
                     let chList = 0;
 
-                    _.forEach(val, ch => {
+                    val.forEach(ch => {
                         if (ch >= 11 && ch <= 26)
                             chList = chList | ZSC.ZDO.channelMask[`CH${ch}`];
                     });
@@ -508,22 +508,22 @@ class Controller extends EventEmitter {
 
         steps = [
             function () { return self.request('SYS', 'osalNvRead', nvParams.znpHasConfigured).delay(10).then(rsp => {
-                if (!_.isEqual(bufToArray(rsp.value), nvParams.znpHasConfigured.value)) return Q.reject('reset');
+                if (!isEqual(bufToArray(rsp.value), nvParams.znpHasConfigured.value)) return Q.reject('reset');
             }); },
             function () { return self.request('SAPI', 'readConfiguration', nvParams.panId).delay(10).then(rsp => {
-                if (!_.isEqual(bufToArray(rsp.value), nvParams.panId.value)) return Q.reject('reset');
+                if (!isEqual(bufToArray(rsp.value), nvParams.panId.value)) return Q.reject('reset');
             }); },
             function () { return self.request('SAPI', 'readConfiguration', nvParams.extPanId).delay(10).then(rsp => {
-                if (!_.isEqual(bufToArray(rsp.value), nvParams.extPanId.value)) return Q.reject('reset');
+                if (!isEqual(bufToArray(rsp.value), nvParams.extPanId.value)) return Q.reject('reset');
             }); },
             function () { return self.request('SAPI', 'readConfiguration', nvParams.channelList).delay(10).then(rsp => {
-                if (!_.isEqual(bufToArray(rsp.value), nvParams.channelList.value)) return Q.reject('reset');
+                if (!isEqual(bufToArray(rsp.value), nvParams.channelList.value)) return Q.reject('reset');
             }); },
             function () { return self.request('SAPI', 'readConfiguration', nvParams.precfgkey).delay(10).then(rsp => {
-                if (!_.isEqual(bufToArray(rsp.value), nvParams.precfgkey.value)) return Q.reject('reset');
+                if (!isEqual(bufToArray(rsp.value), nvParams.precfgkey.value)) return Q.reject('reset');
             }); },
             function () { return self.request('SAPI', 'readConfiguration', nvParams.precfgkeysEnable).delay(10).then(rsp => {
-                if (!_.isEqual(bufToArray(rsp.value), nvParams.precfgkeysEnable.value)) return Q.reject('reset');
+                if (!isEqual(bufToArray(rsp.value), nvParams.precfgkeysEnable.value)) return Q.reject('reset');
             }); }
         ];
 

@@ -3,7 +3,6 @@
 
 const Q = require('q');
 const EventEmitter = require('events');
-const _ = require('busyman');
 const Ziee = require('ziee');
 const ZSC = require('zstack-constants');
 
@@ -13,6 +12,7 @@ const debug = {
     request: require('debug')('zigbee-shepherd:request'),
 };
 
+const {cloneDeep} = require('busyman');
 const Device = require('../model/device');
 const Endpoint = require('../model/endpoint');
 
@@ -22,7 +22,7 @@ handlers.attachEventHandlers = function (shepherd) {
     const controller = shepherd.controller;
     const hdls = {};
 
-    _.forEach(handlers, (hdl, key) => {
+    Object.entries(handlers).forEach(([key, hdl]) => {
         if (key !== 'attachEventHandlers')
             hdls[key] = hdl.bind(shepherd);
     });
@@ -140,7 +140,7 @@ handlers.devIncoming = function (devInfo, resolve) {
                 const ep = dev.getEndpoint(i);
                 const clusterList = ep.getClusterList();
 
-                if (_.isArray(clusterList) && clusterList.indexOf(0) > -1) {
+                if (Array.isArray(clusterList) && clusterList.includes(0)) {
                     // genBasic found
                     basicEpInst = ep;
                     break;
@@ -152,7 +152,7 @@ handlers.devIncoming = function (devInfo, resolve) {
             // Get manufName, modelId and powerSource information
             return self.af.zclFoundation(basicEpInst, basicEpInst, 0, 'read', [{ attrId: 4 }, { attrId: 5 }, { attrId: 7 }]).then(readStatusRecsRsp => {
                 const data = {};
-                if (readStatusRecsRsp && _.isArray(readStatusRecsRsp.payload)) {
+                if (readStatusRecsRsp && Array.isArray(readStatusRecsRsp.payload)) {
                     readStatusRecsRsp.payload.forEach(item => {  // { attrId, status, dataType, attrData }
                         if (item && item.hasOwnProperty('attrId') && item.hasOwnProperty('attrData')) {
                             if (item.attrId === 7)
@@ -175,7 +175,7 @@ handlers.devIncoming = function (devInfo, resolve) {
             return dev;
         }
     }).then(dev => {
-        const numberOfEndpoints = _.keys(dev.endpoints).length;
+        const numberOfEndpoints = Object.keys(dev.endpoints).length;
 
         const interviewEvents = new EventEmitter();
         interviewEvents.on('ind:interview', status => {
@@ -183,10 +183,10 @@ handlers.devIncoming = function (devInfo, resolve) {
             self.emit('ind:interview', dev.ieeeAddr, status);
         });
 
-        _.forEach(dev.endpoints, ep => {
+        Object.values(dev.endpoints).forEach(ep => {
             // if (ep.isZclSupported())
             clustersReqs.push(() => self.af.zclClustersReq(ep, interviewEvents).then(clusters => {
-                _.forEach(clusters, (cInfo, cid) => {
+                Object.entries(clusters).forEach(([cid, cInfo]) => {
                     ep.clusters.init(cid, 'dir', { value: cInfo.dir });
                     ep.clusters.init(cid, 'attrs', cInfo.attrs, false);
                 });
@@ -195,13 +195,13 @@ handlers.devIncoming = function (devInfo, resolve) {
 
         return clustersReqs.reduce((soFar, fn) => soFar.then(fn), Q(0));
     }).then(() => {
-        if (_.isFunction(self.acceptDevIncoming)) {
+        if (typeof self.acceptDevIncoming === "function") {
             const info = {
                 ieeeAddr: dev.getIeeeAddr(),
                 endpoints: []
             };
 
-            _.forEach(dev.epList, epId => {
+            dev.epList.forEach(epId => {
                 info.endpoints.push(dev.getEndpoint(epId));
             });
 
@@ -239,7 +239,7 @@ handlers.leaveInd = function (msg) {
 
     if (dev) {
         const ieeeAddr = dev.getIeeeAddr();
-        const epList = _.cloneDeep(dev.epList);
+        const epList = cloneDeep(dev.epList);
 
         if (msg.request)    // request
             this._unregisterDev(dev);
@@ -258,7 +258,7 @@ handlers.stateChangeInd = function (msg) {
 
     let devStates = msg.state;
 
-    _.forEach(ZSC.ZDO.devStates, (statesCode, states) => {
+    Object.entries(ZSC.ZDO.devStates).forEach(([states, statesCode]) => {
         if (msg.state === statesCode)
             devStates = states;
     });

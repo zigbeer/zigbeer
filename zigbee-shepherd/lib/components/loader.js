@@ -2,7 +2,6 @@
 'use strict';
 
 const Q = require('q');
-const _ = require('busyman');
 const Ziee = require('ziee');
 const Device = require('../model/device');
 const Endpoint = require('../model/endpoint');
@@ -22,12 +21,12 @@ loader.reloadSingleDev = function (shepherd, devRec, callback) {
 
     const recoveredDev = new Device(devRec);
 
-    _.forEach(devRec.endpoints, (epRec, epId) => {
+    Object.entries(devRec.endpoints).forEach(([epId, epRec]) => {
         const recoveredEp = new Endpoint(recoveredDev, epRec);
 
         recoveredEp.clusters = new Ziee();
 
-        _.forEach(epRec.clusters, (cInfo, cid) => {
+        Object.entries(epRec.clusters).forEach(([cid, cInfo]) => {
             recoveredEp.clusters.init(cid, 'dir', cInfo.dir);
             recoveredEp.clusters.init(cid, 'attrs', cInfo.attrs, false);
         });

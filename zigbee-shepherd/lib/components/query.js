@@ -2,7 +2,6 @@
 'use strict';
 
 const Q = require('q');
-const _ = require('busyman');
 const proving = require('proving');
 const ZSC = require('zstack-constants');
 const Endpoint  = require('../model/endpoint');
@@ -24,7 +23,7 @@ query.coordState = function (callback) {
 };
 
 query.network = function (param, callback) {
-    if (_.isFunction(param)) {
+    if (typeof param === "function") {
         callback = param;
         param = null;
     }
@@ -92,7 +91,7 @@ query.deviceWithEndpoints = function (nwkAddr, ieeeAddr, callback) {
     query.device(ieeeAddr, nwkAddr).then(devInfo => {
         fullDev = devInfo;
 
-        _.forEach(fullDev.epList, epId => {
+        fullDev.epList.forEach(epId => {
             const epQuery = {func: query.endpoint, nwkAddr, epId};
             epQueries.push(epQuery);
         });
@@ -126,7 +125,7 @@ query.setBindingEntry = function (bindMode, srcEp, cId, dstEpOrGrpId, callback, 
 
     proving.defined(cIdItem, `Invalid cluster id: ${cId}.`);
 
-    if (_.isNumber(dstEpOrGrpId) && !_.isNaN(dstEpOrGrpId))
+    if (typeof dstEpOrGrpId === "number" && !isNaN(dstEpOrGrpId))
         grpId = dstEpOrGrpId;
     else if (dstEpOrGrpId instanceof Endpoint || dstEpOrGrpId instanceof Coordpoint)
         dstEp = dstEpOrGrpId;
@@ -169,7 +168,7 @@ query._network = function (param, callback) {
     const prop = ZSC.SAPI.zbDeviceInfo[param];
 
     return Q.fcall(() => {
-        if (_.isNil(prop))
+        if (prop == null)
             return Q.reject(new Error('Unknown network property.'));
         else
             return controller.request('SAPI', 'getDeviceInfo', { param: prop });
@@ -209,7 +208,7 @@ query._networkAll = function (callback) {
 
     const steps = [];
 
-    _.forEach(paramsInfo, paramInfo => {
+    paramsInfo.forEach(paramInfo => {
         steps.push(net => query._network(paramInfo.param).then(value => {
             net[paramInfo.name] = value;
             return net;

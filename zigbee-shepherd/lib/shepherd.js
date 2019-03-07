@@ -3,7 +3,6 @@
 
 const EventEmitter = require('events');
 const Q = require('q');
-const _ = require('busyman');
 const proving = require('proving');
 const Objectbox = require('objectbox');
 const debug = { shepherd: require('debug')('zigbee-shepherd') };
@@ -81,7 +80,7 @@ class ZShepherd extends EventEmitter {
         this.on('ind:incoming', dev => {
             const endpoints = [];
 
-            _.forEach(dev.epList, epId => {
+            dev.epList.forEach(epId => {
                 endpoints.push(dev.getEndpoint(epId));
             });
 
@@ -139,7 +138,7 @@ class ZShepherd extends EventEmitter {
             cIdString = cIdString ? cIdString.key : cId;
             notifData.cid = cIdString;
 
-            _.forEach(attrs, rec => {  // { attrId, dataType, attrData }
+            attrs.forEach(rec => {  // { attrId, dataType, attrData }
                 let attrIdString = self.zclId.attr(cIdString, rec.attrId);
                 attrIdString = attrIdString ? attrIdString.key : rec.attrId;
 
@@ -152,7 +151,7 @@ class ZShepherd extends EventEmitter {
         this.on('ind:status', (dev, status) => {
             const endpoints = [];
 
-            _.forEach(dev.epList, epId => {
+            dev.epList.forEach(epId => {
                 endpoints.push(dev.getEndpoint(epId));
             });
 
@@ -181,7 +180,7 @@ class ZShepherd extends EventEmitter {
         return Q.fcall(() => {
             if (self._enabled) {
                 self.permitJoin(0x00, 'all');
-                _.forEach(devbox.exportAllIds(), id => {
+                devbox.exportAllIds().forEach(id => {
                     devbox.removeElement(id);
                 });
                 return self.controller.close();
@@ -204,7 +203,7 @@ class ZShepherd extends EventEmitter {
         if (mode === 'hard' || mode === 0) {
             // clear database
             if (devbox) {
-                _.forEach(devbox.exportAllIds(), id => {
+                devbox.exportAllIds().forEach(id => {
                     removeDevs.push(Q.ninvoke(devbox, 'remove', id));
                 });
 
@@ -225,7 +224,7 @@ class ZShepherd extends EventEmitter {
     };
 
     permitJoin(time, type, callback) {
-        if (_.isFunction(type) && !_.isFunction(callback)) {
+        if (typeof type === "function" && typeof callback !== "function") {
             callback = type;
             type = 'all';
         } else {
@@ -278,7 +277,7 @@ class ZShepherd extends EventEmitter {
         this._mounting = true;
 
         Q.fcall(() => {
-            _.forEach(self._zApp, app => {
+            self._zApp.forEach(app => {
                 if (app === zApp)
                     throw new  Error('zApp already exists.');
             });
@@ -329,22 +328,22 @@ class ZShepherd extends EventEmitter {
         const self = this;
         let foundDevs;
 
-        if (_.isString(ieeeAddrs))
+        if (typeof ieeeAddrs === "string")
             ieeeAddrs = [ ieeeAddrs ];
-        else if (!_.isUndefined(ieeeAddrs) && !_.isArray(ieeeAddrs))
+        else if (typeof ieeeAddrs !== "undefined" && !Array.isArray(ieeeAddrs))
             throw new TypeError('ieeeAddrs should be a string or an array of strings if given.');
         else if (!ieeeAddrs)
-            ieeeAddrs = _.map(this._devbox.exportAllObjs(), dev => // list all
+            ieeeAddrs = this._devbox.exportAllObjs().map(dev => // list all
             dev.getIeeeAddr());
 
-        foundDevs = _.map(ieeeAddrs, ieeeAddr => {
+        foundDevs = ieeeAddrs.map(ieeeAddr => {
             proving.string(ieeeAddr, 'ieeeAddr should be a string.');
 
-            let devInfo;
             const found = self._findDevByAddr(ieeeAddr);
 
-            if (found)
-                devInfo = _.omit(found.dump(), [ 'id', 'endpoints' ]);
+            if (!found) return
+                
+            const {id, endpoints, ...devInfo} = found.dump();
 
             return devInfo;  // will push undefined to foundDevs array if not found
         });
@@ -379,7 +378,7 @@ class ZShepherd extends EventEmitter {
                 return Q.reject(new Error('device is not found.'));
         }).then(rsp => {   // { srcaddr, status, neighbortableentries, startindex, neighborlqilistcount, neighborlqilist }
             if (rsp.status === 0)  // success
-                return _.map(rsp.neighborlqilist, neighbor => ({
+                return rsp.neighborlqilist.map(neighbor => ({
                     ieeeAddr: neighbor.extAddr,
                     nwkAddr: neighbor.nwkAddr,
                     lqi: neighbor.lqi
@@ -392,7 +391,7 @@ class ZShepherd extends EventEmitter {
 
         const dev = this._findDevByAddr(ieeeAddr);
 
-        if (_.isFunction(cfg) && !_.isFunction(callback)) {
+        if (typeof cfg === "function" && typeof callback !== "function") {
             callback = cfg;
             cfg = {};
         } else {
@@ -447,7 +446,7 @@ class ZShepherd extends EventEmitter {
         // addr: ieeeAddr(String) or nwkAddr(Number)
         proving.stringOrNumber(addr, 'addr should be a number or a string.');
 
-        return this._devbox.find(dev => _.isString(addr) ? dev.getIeeeAddr() === addr : dev.getNwkAddr() === addr);
+        return this._devbox.find(dev => typeof addr === "string" ? dev.getIeeeAddr() === addr : dev.getNwkAddr() === addr);
     };
 
     _registerDev(dev, callback) {
@@ -457,7 +456,7 @@ class ZShepherd extends EventEmitter {
         if (!(dev instanceof Device))
             throw new TypeError('dev should be an instance of Device class.');
 
-        oldDev = _.isNil(dev._getId()) ? undefined : devbox.get(dev._getId());
+        oldDev = dev._getId() == null ? undefined : devbox.get(dev._getId());
 
         return Q.fcall(() => {
             if (oldDev) {
@@ -581,7 +580,7 @@ class ZShepherd extends EventEmitter {
                 } else if (arguments.length === 2) {
                     callback = attrId;
                     cfgRpt = false;
-                } else if (arguments.length === 5 && _.isFunction(repChange)) {
+                } else if (arguments.length === 5 && typeof repChange === "function") {
                     callback = repChange;
                 }
 
@@ -624,7 +623,7 @@ class ZShepherd extends EventEmitter {
     _foundation(srcEp, dstEp, cId, cmd, zclData, cfg, callback) {
         const self = this;
 
-        if (_.isFunction(cfg) && !_.isFunction(callback)) {
+        if (typeof cfg === "function" && typeof callback !== "function") {
             callback = cfg;
             cfg = {};
         } else {
@@ -647,7 +646,7 @@ class ZShepherd extends EventEmitter {
     _functional(srcEp, dstEp, cId, cmd, zclData, cfg, callback) {
         const self = this;
 
-        if (_.isFunction(cfg) && !_.isFunction(callback)) {
+        if (typeof cfg === "function" && typeof callback !== "function") {
             callback = cfg;
             cfg = {};
         } else {
@@ -676,7 +675,7 @@ class ZShepherd extends EventEmitter {
             if (attrs) {
                 const newAttrs = {};
 
-                _.forEach(attrs, rec => {  // { attrId, status, dataType, attrData }
+                attrs.forEach(rec => {  // { attrId, status, dataType, attrData }
                     let attrIdString = self.zclId.attr(cId, rec.attrId);
                     attrIdString = attrIdString ? attrIdString.key : rec.attrId;
 
@@ -694,13 +693,13 @@ class ZShepherd extends EventEmitter {
             const oldAttrs = clusters[cIdString].attrs;
             const diff = zutils.objectDiff(oldAttrs, newAttrs);
 
-            if (!_.isEmpty(diff)) {
-                _.forEach(diff, (val, attrId) => {
-                    ep.getClusters().set(cIdString, 'attrs', attrId, val);
-                });
+            let trigger = false;
+            Object.entries(diff).forEach(([attrId, val]) => {
+                trigger = true;
+                ep.getClusters().set(cIdString, 'attrs', attrId, val);
+            });
 
-                self.emit('ind:changed', ep, { cid: cIdString, data: diff });
-            }
+            if (trigger) self.emit('ind:changed', ep, { cid: cIdString, data: diff });
         }).fail(() => {}).done();
     };
 
