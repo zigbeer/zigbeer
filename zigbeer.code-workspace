@@ -1,16 +1,16 @@
 {
 	"folders": [
 		{
-			"path": "zigbee-shepherd"
+			"path": "packages/zigbee-shepherd"
 		},
 		{
-			"path": "zcl-packet"
+			"path": "packages/zcl-packet"
 		},
 		{
-			"path": "zcl-id"
+			"path": "packages/zcl-id"
 		},
 		{
-			"path": "cc-znp"
+			"path": "packages/cc-znp"
 		},
 		{
 			"path": "."
