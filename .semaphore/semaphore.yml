@@ -1,0 +1,19 @@
+version: v1.0
+name: Zigbeer monorepo default
+agent:
+  machine:
+    type: e1-standard-4
+    os_image: ubuntu1804
+blocks:
+  - name: Everything
+    task:
+      jobs:
+        - name: pnpm install & test
+          commands:
+            - curl -L https://unpkg.com/@pnpm/self-installer | node
+            - checkout
+            - cache restore pnpm-store-$SEMAPHORE_GIT_BRANCH-$(checksum pnpm-lock.yaml),pnpm-store-$SEMAPHORE_GIT_BRANCH,pnpm-store-master
+            - pnpm i --frozen-lockfile
+            - pnpm store prune
+            - cache store pnpm-store-$SEMAPHORE_GIT_BRANCH-$(checksum pnpm-lock.yaml) ~/.pnpm-store
+            - pnpm m t
