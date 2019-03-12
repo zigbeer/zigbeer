@@ -7,8 +7,8 @@ const Concentrate = Unpi.Concentrate;
 const DChunks = Unpi.DChunks;
 const ru = DChunks().Rule();
 
-const zmeta = require('../lib/zmeta');
-const ZpiObject = require('../lib/zpiObject');
+const zmeta = require('../src/zmeta')
+const ZpiObject = require('../src/zpiObject')
 let preBufLen;
 
 ru.clause('dynbuffer', function(name) {

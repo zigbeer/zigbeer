@@ -6,8 +6,8 @@ const Unpi = require('unpi');
 const DChunks = Unpi.DChunks;
 const ru = DChunks().Rule();
 
-const zmeta = require('../lib/zmeta');
-const ZpiObject = require('../lib/zpiObject');
+const zmeta = require('../src/zmeta');
+const ZpiObject = require('../src/zpiObject');
 
 ru.clause('listbuffer', function(name) {
     this.buffer(name, 2 * 3).tap(function() {
