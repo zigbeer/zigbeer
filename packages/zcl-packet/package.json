@@ -40,11 +40,9 @@
     "url": "https://github.com/zigbeer/zcl-packet/issues"
   },
   "homepage": "https://github.com/zigbeer/zcl-packet#readme",
-  "dependencies": {},
   "devDependencies": {
     "@types/jest": "^23.3.14",
     "@types/node": "^10.12.24",
-    "busyman": "^0.3.0",
     "chance": "^1.0.4",
     "jest": "^23.6.0",
     "prettier": "^1.16.4",
