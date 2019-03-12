@@ -1,10 +1,10 @@
-'use strict';
+"use strict"
 module.exports = {
   transform: {
-    "^.+\\.tsx?$": "ts-jest"
+    "^.+\\.ts$": "ts-jest"
   },
-  testRegex: "(\\.|/)(test|spec)\\.(jsx?|tsx?)$",
+  testRegex: "(\\.|/)(test|spec)\\.(js|ts)$",
   testPathIgnorePatterns: ["/lib/", "/node_modules/"],
-  moduleFileExtensions: ["ts", "tsx", "js", "jsx", "json", "node"],
+  moduleFileExtensions: ["ts", "js", "json", "node"],
   testEnvironment: "node"
 }
