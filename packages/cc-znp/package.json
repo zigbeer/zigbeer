@@ -2,16 +2,18 @@
   "name": "cc-znp",
   "version": "0.5.2-2",
   "description": "The interface for a host to communicate with TI CC253X Zigbee Network Processor(ZNP) over a serial port.",
-  "main": "lib/ccznp.js",
+  "main": "dist/ccznp.js",
   "files": [
-    "/lib",
-    "npm-shrinkwrap.json"
+    "/dist"
   ],
   "publishConfig": {
     "access": "public"
   },
   "scripts": {
-    "test": "jest"
+    "test": "jest",
+    "prepare": "tsc -p ./tsconfig.release.json",
+    "prettier": "prettier \"{src,test}/**\" --check",
+    "prettier:fix": "prettier \"{src,test}/**\" --write"
   },
   "repository": {
     "type": "git",
@@ -44,11 +46,15 @@
     "@serialport/bindings": "^2.0.6",
     "@serialport/stream": "^2.0.4",
     "debug": "^4.1.1",
-    "enum": "^2.5.0",
+    "prettier": "^1.16.4",
     "unpi": "^1.1.0"
   },
   "devDependencies": {
+    "@types/jest": "^24.0.11",
+    "@types/node": "^11.11.1",
     "chance": "^1.0.18",
-    "jest": "^24.1.0"
+    "jest": "^24.1.0",
+    "ts-jest": "^24.0.0",
+    "typescript": "^3.4.0-dev.20190312"
   }
 }
