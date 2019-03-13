@@ -11,7 +11,9 @@
   },
   "scripts": {
     "test": "jest",
-    "prepare": "tsc -p ./tsconfig.release.json"
+    "prepare": "tsc -p ./tsconfig.release.json",
+    "prettier": "prettier \"{src,test}/**\" --check",
+    "prettier:fix": "prettier \"{src,test}/**\" --write"
   },
   "repository": {
     "type": "git",
@@ -44,6 +46,7 @@
     "@serialport/bindings": "^2.0.6",
     "@serialport/stream": "^2.0.4",
     "debug": "^4.1.1",
+    "prettier": "^1.16.4",
     "unpi": "^1.1.0"
   },
   "devDependencies": {
