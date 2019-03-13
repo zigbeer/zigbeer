@@ -1,4 +1,4 @@
-import { BufferBuilder } from "./buffer"
+import { BufferBuilder } from "buffster"
 import { writeByType } from "./dataTypeWrite"
 import { statusCodes } from "./definition"
 import { isAnalogType, Selector } from "./foundationUtils"

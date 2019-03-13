@@ -1,5 +1,5 @@
 import { fixedLength, readUntilEnd } from "./readUtils"
-import { BufferWithPointer } from "./buffer"
+import { BufferWithPointer } from "buffster"
 
 const readTwo = (r: BufferWithPointer) => [r.fwd(1), r.fwd(1)]
 const readTwoLengthed = fixedLength(2, (r: BufferWithPointer) => [

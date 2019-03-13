@@ -1,4 +1,4 @@
-import { BufferWithPointer } from "./buffer"
+import { BufferWithPointer } from "buffster"
 import { Status, FailureStatus } from "./definition"
 
 const byteLengths = new WeakMap<(r: BufferWithPointer) => any, number>()

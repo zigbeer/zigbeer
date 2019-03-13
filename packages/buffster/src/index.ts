@@ -1,4 +1,3 @@
-type Encoding = "utf8" | "latin1"
 export class BufferWithPointer {
   public pointer = 0
   constructor(private buf: Buffer) {}
@@ -67,7 +66,7 @@ export class BufferWithPointer {
     this.buf.copy(newBuf, 0, start, this.pointer)
     return newBuf
   }
-  string(length: number, encoding: Encoding) {
+  string(length: number, encoding: BufferEncoding) {
     return this.buf.toString(encoding, this.fwd(length), this.pointer)
   }
   rest() {
@@ -86,7 +85,7 @@ type Args<T extends (...args: any[]) => any> = T extends (
 
 type Task =
   | ["copy", Buffer]
-  | ["write", string, Encoding]
+  | ["write", string, BufferEncoding]
   | ["writeUIntLE" | "writeIntLE", number, number]
   | [
 
@@ -154,7 +153,7 @@ export class BufferBuilder {
     this.len += length
     return this
   }
-  string(value: string, encoding: Encoding): this {
+  string(value: string, encoding: BufferEncoding): this {
     this.tasks.push(["write", value, encoding])
     this.len += Buffer.byteLength(value, encoding)
     return this
@@ -179,11 +178,7 @@ export class BufferBuilder {
         }
         case "write": {
           const [, string, encoding] = task
-          pointer += ((buf.write as any) as (
-            string: Args<typeof buf.write>[0],
-            offset: Args<typeof buf.write>[1],
-            encoding: Args<typeof buf.write>[3]
-          ) => number)(string, pointer, encoding)
+          pointer += buf.write(string, pointer, encoding)
           continue
         }
         case "writeUIntLE":

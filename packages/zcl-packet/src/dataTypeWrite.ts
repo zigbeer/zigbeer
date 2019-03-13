@@ -1,4 +1,4 @@
-import { BufferBuilder } from "./buffer"
+import { BufferBuilder } from "buffster"
 import { zclTypeName, getStdType } from "./definition"
 const assertBufferLength = (name: string, len: number) => (buf: Buffer) => {
   if (buf.length !== len)

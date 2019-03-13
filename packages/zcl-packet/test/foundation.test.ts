@@ -2,7 +2,7 @@ import { ZclID } from "zcl-id"
 const zclId: ZclID = require("zcl-id/dist/legacy")
 
 import { FoundPayload } from "../src/foundation"
-import { BufferWithPointer, BufferBuilder } from "../src/buffer"
+import { BufferWithPointer, BufferBuilder } from "buffster"
 import { findFoundation } from "../src/findCommand"
 
 const foundCmd = Object.keys(

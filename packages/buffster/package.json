@@ -1,0 +1,32 @@
+{
+  "name": "buffster",
+  "version": "0.1.1",
+  "description": "A dead-simple wrapper for building and reading nodejs Buffers",
+  "main": "dist/index.js",
+  "files": [
+    "/dist"
+  ],
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "prepare": "tsc -p ./tsconfig.release.json",
+    "test": "jest",
+    "prettier": "prettier \"{src,test}/**\" --check",
+    "prettier:fix": "prettier \"{src,test}/**\" --write"
+  },
+  "keywords": [
+    "buffer",
+    "serialize",
+    "parse"
+  ],
+  "author": "Mihail Malo <qm3ster@gmail.com> (https://github.com/qm3ster)",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/jest": "^24.0.11",
+    "@types/node": "^11.11.2",
+    "jest": "^24.5.0",
+    "jest-buffer-snapshot-serializer": "github:qm3ster/jest-buffer-snapshot-serializer#c0e433b76338a35e1b9f8b16ae4460ffdc05a996",
+    "prettier": "^1.16.4",
+    "ts-jest": "^24.0.0",
+    "typescript": "^3.4.0-dev.20190312"
+  }
+}

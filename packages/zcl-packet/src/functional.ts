@@ -1,4 +1,4 @@
-import { BufferBuilder, BufferWithPointer } from "./buffer"
+import { BufferBuilder, BufferWithPointer } from "buffster"
 import { readDataTable } from "./dataTypeRead"
 import { writeDataTable } from "./dataTypeWrite"
 import { getStdType } from "./definition"

@@ -1,4 +1,4 @@
-import { BufferBuilder } from "./buffer"
+import { BufferBuilder } from "buffster"
 import { FailureStatus } from "./definition"
 
 export const writeWithStatus = <R, T>(

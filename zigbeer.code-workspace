@@ -1,23 +1,26 @@
 {
-	"folders": [
-		{
-			"path": "packages/zigbee-shepherd"
-		},
-		{
-			"path": "packages/zcl-packet"
-		},
-		{
-			"path": "packages/zcl-id"
-		},
-		{
-			"path": "packages/cc-znp"
-		},
-		{
-			"path": "."
-		}
-	],
-	"settings": {
-		"typescript.tsdk": "zcl-packet/node_modules/typescript/lib",
-		"editor.formatOnSave": true
-	}
+  "folders": [
+    {
+      "path": "packages/zigbee-shepherd"
+    },
+    {
+      "path": "packages/zcl-packet"
+    },
+    {
+      "path": "packages/zcl-id"
+    },
+    {
+      "path": "packages/cc-znp"
+    },
+    {
+      "path": "packages/buffster"
+    },
+    {
+      "path": "."
+    }
+  ],
+  "settings": {
+    "typescript.tsdk": "zcl-packet/node_modules/typescript/lib",
+    "editor.formatOnSave": true
+  }
 }
