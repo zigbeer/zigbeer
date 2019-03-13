@@ -12,7 +12,7 @@
   },
   "scripts": {
     "test": "jest",
-    "prepare": "tsc -p ./tsconfig.release.json",
+    "build": "rimraf ./dist/ && tsc -p ./tsconfig.release.json",
     "prettier": "prettier \"{src,test}/**\" --check",
     "prettier:fix": "prettier \"{src,test}/**\" --write"
   },
@@ -46,6 +46,7 @@
     "chance": "^1.0.4",
     "jest": "^23.6.0",
     "prettier": "^1.16.4",
+    "rimraf": "^2.6.3",
     "ts-jest": "^23.10.5",
     "ts-node": "^8.0.2",
     "typescript": "^3.4.0-dev.20190209",

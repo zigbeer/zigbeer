@@ -8,12 +8,10 @@ blocks:
   - name: Everything
     task:
       jobs:
-        - name: pnpm install & test
+        - name: rush
           commands:
-            - curl -L https://unpkg.com/@pnpm/self-installer | node
             - checkout
-            - cache restore pnpm-store-$SEMAPHORE_GIT_BRANCH-$(checksum pnpm-lock.yaml),pnpm-store-$SEMAPHORE_GIT_BRANCH,pnpm-store-master
-            - pnpm i --frozen-lockfile
-            - pnpm store prune
-            - cache store pnpm-store-$SEMAPHORE_GIT_BRANCH-$(checksum pnpm-lock.yaml) ~/.pnpm-store
-            - pnpm m t
+            - node common/scripts/install-run-rush.js change -v
+            - node common/scripts/install-run-rush.js check
+            - node common/scripts/install-run-rush.js install
+            - node common/scripts/install-run-rush.js rebuild --verbose

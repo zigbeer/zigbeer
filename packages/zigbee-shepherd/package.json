@@ -11,7 +11,8 @@
     "access": "public"
   },
   "scripts": {
-    "test": "jest"
+    "test": "jest",
+    "build": ""
   },
   "repository": {
     "type": "git",

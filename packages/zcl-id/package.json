@@ -12,7 +12,7 @@
   },
   "scripts": {
     "test": "jest",
-    "prepare": "tsc",
+    "build": "rimraf ./dist/ && tsc",
     "prettier": "prettier '{src,test}/**' --check",
     "prettier:fix": "prettier '{src,test}/**' --write"
   },
@@ -49,6 +49,7 @@
     "@types/node": "^10.12.18",
     "jest": "^23.6.0",
     "prettier": "^1.16.1",
+    "rimraf": "^2.6.3",
     "ts-jest": "^23.10.5",
     "typescript": "^3.2.4"
   }
