@@ -1,4 +1,4 @@
-import { BufferBuilder } from "./buffer"
+import { BufferBuilder } from "buffster"
 
 export const specialWrites = {
   preLenUint8: (c: BufferBuilder, value: number) => c.uint8(value),

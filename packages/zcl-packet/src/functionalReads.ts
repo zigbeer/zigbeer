@@ -1,4 +1,4 @@
-import { BufferWithPointer } from "./buffer"
+import { BufferWithPointer } from "buffster"
 import { readUntilEnd } from "./readUtils"
 
 export const specialReads = {

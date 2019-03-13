@@ -1,5 +1,5 @@
 import { ZclID } from "zcl-id"
-import { BufferBuilder, BufferWithPointer } from "./buffer"
+import { BufferBuilder, BufferWithPointer } from "buffster"
 import { FoundPayload } from "./foundation"
 import { FuncPayload } from "./functional"
 import { findFoundation, findFunctional } from "./findCommand"

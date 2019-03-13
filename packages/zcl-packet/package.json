@@ -50,5 +50,8 @@
     "ts-node": "^8.0.2",
     "typescript": "^3.4.0-dev.20190209",
     "zcl-id": "^0.5.0-6"
+  },
+  "dependencies": {
+    "buffster": "^0.1.1"
   }
 }

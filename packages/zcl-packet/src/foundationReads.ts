@@ -1,4 +1,4 @@
-import { BufferWithPointer } from "./buffer"
+import { BufferWithPointer } from "buffster"
 import { readByType } from "./dataTypeRead"
 import { isAnalogType, Selector } from "./foundationUtils"
 import { collapseSuccess, fixedLength, readUntilEnd } from "./readUtils"

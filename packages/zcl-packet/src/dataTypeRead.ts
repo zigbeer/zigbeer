@@ -1,4 +1,4 @@
-import { BufferWithPointer } from "./buffer"
+import { BufferWithPointer } from "buffster"
 import { getStdType, zclTypeName } from "./definition"
 export const readDataTable = {
   noData: (r: BufferWithPointer) => {},

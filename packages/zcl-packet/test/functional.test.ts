@@ -4,7 +4,7 @@ import { ZclID } from "zcl-id"
 const zclId: ZclID = require("zcl-id/dist/legacy")
 import { getStdType } from "../src/definition"
 import { FuncPayload } from "../src/functional"
-import { BufferWithPointer, BufferBuilder } from "../src/buffer"
+import { BufferWithPointer, BufferBuilder } from "buffster"
 import { findFunctional } from "../src/findCommand"
 
 const clusterIds = Object.keys(
