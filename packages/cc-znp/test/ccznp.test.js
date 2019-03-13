@@ -1,6 +1,6 @@
 'use strict';
 
-const ccznp = require('../');
+const ccznp = require('../src/ccznp');
 
 describe('Signature Check', () => {
   test('ccznp.init(spCfg[, callback])', () => {

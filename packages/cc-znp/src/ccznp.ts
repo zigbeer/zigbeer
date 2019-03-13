@@ -1,9 +1,7 @@
-'use strict';
-const util = require('util');
-const EventEmitter = require('events').EventEmitter;
+import { EventEmitter } from 'events';
 
-const Unpi = require('unpi');
-const Serialport = require('@serialport/stream');
+import Unpi = require('unpi');
+import Serialport = require('@serialport/stream');
 const debug = require('debug')('cc-znp');
 const logSreq = require('debug')('cc-znp:SREQ');
 const logSrsp = require('debug')('cc-znp:SRSP');
@@ -29,73 +27,46 @@ const MT = {
 };
 
 /*
-    Polyfill
-*/
-if (!EventEmitter.prototype.listenerCount) {
-  EventEmitter.prototype.listenerCount = function(type) {
-    const events = this._events;
-
-    if (events) {
-      const evlistener = events[type];
-
-      if (typeof evlistener === 'function') {
-        return 1;
-      }
-
-      if (evlistener) {
-        return evlistener.length;
-      }
-    }
-
-    return 0;
-  };
-}
-
-/*
     CcZnp Class
 */
 class CcZnp extends EventEmitter {
+  // export constant
+  MT = MT; //TODO: static
+
+  _init = false;
+  _resetting = false;
+  _sp?: Serialport;
+  _unpi?: Unpi;
+  _spinLock = false;
+  _txQueue: (() => void)[] = [];
+  _innerListeners = {
+    spOpen: () => {
+      debug(`The serialport ${this._sp.path} is opened.`);
+      this.emit('_ready');
+    },
+    spErr: err => {
+      this._sp.close();
+    },
+    spClose: () => {
+      debug(`The serialport ${this._sp.path} is closed.`);
+      this._txQueue = [];
+      this._sp = null;
+      this._unpi = null;
+      this._init = false;
+      this.emit('close');
+    },
+    parseMtIncomingData: result => {
+      this._parseMtIncomingData(result);
+    },
+  };
+
   constructor() {
     super();
 
-    const self = this;
-
-    // export constant
-    this.MT = MT;
-
-    this._init = false;
-    this._resetting = false;
-    this._sp = null;
-    this._unpi = null;
-    this._spinLock = false;
-    this._txQueue = [];
-
     this.on('_ready', () => {
-      self._init = true;
-      self.emit('ready');
+      this._init = true;
+      this.emit('ready');
     });
-
-    this._innerListeners = {
-      spOpen() {
-        debug(`The serialport ${self._sp.path} is opened.`);
-        self.emit('_ready');
-      },
-      spErr(err) {
-        self._sp.close();
-      },
-      spClose() {
-        debug(`The serialport ${self._sp.path} is closed.`);
-        self._txQueue = null;
-        self._txQueue = [];
-        self._sp = null;
-        self._unpi = null;
-        self._init = false;
-        self.emit('close');
-      },
-      parseMtIncomingData(result) {
-        self._parseMtIncomingData(result);
-      },
-    };
   }
 
   /*
@@ -312,7 +283,6 @@ class CcZnp extends EventEmitter {
     if (argObj.cmd === 'resetReq' || argObj.cmd === 'systemReset') {
       this._resetting = true;
       // clear all pending requests, since the system is reset
-      this._txQueue = null;
       this._txQueue = [];
 
       this.once('AREQ:SYS:RESET', () => {
@@ -343,7 +313,7 @@ class CcZnp extends EventEmitter {
 
     if (txQueue.length) {
       setImmediate(() => {
-        txQueue.shift()();
+        txQueue.shift()!();
       });
     }
   }
