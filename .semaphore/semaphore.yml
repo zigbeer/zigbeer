@@ -11,6 +11,7 @@ blocks:
         - name: rush
           commands:
             - checkout
+            - git fetch origin master:refs/remotes/origin/master -a
             - node common/scripts/install-run-rush.js change -v
             - node common/scripts/install-run-rush.js check
             - node common/scripts/install-run-rush.js install
