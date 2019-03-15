@@ -690,7 +690,7 @@ function afFactory(zclId) {
                     'on', 'offWithEffect', 'step', 'stop', 'hueNotification',
                     'off', 'stepColorTemp', 'moveWithOnOff', 'move', 'moveHue', 'moveToSaturation',
                     'stopWithOnOff', 'moveToLevelWithOnOff', 'toggle', 'tradfriArrowSingle', 'tradfriArrowHold', 'tradfriArrowRelease',
-                    'stepWithOnOff', 'moveToColorTemp', 'moveToColor', 'onWithTimedOff', 'recall', 'arm', 'panic',
+                    'stepWithOnOff', 'moveToColorTemp', 'moveToColor', 'onWithTimedOff', 'recall', 'arm', 'panic', 'emergency',
                 ];
 
                 if (frameType === 1 && cmdIDs.includes(msg.zclMsg.cmdId) && msg.zclMsg.payload) {
