@@ -60,7 +60,7 @@ const compatabilityTableTypeCheck: Check = compatabilityTable
 type Compat<K extends "read" | "write"> = <
   C extends string,
   A extends C extends keyof typeof compatabilityTable
-    ? ArgsType<typeof compatabilityTable[C][K]>[0]
+    ? Parameters<typeof compatabilityTable[C][K]>[0]
     : any
 >(
   cmd: C,

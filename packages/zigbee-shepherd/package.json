@@ -11,7 +11,8 @@
     "access": "public"
   },
   "scripts": {
-    "test": "jest"
+    "test": "jest",
+    "build": ""
   },
   "repository": {
     "type": "git",
@@ -50,7 +51,7 @@
     "zstack-constants": "^0.2.0"
   },
   "devDependencies": {
-    "jest": "^24.1.0",
+    "jest": "^24.5.0",
     "zcl-id": "^0.5.0-6",
     "zive": "^0.2.2"
   }
