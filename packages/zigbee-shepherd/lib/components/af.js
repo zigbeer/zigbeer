@@ -686,7 +686,8 @@ function afFactory(zclId) {
                 if (frameType === 0 && msg.zclMsg.cmdId === 'report')
                     af.controller._shepherd.emit('ind:reported', targetEp, msg.clusterid, msg.zclMsg.payload, msg);
 
-                const cmdIDs = ['on', 'offWithEffect', 'step', 'stop', 'hueNotification',
+                const cmdIDs = [
+                    'on', 'offWithEffect', 'step', 'stop', 'hueNotification',
                     'off', 'stepColorTemp', 'moveWithOnOff', 'move', 'moveHue', 'moveToSaturation',
                     'stopWithOnOff', 'moveToLevelWithOnOff', 'toggle', 'tradfriArrowSingle', 'tradfriArrowHold', 'tradfriArrowRelease',
                     'stepWithOnOff', 'moveToColorTemp', 'moveToColor', 'onWithTimedOff', 'recall', 'arm', 'panic',
