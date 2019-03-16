@@ -166,7 +166,7 @@
      * It specifies the remote url for the official Git repository.  If this URL is provided,
      * "rush change" will use it to find the right remote to compare against.
      */
-    "url": "https://github.com/zigbeer/zigbeer"
+    "url": "git@github.com:zigbeer/zigbeer.git"
   },
 
   /**
@@ -312,23 +312,28 @@
     // }
     {
       "packageName": "zigbee-shepherd",
-      "projectFolder": "packages/zigbee-shepherd"
+      "projectFolder": "packages/zigbee-shepherd",
+      "shouldPublish": true
     },
     {
       "packageName": "zcl-packet",
-      "projectFolder": "packages/zcl-packet"
+      "projectFolder": "packages/zcl-packet",
+      "shouldPublish": true
     },
     {
       "packageName": "zcl-id",
-      "projectFolder": "packages/zcl-id"
+      "projectFolder": "packages/zcl-id",
+      "shouldPublish": true
     },
     {
       "packageName": "cc-znp",
-      "projectFolder": "packages/cc-znp"
+      "projectFolder": "packages/cc-znp",
+      "shouldPublish": true
     },
     {
       "packageName": "buffster",
-      "projectFolder": "packages/buffster"
+      "projectFolder": "packages/buffster",
+      "shouldPublish": true
     }
   ]
 }
