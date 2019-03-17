@@ -3,7 +3,7 @@
     {
       "packageName": "zigbee-shepherd",
       "comment": "Initial release from monorepo",
-      "type": "major"
+      "type": "minor"
     }
   ],
   "packageName": "zigbee-shepherd",

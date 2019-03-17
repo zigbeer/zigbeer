@@ -3,7 +3,7 @@
     {
       "packageName": "zcl-id",
       "comment": "Initial release from monorepo",
-      "type": "major"
+      "type": "minor"
     }
   ],
   "packageName": "zcl-id",

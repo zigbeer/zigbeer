@@ -3,7 +3,7 @@
     {
       "packageName": "cc-znp",
       "comment": "Initial release from monorepo",
-      "type": "major"
+      "type": "minor"
     }
   ],
   "packageName": "cc-znp",
