@@ -22,4 +22,4 @@ blocks:
             - git fetch origin master:refs/remotes/origin/master -a
             - node common/scripts/install-run-rush.js install
             - node common/scripts/install-run-rush.js rebuild --verbose
-            - node common/scripts/install-run-rush.js publish -a -b master -p -n $NPM_TOKEN
+            - node common/scripts/install-run-rush.js publish -a -b master -p
