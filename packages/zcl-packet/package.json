@@ -18,7 +18,8 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/zigbeer/zcl-packet.git"
+    "url": "https://github.com/zigbeer/zigbeer.git",
+    "directory": "packages/zcl-packet"
   },
   "keywords": [
     "zcl",
@@ -26,20 +27,12 @@
   ],
   "author": "Jack Wu <jackchased@gmail.com>",
   "contributors": [
-    {
-      "name": "Hedy Wang",
-      "email": "hedywings@gmail.com"
-    },
-    {
-      "name": "Simen Li",
-      "email": "simenkid@gmail.com"
-    }
+    "Hedy Wang <hedywings@gmail.com>",
+    "Simen Li <simenkid@gmail.com>"
   ],
   "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/zigbeer/zcl-packet/issues"
-  },
-  "homepage": "https://github.com/zigbeer/zcl-packet#readme",
+  "bugs": "https://github.com/zigbeer/zigbeer/issues",
+  "homepage": "https://github.com/zigbeer/zigbeer/tree/master/packages/zcl-packet#readme",
   "dependencies": {
     "buffster": "^0.1.1"
   },
@@ -51,7 +44,7 @@
     "prettier": "^1.16.4",
     "rimraf": "^2.6.3",
     "ts-jest": "^24.0.0",
-    "typescript": "^3.4.0-dev.20190315",
+    "typescript": "^3.4.0-rc",
     "zcl-id": "^0.5.0-6"
   }
 }

@@ -13,6 +13,11 @@
     "prettier": "prettier \"{src,test}/**\" --check",
     "prettier:fix": "prettier \"{src,test}/**\" --write"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/zigbeer/zigbeer.git",
+    "directory": "packages/buffster"
+  },
   "keywords": [
     "buffer",
     "serialize",
@@ -20,6 +25,8 @@
   ],
   "author": "Mihail Malo <qm3ster@gmail.com> (https://github.com/qm3ster)",
   "license": "MIT",
+  "bugs": "https://github.com/zigbeer/zigbeer/issues",
+  "homepage": "https://github.com/zigbeer/zigbeer/tree/master/packages/buffster#readme",
   "devDependencies": {
     "@types/jest": "^24.0.11",
     "@types/node": "^11.11.3",
@@ -28,6 +35,6 @@
     "prettier": "^1.16.4",
     "rimraf": "^2.6.3",
     "ts-jest": "^24.0.0",
-    "typescript": "^3.4.0-dev.20190315"
+    "typescript": "^3.4.0-rc"
   }
 }

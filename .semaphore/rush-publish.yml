@@ -1,0 +1,17 @@
+version: v1.0
+name: Rush Publish
+agent:
+  machine:
+    type: e1-standard-4
+    os_image: ubuntu1804
+blocks:
+  - name: Publish
+    task:
+      jobs:
+        - name: rush
+          commands:
+            - checkout
+            - git fetch origin master:refs/remotes/origin/master -a
+            - node common/scripts/install-run-rush.js install
+            - node common/scripts/install-run-rush.js rebuild --verbose
+            - node common/scripts/install-run-rush.js publish -a -p

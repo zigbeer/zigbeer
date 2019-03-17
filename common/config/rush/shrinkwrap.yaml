@@ -20,7 +20,7 @@ dependencies:
   q: 1.5.1
   rimraf: 2.6.3
   ts-jest: 24.0.0
-  typescript: 3.4.0-dev.20190315
+  typescript: 3.4.0-rc
   unpi: 1.1.1
   ziee: 0.3.0
   zive: 0.2.2
@@ -912,11 +912,11 @@ packages:
       node: '>= 0.8'
     resolution:
       integrity: sha512-brWl9y6vOB1xYPZcpZde3N9zDByXTosAeMDo4p1wzo6UMOX4vumB+TP1RZ76sfE6Md68Q0NJSrE/gbezd4Ul+w==
-  /commander/2.17.1:
+  /commander/2.19.0:
     dev: false
     optional: true
     resolution:
-      integrity: sha512-wPMUt6FnH2yzG95SA6mzjQOEKUU3aLaDEmzs1ti+1E9h+CsrZghRlqEM/EJ4KscsQVG8uNN4uVreUeT8+drlgg==
+      integrity: sha512-6tvAOO+D6OENvRAh524Dh9jcfKTYDQAqvqezbCW82xj5X0pSrcpxtvRKHLG0yBY6SD7PSDrJaj+0AiOcKVd1Xg==
   /compare-versions/3.4.0:
     dev: false
     resolution:
@@ -1481,9 +1481,9 @@ packages:
     dev: false
     resolution:
       integrity: sha1-8QdIy+dq+WS3yWyTxrzCivEgwIE=
-  /handlebars/4.1.0:
+  /handlebars/4.1.1:
     dependencies:
-      async: 2.6.2
+      neo-async: 2.6.0
       optimist: 0.6.1
       source-map: 0.6.1
     dev: false
@@ -1491,9 +1491,9 @@ packages:
       node: '>=0.4.7'
     hasBin: true
     optionalDependencies:
-      uglify-js: 3.4.9
+      uglify-js: 3.4.10
     resolution:
-      integrity: sha512-l2jRuU1NAWK6AW5qqcTATWQJvNPEwkM7NEKSiv/gqOsoSQbVoWyqVEY5GS+XPQ88zLNmqASRpzfdm8d79hJS+w==
+      integrity: sha512-3Zhi6C0euYZL5sM0Zcy7lInLXKQ+YLcF/olbN010mzGQ4XVm50JeyBnMqofHh696GrciGruC7kCcApPDJvVgwA==
   /har-schema/2.0.0:
     dev: false
     engines:
@@ -1913,7 +1913,7 @@ packages:
       integrity: sha512-JX4v0CiKTGp9fZPmoxpu9YEkPbEqCqBbO3403VabKjH+NRXo72HafD5UgnjTEqHL2SAjaZK1XDuDOkn6I5QVfQ==
   /istanbul-reports/2.1.1:
     dependencies:
-      handlebars: 4.1.0
+      handlebars: 4.1.1
     dev: false
     engines:
       node: '>=6'
@@ -1941,7 +1941,7 @@ packages:
       jest-config: 24.5.0
       jest-util: 24.5.0
       jest-validate: 24.5.0
-      prompts: 2.0.3
+      prompts: 2.0.4
       realpath-native: 1.1.0
       yargs: 12.0.5
     dev: false
@@ -2784,6 +2784,10 @@ packages:
     dev: false
     resolution:
       integrity: sha1-DjUCzYLABNU1WkPJ5VV3vXvZHYg=
+  /neo-async/2.6.0:
+    dev: false
+    resolution:
+      integrity: sha512-MFh0d/Wa7vkKO3Y3LlacqAEeHK0mckVqzDieUKTT+KGxi+zIpeVsFxymkIiRpbpDziHc290Xr9A1O4Om7otoRA==
   /nice-try/1.0.5:
     dev: false
     resolution:
@@ -3153,7 +3157,7 @@ packages:
     dev: false
     resolution:
       integrity: sha512-MtEC1TqN0EU5nephaJ4rAtThHtC86dNN9qCuEhtshvpVBkAW5ZO7BASN9REnF9eoXGcRub+pFuKEpOHE+HbEMw==
-  /prompts/2.0.3:
+  /prompts/2.0.4:
     dependencies:
       kleur: 3.0.2
       sisteransi: 1.0.0
@@ -3161,7 +3165,7 @@ packages:
     engines:
       node: '>= 6'
     resolution:
-      integrity: sha512-H8oWEoRZpybm6NV4to9/1limhttEo13xK62pNvn2JzY0MA03p7s0OjtmhXyon3uJmxiJJVSuUwEJFFssI3eBiQ==
+      integrity: sha512-HTzM3UWp/99A0gk51gAegwo1QRYA7xjcZufMNe33rCclFszUYAuHe1fIN/3ZmiHeGPkUsNaRyQm1hHOfM0PKxA==
   /proving/0.1.0:
     dev: false
     resolution:
@@ -3936,16 +3940,16 @@ packages:
       node: '>= 0.8.0'
     resolution:
       integrity: sha1-WITKtRLPHTVeP7eE8wgEsrUg23I=
-  /typescript/3.4.0-dev.20190315:
+  /typescript/3.4.0-rc:
     dev: false
     engines:
       node: '>=4.2.0'
     hasBin: true
     resolution:
-      integrity: sha512-AmAGWYv52Bka/q20YNFy3jRiPMgAmWssti5uLTzFoPyuuzCd/GPmxm+j3iYm22ShrrDJw8biPxVDTq3DnOIaWA==
-  /uglify-js/3.4.9:
+      integrity: sha512-wtm2GwuV0Yy2zvmpFaMDtWHnRbzfERi9FLpL+K+JqGkHoclgEQ6TmD1AMxMIjs80NWRIq0Xp1veQyuZbGsUYsg==
+  /uglify-js/3.4.10:
     dependencies:
-      commander: 2.17.1
+      commander: 2.19.0
       source-map: 0.6.1
     dev: false
     engines:
@@ -3953,7 +3957,7 @@ packages:
     hasBin: true
     optional: true
     resolution:
-      integrity: sha512-8CJsbKOtEbnJsTyv6LE6m6ZKniqMiFWmm9sRbopbkGs3gMPPfd3Fh8iIA4Ykv5MgaTbqHr4BaoGLJLZNhsrW1Q==
+      integrity: sha512-Y2VsbPVs0FIshJztycsO2SfPk7/KAF/T72qzv9u5EpQ4kB2hQoHlhNQTsNyy6ul7lQtqJN/AoWeS23OzEiEFxw==
   /underscore/1.4.4:
     dev: false
     resolution:
@@ -4212,11 +4216,11 @@ packages:
       prettier: 1.16.4
       rimraf: 2.6.3
       ts-jest: /ts-jest/24.0.0/jest@24.5.0
-      typescript: 3.4.0-dev.20190315
+      typescript: 3.4.0-rc
     dev: false
     name: '@rush-temp/buffster'
     resolution:
-      integrity: sha512-6GEs3kC6jYHb00tMmRu6/IseP0NAKMLTF61xUIPaWSS+H8w8+ZPG1m02PwpilfeiVWx2tLTQMqAfjgADPRkEug==
+      integrity: sha512-7HU/Xn2nbMu5fGJi7NWfCeJrqBti1BjtPIQOlSWr+mVEaQtqAFwbkYRHTvb43RP6g8rZIzMmplFLp1/yTRv3og==
       tarball: 'file:projects/buffster.tgz'
     version: 0.0.0
   'file:projects/cc-znp.tgz':
@@ -4231,12 +4235,12 @@ packages:
       prettier: 1.16.4
       rimraf: 2.6.3
       ts-jest: /ts-jest/24.0.0/jest@24.5.0
-      typescript: 3.4.0-dev.20190315
+      typescript: 3.4.0-rc
       unpi: 1.1.1
     dev: false
     name: '@rush-temp/cc-znp'
     resolution:
-      integrity: sha512-HW2rUph/9L5ONpQxK9LCYLtv27Hzel2MIQrX/5wAcT6WLvFOBYz1U/2yZ7Z/B85I3Bgid0r+D1wEoZ3AN3NIrw==
+      integrity: sha512-B/cOUskZVs36j9dLDkJ7BkIa8loi8eFclzfV09EfTiBGZ7xlF8EzVxDFIOi0TIymXySQUArc/vjR6dWaE11YIg==
       tarball: 'file:projects/cc-znp.tgz'
     version: 0.0.0
   'file:projects/zcl-id.tgz':
@@ -4247,11 +4251,11 @@ packages:
       prettier: 1.16.4
       rimraf: 2.6.3
       ts-jest: /ts-jest/24.0.0/jest@24.5.0
-      typescript: 3.4.0-dev.20190315
+      typescript: 3.4.0-rc
     dev: false
     name: '@rush-temp/zcl-id'
     resolution:
-      integrity: sha512-UpWXZUfnKnG8XK0V9YUNEoqzboxKq9IHGY0K0RFzjQztsZrev/83dLq9KSsks34JnaQuD8s0QU4Nz3kQ+AoZsg==
+      integrity: sha512-TSnm/GE042EN69kLnHrt/UreqUU4cGhXXfgj6hH+7b6imyYo9mN9ovL1BrsyRHXLacVg9kndK/6LPUqzI2DGXw==
       tarball: 'file:projects/zcl-id.tgz'
     version: 0.0.0
   'file:projects/zcl-packet.tgz':
@@ -4263,11 +4267,11 @@ packages:
       prettier: 1.16.4
       rimraf: 2.6.3
       ts-jest: /ts-jest/24.0.0/jest@24.5.0
-      typescript: 3.4.0-dev.20190315
+      typescript: 3.4.0-rc
     dev: false
     name: '@rush-temp/zcl-packet'
     resolution:
-      integrity: sha512-9HVWvn2lWzgPkea6Rzmy671l1/TM5TmmkB8uW1tGiQebKO6Em8WJD5M5kacbESKq7j2DazF1U1Y5vRt6iUPO0w==
+      integrity: sha512-dcu6rBAAq8pqYfeVvdAyVBm1f2pe/SBgUUaEPUocBcRidn2VPGfgcE6UB2j4vO0uURTExcmMOJB5hlg7gOwBbw==
       tarball: 'file:projects/zcl-packet.tgz'
     version: 0.0.0
   'file:projects/zigbee-shepherd.tgz':
@@ -4320,7 +4324,7 @@ specifiers:
   q: ^1.5.1
   rimraf: ^2.6.3
   ts-jest: ^24.0.0
-  typescript: ^3.4.0-dev.20190315
+  typescript: ~3.4.0-rc
   unpi: ^1.1.0
   ziee: ^0.3.0
   zive: ^0.2.2

@@ -13,37 +13,24 @@
   "scripts": {
     "test": "jest",
     "build": "rimraf ./dist/ && tsc",
-    "prettier": "prettier '{src,test}/**' --check",
-    "prettier:fix": "prettier '{src,test}/**' --write"
+    "prettier": "prettier \"{src,test}/**\" --check",
+    "prettier:fix": "prettier \"{src,test}/**\" --write"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/zigbeer/zcl-id.git"
+    "url": "https://github.com/zigbeer/zigbeer.git",
+    "directory": "packages/zcl-id"
   },
-  "author": "Simen Li",
+  "author": "Simen Li <simenkid@gmail.com>",
   "contributors": [
-    {
-      "name": "Hedy Wang",
-      "email": "hedywings@gmail.com"
-    },
-    {
-      "name": "Peter Yi",
-      "email": "peter.eb9@gmail.com"
-    },
-    {
-      "name": "Jack Wu",
-      "email": "jackchased@gmail.com"
-    },
-    {
-      "name": "Eason Chang",
-      "email": "onepiece5478@gmail.com"
-    }
+    "Hedy Wang <hedywings@gmail.com>",
+    "Peter Yi <peter.eb9@gmail.com>",
+    "Jack Wu <jackchased@gmail.com>",
+    "Eason Chang <onepiece5478@gmail.com>"
   ],
   "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/zigbeer/zcl-id/issues"
-  },
-  "homepage": "https://github.com/zigbeer/zcl-id#readme",
+  "bugs": "https://github.com/zigbeer/zigbeer/issues",
+  "homepage": "https://github.com/zigbeer/zigbeer/tree/master/packages/zcl-id#readme",
   "devDependencies": {
     "@types/jest": "^24.0.11",
     "@types/node": "^11.11.3",
@@ -51,6 +38,6 @@
     "prettier": "^1.16.4",
     "rimraf": "^2.6.3",
     "ts-jest": "^24.0.0",
-    "typescript": "^3.4.0-dev.20190315"
+    "typescript": "^3.4.0-rc"
   }
 }

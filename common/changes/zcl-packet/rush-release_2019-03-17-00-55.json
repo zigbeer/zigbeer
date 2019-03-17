@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "zcl-packet",
+      "comment": "Initial release from monorepo",
+      "type": "major"
+    }
+  ],
+  "packageName": "zcl-packet",
+  "email": "qm3ster@gmail.com"
+}

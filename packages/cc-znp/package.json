@@ -17,36 +17,25 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/zigbeer/cc-znp.git"
+    "url": "https://github.com/zigbeer/zigbeer.git",
+    "directory": "packages/cc-znp"
   },
   "keywords": [
     "zigbee",
     "cc253x"
   ],
-  "author": {
-    "name": "Jack Wu",
-    "email": "jackchased@gmail.com"
-  },
+  "author": "Jack Wu <jackchased@gmail.com>",
   "contributors": [
-    {
-      "name": "Simen Li",
-      "email": "simenkid@gmail.com"
-    },
-    {
-      "name": "Hedy Wang",
-      "email": "hedywings@gmail.com"
-    }
+    "Simen Li <simenkid@gmail.com>",
+    "Hedy Wang <hedywings@gmail.com>"
   ],
   "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/zigbeer/cc-znp/issues"
-  },
-  "homepage": "https://github.com/zigbeer/cc-znp#readme",
+  "bugs": "https://github.com/zigbeer/zigbeer/issues",
+  "homepage": "https://github.com/zigbeer/zigbeer/tree/master/packages/cc-znp#readme",
   "dependencies": {
     "@serialport/bindings": "^2.0.6",
     "@serialport/stream": "^2.0.4",
     "debug": "^4.1.1",
-    "prettier": "^1.16.4",
     "unpi": "^1.1.0"
   },
   "devDependencies": {
@@ -54,8 +43,9 @@
     "@types/node": "^11.11.3",
     "chance": "^1.0.18",
     "jest": "^24.5.0",
+    "prettier": "^1.16.4",
     "rimraf": "^2.6.3",
     "ts-jest": "^24.0.0",
-    "typescript": "^3.4.0-dev.20190315"
+    "typescript": "^3.4.0-rc"
   }
 }

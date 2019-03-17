@@ -17,3 +17,10 @@ blocks:
             - node common/scripts/install-run-rush.js install
             - node common/scripts/install-run-rush.js rebuild --verbose
             - common/temp/pnpm-local/node_modules/.bin/pnpm m t
+promotions:
+  - name: Rush Publish Dry Run
+    pipeline_file: rush-publish-dryrun.yml
+    auto_promote_on:
+      - result: passed
+        branch:
+          - "master"

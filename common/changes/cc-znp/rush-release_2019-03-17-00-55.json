@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "cc-znp",
+      "comment": "Initial release from monorepo",
+      "type": "major"
+    }
+  ],
+  "packageName": "cc-znp",
+  "email": "qm3ster@gmail.com"
+}
