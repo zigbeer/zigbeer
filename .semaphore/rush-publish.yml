@@ -12,6 +12,7 @@ blocks:
       jobs:
         - name: rush
           commands:
+            - chmod 600 ~/.ssh/id_rsa
             - gpg --import gpg
             - checkout
             - git config user.name "Rush on Semaphore CI"
