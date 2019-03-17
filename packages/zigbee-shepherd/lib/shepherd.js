@@ -145,7 +145,7 @@ class ZShepherd extends EventEmitter {
                 notifData.data[attrIdString] = rec.attrData;
             });
 
-            self.emit('ind', { type: 'attReport', endpoints: [ ep ], data: notifData, linkquality: msg.linkquality });
+            self.emit('ind', { type: 'attReport', endpoints: [ ep ], data: notifData, linkquality: msg.linkquality, groupid: msg.groupid });
         });
 
         this.on('ind:status', (dev, status) => {

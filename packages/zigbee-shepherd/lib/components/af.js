@@ -686,9 +686,12 @@ function afFactory(zclId) {
                 if (frameType === 0 && msg.zclMsg.cmdId === 'report')
                     af.controller._shepherd.emit('ind:reported', targetEp, msg.clusterid, msg.zclMsg.payload, msg);
 
-                const cmdIDs = ['on', 'offWithEffect', 'step', 'stop', // Philips-RWL020-RWL021
-                                'off', 'stepColorTemp', 'moveWithOnOff', 'move', 'moveHue', 'moveToSaturation', // OSRAM-Switch 4x EU-LIGHTIFY
-                                'stopWithOnOff', 'moveToLevelWithOnOff', 'toggle', 'tradfriArrowSingle', 'tradfriArrowHold', 'tradfriArrowRelease', 'stepWithOnOff'];
+                const cmdIDs = [
+                    'on', 'offWithEffect', 'step', 'stop', 'hueNotification',
+                    'off', 'stepColorTemp', 'moveWithOnOff', 'move', 'moveHue', 'moveToSaturation',
+                    'stopWithOnOff', 'moveToLevelWithOnOff', 'toggle', 'tradfriArrowSingle', 'tradfriArrowHold', 'tradfriArrowRelease',
+                    'stepWithOnOff', 'moveToColorTemp', 'moveToColor', 'onWithTimedOff', 'recall', 'arm', 'panic', 'emergency',
+                ];
 
                 if (frameType === 1 && cmdIDs.includes(msg.zclMsg.cmdId) && msg.zclMsg.payload) {
                     af.controller._shepherd.emit('ind:cmd', targetEp, msg.clusterid, msg.zclMsg.payload, msg.zclMsg.cmdId, msg);
