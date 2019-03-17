@@ -1,0 +1,17 @@
+{
+  "name": "cc-znp",
+  "entries": [
+    {
+      "version": "0.6.0",
+      "tag": "cc-znp_v0.6.0",
+      "date": "Sun, 17 Mar 2019 20:51:01 GMT",
+      "comments": {
+        "minor": [
+          {
+            "comment": "Initial release from monorepo"
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -1,6 +1,6 @@
 {
   "name": "zigbee-shepherd",
-  "version": "0.3.1-0",
+  "version": "0.4.0",
   "description": "An open source ZigBee gateway solution with node.js.",
   "main": "index.js",
   "files": [
@@ -34,18 +34,18 @@
   "dependencies": {
     "areq": "^0.2.0",
     "busyman": "^0.3.0",
-    "cc-znp": "^0.5.2-2",
+    "cc-znp": "^0.6.0",
     "debug": "^4.1.1",
     "objectbox": "^0.3.0",
     "proving": "^0.1.0",
     "q": "^1.5.1",
-    "zcl-packet": "^0.2.5-1",
+    "zcl-packet": "^0.3.0",
     "ziee": "^0.3.0",
     "zstack-constants": "^0.2.0"
   },
   "devDependencies": {
     "jest": "^24.5.0",
-    "zcl-id": "^0.5.0-6",
+    "zcl-id": "^0.5.0",
     "zive": "^0.2.2"
   }
 }

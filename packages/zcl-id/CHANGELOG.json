@@ -1,0 +1,17 @@
+{
+  "name": "zcl-id",
+  "entries": [
+    {
+      "version": "0.5.0",
+      "tag": "zcl-id_v0.5.0",
+      "date": "Sun, 17 Mar 2019 20:51:01 GMT",
+      "comments": {
+        "minor": [
+          {
+            "comment": "Initial release from monorepo"
+          }
+        ]
+      }
+    }
+  ]
+}

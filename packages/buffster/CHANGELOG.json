@@ -1,0 +1,17 @@
+{
+  "name": "buffster",
+  "entries": [
+    {
+      "version": "0.1.2",
+      "tag": "buffster_v0.1.2",
+      "date": "Sun, 17 Mar 2019 20:51:01 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "Initial release from monorepo"
+          }
+        ]
+      }
+    }
+  ]
+}

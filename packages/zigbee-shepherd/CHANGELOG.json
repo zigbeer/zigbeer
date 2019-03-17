@@ -1,0 +1,28 @@
+{
+  "name": "zigbee-shepherd",
+  "entries": [
+    {
+      "version": "0.4.0",
+      "tag": "zigbee-shepherd_v0.4.0",
+      "date": "Sun, 17 Mar 2019 20:51:01 GMT",
+      "comments": {
+        "minor": [
+          {
+            "comment": "Initial release from monorepo"
+          }
+        ],
+        "dependency": [
+          {
+            "comment": "Updating dependency \"cc-znp\" from `^0.5.2-2` to `^0.6.0`"
+          },
+          {
+            "comment": "Updating dependency \"zcl-packet\" from `^0.2.5-1` to `^0.3.0`"
+          },
+          {
+            "comment": "Updating dependency \"zcl-id\" from `^0.5.0-6` to `^0.5.0`"
+          }
+        ]
+      }
+    }
+  ]
+}
