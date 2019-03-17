@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "buffster",
+      "comment": "Initial release from monorepo",
+      "type": "patch"
+    }
+  ],
+  "packageName": "buffster",
+  "email": "qm3ster@gmail.com"
+}
