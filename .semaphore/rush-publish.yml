@@ -14,4 +14,5 @@ blocks:
             - git fetch origin master:refs/remotes/origin/master -a
             - node common/scripts/install-run-rush.js install
             - node common/scripts/install-run-rush.js rebuild --verbose
+            - git config user.name "Rush on Semaphore CI"
             - node common/scripts/install-run-rush.js publish -a -b master -p
