@@ -1,8 +1,41 @@
+import { BufferBuilder } from 'buffster';
 import * as zmeta from './zmeta';
 import Unpi = require('unpi');
-const Concentrate = Unpi.Concentrate;
 const DChunks = Unpi.DChunks;
 const ru = DChunks().Rule();
+
+const writeBuffer = (c: BufferBuilder, value: number[] | Buffer) =>
+  c.buffer(Buffer.from(value as number[])); // TODO: only accept Buffer
+const writeDataTable = {
+  uint8: (c: BufferBuilder, value: number) => c.uint8(value),
+  uint16: (c: BufferBuilder, value: number) => c.uint16le(value),
+  uint32: (c: BufferBuilder, value: number) => c.uint32le(value),
+  buffer: writeBuffer,
+  dynbuffer: writeBuffer,
+  longaddr: (c: BufferBuilder, value: string | Buffer) => {
+    if (Buffer.isBuffer(value)) {
+      if (value.length !== 8)
+        throw new TypeError(`Expected Buffer of length 8, got ${value.length}`);
+
+      c.buffer(value);
+    }
+    // TODO: only accept Buffer
+    if (typeof value === 'string') {
+      const buf = Buffer.from(value.slice(2), 'hex');
+      buf.reverse();
+      if (buf.length !== 8)
+        throw new TypeError(
+          `Expected hex string of length 8, got ${buf.length}`
+        );
+      c.buffer(buf);
+    }
+  },
+  listbuffer: (c: BufferBuilder, value: number[]) => {
+    for (const uint16le of value) {
+      c.uint16le(uint16le);
+    }
+  },
+};
 
 /**
  * 1. Provides command framer (SREQ)
@@ -143,50 +176,13 @@ class ZpiObject {
     if (!Array.isArray(this.args)) {
       return null;
     }
-
-    let dataBuf = Concentrate();
-
-    // arg: { name, type, value }
-    this.args.forEach((arg, idx) => {
-      const type = arg.type;
-      const val = arg.value;
-      let msb;
-      let lsb;
-      let tempBuf;
-      let idxbuf;
-
-      switch (type) {
-        case 'uint8':
-        case 'uint16':
-        case 'uint32':
-          dataBuf = dataBuf[type](val);
-          break;
-        case 'buffer':
-        case 'dynbuffer':
-          dataBuf = dataBuf.buffer(Buffer.from(val));
-          break;
-        case 'longaddr':
-          // string '0x00124b00019c2ee9'
-          msb = parseInt(val.slice(2, 10), 16);
-          lsb = parseInt(val.slice(10), 16);
-
-          dataBuf = dataBuf.uint32le(lsb).uint32le(msb);
-          break;
-        case 'listbuffer':
-          // [ 0x0001, 0x0002, 0x0003, ... ]
-          tempBuf = Buffer.alloc(val.length * 2);
-
-          for (idxbuf = 0; idxbuf < val.length; idxbuf += 1) {
-            tempBuf.writeUInt16LE(val[idxbuf], idxbuf * 2);
-          }
-          dataBuf = dataBuf.buffer(tempBuf);
-          break;
-        default:
-          throw new Error('Unknown Data Type');
-      }
-    });
-
-    return dataBuf.result();
+    const c = new BufferBuilder();
+    for (const { type, value } of this.args) {
+      const fn = writeDataTable[type];
+      if (!fn) throw new TypeError(`Unknown argument type: ${type}`);
+      fn(c, value);
+    }
+    return c.result();
   }
 }
 

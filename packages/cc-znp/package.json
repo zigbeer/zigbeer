@@ -35,6 +35,7 @@
   "dependencies": {
     "@serialport/bindings": "^2.0.6",
     "@serialport/stream": "^2.0.4",
+    "buffster": "~0.1.2",
     "debug": "^4.1.1",
     "unpi": "^1.1.0"
   },
