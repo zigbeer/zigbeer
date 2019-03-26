@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "cc-znp",
+      "comment": "Replaced parser, changed some structures.",
+      "type": "minor"
+    }
+  ],
+  "packageName": "cc-znp",
+  "email": "qm3ster@gmail.com"
+}

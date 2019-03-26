@@ -1,6 +1,5 @@
-'use strict';
-
-const ccznp = require('../src/ccznp');
+import ccznp from '../src/ccznp';
+const _ccznp: any = ccznp;
 
 describe('Signature Check', () => {
   test('ccznp.init(spCfg[, callback])', () => {
@@ -10,20 +9,20 @@ describe('Signature Check', () => {
       })
     ).not.toThrowError();
 
-    ccznp._sp = null;
-    expect(() => ccznp.init({})).toThrowError();
-    ccznp._sp = null;
-    expect(() => ccznp.init([])).toThrowError();
-    ccznp._sp = null;
-    expect(() => ccznp.init('xxx')).toThrowError();
-    ccznp._sp = null;
-    expect(() => ccznp.init(123)).toThrowError();
-    ccznp._sp = null;
-    expect(() => ccznp.init(false)).toThrowError();
-    ccznp._sp = null;
-    expect(() => ccznp.init(undefined)).toThrowError();
-    ccznp._sp = null;
-    expect(() => ccznp.init(null)).toThrowError();
+    _ccznp._sp = null;
+    expect(() => _ccznp.init({})).toThrowError();
+    _ccznp._sp = null;
+    expect(() => _ccznp.init([])).toThrowError();
+    _ccznp._sp = null;
+    expect(() => _ccznp.init('xxx')).toThrowError();
+    _ccznp._sp = null;
+    expect(() => _ccznp.init(123)).toThrowError();
+    _ccznp._sp = null;
+    expect(() => _ccznp.init(false)).toThrowError();
+    _ccznp._sp = null;
+    expect(() => _ccznp.init(undefined)).toThrowError();
+    _ccznp._sp = null;
+    expect(() => _ccznp.init(null)).toThrowError();
   });
 
   test('ccznp.request(subsys, cmdId, valObj, callback)', () => {
@@ -166,11 +165,17 @@ describe('Functional Check', () => {
   });
 
   test('ccznp.request() - timeout', done => {
-    ccznp._unpi.send = () => {};
+    ccznp._unpi.send = jest.fn();
+    expect.assertions(2);
     ccznp.request('SYS', 'ping', {}, (err, result) => {
-      if (err.message === 'request timeout') {
-        done();
-      }
+      expect(err.message).toBe('request timeout');
+      expect(ccznp._unpi.send).toHaveBeenCalledWith(
+        'SREQ',
+        'SYS',
+        1,
+        expect.any(Buffer)
+      );
+      done();
     });
   }, 4000);
 
@@ -179,13 +184,19 @@ describe('Functional Check', () => {
       status: 0,
     };
 
-    ccznp._unpi.send = () => {};
+    ccznp._unpi.send = jest.fn();
+    expect.assertions(3);
     ccznp.request('SYS', 'ping', {}, (err, result) => {
-      if (err) {
-        throw err;
-      } else if (result === rsp && ccznp._spinLock === false) {
-        done();
-      }
+      if (err) throw err;
+      expect(ccznp._unpi.send).toHaveBeenCalledWith(
+        'SREQ',
+        'SYS',
+        1,
+        expect.any(Buffer)
+      );
+      expect(result).toEqual(rsp);
+      expect(ccznp._spinLock).toBe(false);
+      done();
     });
     ccznp.emit('SRSP:SYS:ping', rsp);
   });
@@ -201,15 +212,11 @@ describe('Functional Check', () => {
       fcs: 100,
       csum: 100,
     };
-    let dataEvtFlag = false;
-
-    ccznp.on('data', msg => {
-      if (msg === data) {
-        dataEvtFlag = true;
-      }
+    expect.assertions(2);
+    ccznp.once('data', msg => {
+      expect(msg).toEqual(data);
     });
-    ccznp.on('SRSP:SYS:version', result => {
-      let flag = true;
+    ccznp.once('SRSP:SYS:version', result => {
       const parsedResult = {
         transportrev: 0,
         product: 1,
@@ -218,14 +225,8 @@ describe('Functional Check', () => {
         maintrel: 4,
         revision: 5,
       };
-
-      for (const key in result) {
-        if (parsedResult[key] !== result[key]) flag = false;
-      }
-
-      if (dataEvtFlag && flag) {
-        done();
-      }
+      expect(result).toEqual(parsedResult);
+      done();
     });
 
     ccznp._unpi.emit('data', data);
@@ -242,17 +243,12 @@ describe('Functional Check', () => {
       fcs: 100,
       csum: 100,
     };
-
-    let dataEvtFlag = false;
-
-    ccznp.on('data', msg => {
-      if (msg === data) {
-        dataEvtFlag = true;
-      }
+    expect.assertions(2);
+    ccznp.once('data', msg => {
+      expect(msg).toEqual(data);
     });
 
-    ccznp.on('AREQ', result => {
-      let flag = true;
+    ccznp.once('AREQ', result => {
       const parsedResult = {
         subsys: 'AF',
         ind: 'dataConfirm',
@@ -262,22 +258,8 @@ describe('Functional Check', () => {
           transid: 30,
         },
       };
-
-      for (let key in result) {
-        if (key !== 'data' && parsedResult[key] !== result[key]) {
-          flag = false;
-        }
-      }
-
-      for (let field in result[data]) {
-        if (parsedResult.data[field] !== result.data[field]) {
-          flag = false;
-        }
-      }
-
-      if (dataEvtFlag && flag) {
-        done();
-      }
+      expect(result).toEqual(parsedResult);
+      done();
     });
 
     ccznp._unpi.emit('data', data);
