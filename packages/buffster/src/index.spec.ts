@@ -9,6 +9,7 @@ describe("should write and read back", () => {
     ["uint16le", 0xfefe, 0],
     ["int32le", 0x7fefefef, -0x80000000],
     ["uint32le", 0xfefefefe, 0],
+    ["uint32be", 0xfefefefe, 0],
     ["doublele", 1 / 0x100, 0],
     ["floatle", 1 / 0x100, 0]
   ] as const

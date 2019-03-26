@@ -1,7 +1,7 @@
 import { Enum } from './enum';
 
-import * as zpiMeta from './defs/zpi_meta.json';
-import * as zmtDefs from './defs/zmt_defs.json';
+import zpiMeta from './defs/zpi_meta';
+import * as zmtDefs from './defs/zmt_defs';
 
 export const CmdType = new Enum(zmtDefs.CmdType);
 export const Subsys = new Enum(zmtDefs.Subsys);
@@ -16,9 +16,15 @@ export const DBG = new Enum(zmtDefs.DBG);
 export const APP = new Enum(zmtDefs.APP);
 export const DEBUG = new Enum(zmtDefs.DEBUG);
 
-export function get(subsys, cmd) {
-  const meta = zpiMeta[subsys];
-  return meta ? meta[cmd] : undefined;
+export function get<
+  S extends keyof typeof zpiMeta,
+  C extends keyof typeof zpiMeta[S]
+>(subsys: S, cmd: C): typeof zpiMeta[S][C] {
+  const s = zpiMeta[subsys];
+  if (!s) throw new Error(`No subsystem <${subsys}>`);
+  const c = s[cmd];
+  if (!c) throw new Error(`No cmd <${cmd}> in ${subsys}`);
+  return c;
   // return: {
   //  type,
   //  cmdId,
@@ -30,26 +36,37 @@ export function get(subsys, cmd) {
   // }
 }
 
-export function getType(subsys, cmd) {
-  let meta = get(subsys, cmd);
-
-  if (meta) {
-    meta = CmdType.get(meta.type);
-  }
-
-  // return: "POLL", "SREQ", "AREQ", "SRSP"
-  return meta ? meta.key : undefined;
+interface Type1Cmd {
+  readonly cmdId: number;
+  readonly type: 1;
+  readonly params: { readonly req: object[]; readonly rsp: object[] };
+}
+interface Type2Cmd {
+  readonly cmdId: number;
+  readonly type: 2;
+  readonly params: { readonly req: object[] };
+}
+type Cmd = Type1Cmd | Type2Cmd;
+interface Subsys {
+  readonly [cmd: string]: Cmd;
+}
+interface ZpiMeta {
+  readonly [subsys: string]: Subsys;
 }
 
-export function getParams(subsys, cmdName) {
-  const meta = get(subsys, cmdName);
-  return meta ? meta.params : meta;
+export function getType<
+  S extends keyof typeof zpiMeta,
+  C extends keyof typeof zpiMeta[S]
+>(subsys: S, cmd: C) {
+  const type = CmdType.keys.get(((get(subsys, cmd) as unknown) as Cmd).type);
+  if (!type) throw new Error(`type unspecified on ${subsys}/${cmd}`);
+  // return: "POLL", "SREQ", "AREQ", "SRSP"
+  return type;
 }
 
 export function getReqParams(subsys, cmd) {
-  const meta = getParams(subsys, cmd);
   // [ { name: type }, .... ]
-  const params = meta ? meta.req : meta;
+  const params = get(subsys, cmd).params.req;
 
   if (params) {
     return cloneParamsWithNewFormat(params);
@@ -57,9 +74,8 @@ export function getReqParams(subsys, cmd) {
 }
 
 export function getRspParams(subsys, cmd) {
-  const meta = getParams(subsys, cmd);
   // [ { name: type }, .... ]
-  const params = meta ? meta.rsp : meta;
+  const params = get(subsys, cmd).params.rsp;
 
   if (params) {
     return cloneParamsWithNewFormat(params);
@@ -67,26 +83,13 @@ export function getRspParams(subsys, cmd) {
 }
 
 export function cloneParamsWithNewFormat(params) {
-  let output = params.map(item => {
+  return params.map(item => {
     const name = Object.keys(item)[0];
+    const val = item[name];
+    const type = ParamType.keys.get(val);
     return {
       name,
-      type: item[name],
+      type: type || val,
     };
   });
-
-  output = _paramTypeToString(output);
-
-  return output;
-}
-
-function _paramTypeToString(params) {
-  params.forEach((item, idx) => {
-    // enum | undefined
-    const type = ParamType.get(item.type);
-    // item.type is a string
-    item.type = type ? type.key : item.type;
-  });
-
-  return params;
 }

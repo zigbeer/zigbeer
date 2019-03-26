@@ -18,4 +18,6 @@ exports[`should write and read back uint8 number 1`] = `Buffer<fe 00>`;
 
 exports[`should write and read back uint16le number 1`] = `Buffer<fe fe 00 00>`;
 
+exports[`should write and read back uint32be number 1`] = `Buffer<fe fe fe fe 00 00 00 00>`;
+
 exports[`should write and read back uint32le number 1`] = `Buffer<fe fe fe fe 00 00 00 00>`;

@@ -1,7 +1,7 @@
 'use strict';
 const Q = require('q');
 const EventEmitter = require('events');
-const znp = require('cc-znp');
+const znp = require('cc-znp').default;
 const Device  = require('../lib/model/device');
 const Endpoint  = require('../lib/model/endpoint');
 const Controller = require('../lib/components/controller');

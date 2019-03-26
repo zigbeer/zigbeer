@@ -35,14 +35,18 @@
   "dependencies": {
     "@serialport/bindings": "^2.0.6",
     "@serialport/stream": "^2.0.4",
+    "buffster": "^0.1.2",
     "debug": "^4.1.1",
     "unpi": "^1.1.0"
   },
   "devDependencies": {
+    "@types/chance": "~1.0.1",
     "@types/jest": "^24.0.11",
     "@types/node": "^11.11.3",
     "chance": "^1.0.18",
     "jest": "^24.5.0",
+    "jest-buffer-snapshot-serializer": "github:qm3ster/jest-buffer-snapshot-serializer#c0e433b76338a35e1b9f8b16ae4460ffdc05a996",
+    "jest-extended": "~0.11.1",
     "prettier": "^1.16.4",
     "rimraf": "^2.6.3",
     "ts-jest": "^24.0.0",

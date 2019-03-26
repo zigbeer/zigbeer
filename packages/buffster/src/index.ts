@@ -41,6 +41,9 @@ export class BufferWithPointer {
   uint32le() {
     return this.buf.readUInt32LE(this.fwd(4))
   }
+  uint32be() {
+    return this.buf.readUInt32BE(this.fwd(4))
+  }
   int32le() {
     return this.buf.readInt32LE(this.fwd(4))
   }
@@ -92,6 +95,7 @@ type Task =
         | "writeUInt8"
         | "writeUInt16LE"
         | "writeUInt32LE"
+        | "writeUInt32BE"
         | "writeInt8"
         | "writeInt16LE"
         | "writeInt32LE"
@@ -130,6 +134,11 @@ export class BufferBuilder {
   }
   uint32le(value: number): this {
     this.tasks.push(["writeUInt32LE", value])
+    this.len += 4
+    return this
+  }
+  uint32be(value: number): this {
+    this.tasks.push(["writeUInt32BE", value])
     this.len += 4
     return this
   }

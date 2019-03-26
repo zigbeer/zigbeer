@@ -3,7 +3,7 @@
 
 const Q = require('q');
 const Areq = require('areq');
-const znp = require('cc-znp');
+const znp = require('cc-znp').default;
 const ZSC = require('zstack-constants');
 
 const zdoHelper = require('./zdo_helper');

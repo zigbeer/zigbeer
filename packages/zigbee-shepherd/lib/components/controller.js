@@ -5,7 +5,7 @@ const EventEmitter = require('events');
 const Q = require('q');
 const _ = require('busyman');
 const {isPlainObject, cloneDeep, isEqual} = _;
-const znp = require('cc-znp');
+const znp = require('cc-znp').default;
 const proving = require('proving');
 const ZSC = require('zstack-constants');
 

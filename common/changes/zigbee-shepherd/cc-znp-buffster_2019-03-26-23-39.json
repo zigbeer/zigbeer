@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "zigbee-shepherd",
+      "comment": "Correctly import cc-znp",
+      "type": "patch"
+    }
+  ],
+  "packageName": "zigbee-shepherd",
+  "email": "qm3ster@gmail.com"
+}

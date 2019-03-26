@@ -2,15 +2,16 @@ import { EventEmitter } from 'events';
 
 import Unpi = require('unpi');
 import Serialport = require('@serialport/stream');
-const debug = require('debug')('cc-znp');
-const logSreq = require('debug')('cc-znp:SREQ');
-const logSrsp = require('debug')('cc-znp:SRSP');
-const logAreq = require('debug')('cc-znp:AREQ');
+import * as _debug from 'debug';
+const debug = _debug('cc-znp');
+const logSreq = _debug('cc-znp:SREQ');
+const logSrsp = _debug('cc-znp:SRSP');
+const logAreq = _debug('cc-znp:AREQ');
+import { parse, frame, getCommandData } from './zpiObject';
 
 Serialport.Binding = require('@serialport/bindings');
 
-const zmeta = require('./zmeta');
-const ZpiObject = require('./zpiObject');
+import * as zmeta from './zmeta';
 
 const MT = {
   CMDTYPE: zmeta.CmdType,
@@ -25,6 +26,8 @@ const MT = {
   APP: zmeta.APP,
   DEBUG: zmeta.DEBUG,
 };
+
+type cmdMetadata = ReturnType<typeof getCommandData>;
 
 /*
     CcZnp Class
@@ -72,7 +75,7 @@ class CcZnp extends EventEmitter {
   /*
     Public APIs
 */
-  init(spCfg, callback) {
+  init(spCfg, callback = (err?) => {}) {
     if (typeof spCfg !== 'object' || Array.isArray(spCfg)) {
       throw new TypeError('spCfg should be a plain object.');
     }
@@ -85,12 +88,15 @@ class CcZnp extends EventEmitter {
       spCfg.options.autoOpen = false;
     }
 
-    callback = callback || function() {};
-
     const sp = (this._sp =
       this._sp instanceof Serialport
         ? this._sp
         : new Serialport(spCfg.path, spCfg.options));
+
+    if (!sp) {
+      throw new Error('Cannot initialize serial port.');
+    }
+
     const unpi = (this._unpi =
       this._unpi instanceof Unpi
         ? this._unpi
@@ -104,10 +110,6 @@ class CcZnp extends EventEmitter {
     const spOpenLsn = this._innerListeners.spOpen;
     const spErrLsn = this._innerListeners.spErr;
     const spCloseLsn = this._innerListeners.spClose;
-
-    if (!sp) {
-      throw new Error('Cannot initialize serial port.');
-    }
 
     if (!unpi) {
       throw new Error('Cannot initialize unpi.');
@@ -153,16 +155,13 @@ class CcZnp extends EventEmitter {
 
   request(subsys, cmd, valObj, callback) {
     // subsys: String | Number, cmd: String | Number, valObj: Object | Array
-    const self = this;
-    let argObj;
-
     if (!this._init) {
       throw new Error('ccznp has not been initialized yet');
     }
 
     if (this._spinLock) {
       this._txQueue.push(() => {
-        self.request(subsys, cmd, valObj, callback);
+        this.request(subsys, cmd, valObj, callback);
       });
       return;
     }
@@ -175,14 +174,24 @@ class CcZnp extends EventEmitter {
       throw new TypeError('valObj should be an object');
     else if (typeof callback !== 'function' && typeof callback !== 'undefined')
       throw new TypeError('callback should be a function');
-    else argObj = new ZpiObject(subsys, cmd, valObj);
+    const cmdMetadata = getCommandData(subsys, cmd);
 
-    if (argObj.type === 'SREQ') {
-      logSreq('--> %s, %o', `${argObj.subsys}:${argObj.cmd}`, valObj);
-      return this._sendSREQ(argObj, callback);
-    } else if (argObj.type === 'AREQ') {
-      logAreq('--> %s, %o', `${argObj.subsys}:${argObj.cmd}`, valObj);
-      return this._sendAREQ(argObj, callback);
+    const type = zmeta.getType(subsys, cmd);
+
+    if (type === 'SREQ') {
+      logSreq(
+        '--> %s, %o',
+        `${cmdMetadata.subsysName}:${cmdMetadata.cmdName}`,
+        valObj
+      );
+      return this._sendSREQ(valObj, cmdMetadata, callback);
+    } else if (type === 'AREQ') {
+      logAreq(
+        '--> %s, %o',
+        `${cmdMetadata.subsysName}:${cmdMetadata.cmdName}`,
+        valObj
+      );
+      return this._sendAREQ(valObj, cmdMetadata, callback);
     }
   }
 
@@ -224,12 +233,12 @@ class CcZnp extends EventEmitter {
   /*
         Protected Methods
     */
-  _sendSREQ(argObj, callback) {
+  _sendSREQ(valObj, cmdMetadata: cmdMetadata, callback) {
     // subsys: String, cmd: String
     const self = this;
-    const payload = argObj.frame();
+    const payload = frame('SREQ', cmdMetadata, valObj);
     let sreqTimeout;
-    const srspEvt = `SRSP:${argObj.subsys}:${argObj.cmd}`;
+    const srspEvt = `SRSP:${cmdMetadata.subsysName}:${cmdMetadata.cmdName}`;
 
     if (!payload) {
       callback(new Error('Fail to build frame'));
@@ -259,7 +268,10 @@ class CcZnp extends EventEmitter {
 
       // check if this event is fired by timeout controller
       if (result === '__timeout__') {
-        logSrsp('<-- %s, __timeout__', `${argObj.subsys}:${argObj.cmd}`);
+        logSrsp(
+          '<-- %s, __timeout__',
+          `${cmdMetadata.subsysName}:${cmdMetadata.cmdName}`
+        );
         callback(new Error('request timeout'));
       } else {
         self._resetting = false;
@@ -267,36 +279,38 @@ class CcZnp extends EventEmitter {
       }
     });
 
-    this._unpi.send('SREQ', argObj.subsys, argObj.cmdId, payload);
+    this._unpi.send('SREQ', cmdMetadata.subsysName, cmdMetadata.cmdId, payload);
   }
 
-  _sendAREQ(argObj, callback) {
+  _sendAREQ(valObj, cmdMetadata: cmdMetadata, callback) {
     // subsys: String, cmd: String
-    const self = this;
-    const payload = argObj.frame();
+    const payload = frame('AREQ', cmdMetadata, valObj);
 
     if (!payload) {
       callback(new Error('Fail to build frame'));
       return;
     }
 
-    if (argObj.cmd === 'resetReq' || argObj.cmd === 'systemReset') {
+    if (
+      cmdMetadata.cmdName === 'resetReq' ||
+      cmdMetadata.cmdName === 'systemReset'
+    ) {
       this._resetting = true;
       // clear all pending requests, since the system is reset
       this._txQueue = [];
 
       this.once('AREQ:SYS:RESET', () => {
         // hold the lock until coordinator reset completed
-        self._resetting = false;
-        self._spinLock = false;
+        this._resetting = false;
+        this._spinLock = false;
         callback(null);
       });
 
       // if AREQ:SYS:RESET does not return in 30 sec
       // release the lock to avoid the requests from enqueuing
       setTimeout(() => {
-        if (self._resetting) {
-          self._spinLock = false;
+        if (this._resetting) {
+          this._spinLock = false;
         }
       }, 30000);
     } else {
@@ -305,7 +319,7 @@ class CcZnp extends EventEmitter {
       callback(null);
     }
 
-    this._unpi.send('AREQ', argObj.subsys, argObj.cmdId, payload);
+    this._unpi.send('AREQ', cmdMetadata.subsysName, cmdMetadata.cmdId, payload);
   }
 
   _scheduleNextSend() {
@@ -320,67 +334,53 @@ class CcZnp extends EventEmitter {
 
   _parseMtIncomingData(data) {
     // data = { sof, len, type, subsys, cmd, payload, fcs, csum }
-    const self = this;
-    let argObj;
-
     this.emit('data', data);
 
+    if (data.fcs !== data.csum) {
+      throw new Error('Invalid checksum');
+    }
+
     try {
-      if (data.fcs !== data.csum) {
-        throw new Error('Invalid checksum');
-      }
-
-      argObj = new ZpiObject(data.subsys, data.cmd);
+      const cmdMetadata = getCommandData(data.subsys, data.cmd);
       // make sure data.type will be string
-      data.type = zmeta.CmdType.get(data.type).key;
+      const type = zmeta.CmdType.get(data.type)!.key;
       // make sure data.subsys will be string
-      data.subsys = argObj.subsys;
+      const subsysName = cmdMetadata.subsysName;
       // make sure data.cmd will be string
-      data.cmd = argObj.cmd;
+      const cmdName = cmdMetadata.cmdName;
 
-      argObj.parse(data.type, data.len, data.payload, (err, result) => {
-        data.payload = result;
-
-        setImmediate(() => {
-          self._mtIncomingDataHdlr(err, data);
-        });
-      });
-    } catch (e) {
-      self._mtIncomingDataHdlr(e, data);
+      const result = parse(data.type, cmdMetadata, data.payload);
+      const newData = {
+        sof: data.sof,
+        type,
+        subsysName,
+        cmdName,
+        result,
+      };
+      this._mtIncomingDataHdlr(newData);
+    } catch (err) {
+      debug(err); // just print out. do nothing if incoming data is invalid
     }
   }
 
-  _mtIncomingDataHdlr(err, data) {
-    // data = { sof, len, type, subsys, cmd, payload = result, fcs, csum }
-    if (err) {
-      debug(err); // just print out. do nothing if incoming data is invalid
+  _mtIncomingDataHdlr({ type, subsysName, cmdName, result }) {
+    // data = { type, subsysName, cmdName, result }
+    if (type === 'SRSP') {
+      logSrsp('<-- %s, %o', `${subsysName}:${cmdName}`, result);
+      this.emit(`SRSP:${subsysName}:${cmdName}`, result);
       return;
     }
+    if (type === 'AREQ') {
+      logAreq('<-- %s, %o', `${subsysName}:${cmdName}`, result);
 
-    let rxEvt;
-    let msg;
-    const subsys = data.subsys;
-    const cmd = data.cmd;
-    const result = data.payload;
-
-    if (data.type === 'SRSP') {
-      logSrsp('<-- %s, %o', `${subsys}:${cmd}`, result);
-      rxEvt = `SRSP:${subsys}:${cmd}`;
-      this.emit(rxEvt, result);
-    } else if (data.type === 'AREQ') {
-      logAreq('<-- %s, %o', `${subsys}:${cmd}`, result);
-      rxEvt = 'AREQ';
-      msg = {
-        subsys,
-        ind: cmd,
+      this.emit('AREQ', {
+        subsys: subsysName,
+        ind: cmdName,
         data: result,
-      };
+      });
 
-      this.emit(rxEvt, msg);
-
-      if (subsys === 'SYS' && cmd === 'resetInd') {
-        rxEvt = 'AREQ:SYS:RESET';
-        this.emit(rxEvt, result);
+      if (subsysName === 'SYS' && cmdName === 'resetInd') {
+        this.emit('AREQ:SYS:RESET', result);
       }
     }
   }
@@ -389,4 +389,4 @@ class CcZnp extends EventEmitter {
 /*
     Export as a singleton
 */
-module.exports = new CcZnp();
+export default new CcZnp();
