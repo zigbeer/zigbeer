@@ -74,7 +74,7 @@ export const readTable = {
     for (let i = 0; i < len; i++) list[i] = r.uint16le();
     return list;
   },
-  uint32be: (r: BufferWithPointer) => r.slice(4).readUInt32BE(0),
+  uint32be: (r: BufferWithPointer) => r.uint32be(),
   varAddr8: (r: BufferWithPointer) => {
     const type = r.uint8();
     return {

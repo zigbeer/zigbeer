@@ -24,11 +24,7 @@ export const writeDataTable = {
   uint8: (c: BufferBuilder, value: number) => c.uint8(value),
   uint16: (c: BufferBuilder, value: number) => c.uint16le(value),
   uint32: (c: BufferBuilder, value: number) => c.uint32le(value),
-  uint32be: (c: BufferBuilder, value: number) => {
-    const buf = Buffer.allocUnsafe(4);
-    buf.writeUInt32BE(value, 0); //TODO: Implement in buffster package
-    c.buffer(buf);
-  },
+  uint32be: (c: BufferBuilder, value: number) => c.uint32be(value),
   buffer: writeBuffer,
   buffer8: writeBuffer,
   buffer16: writeBuffer,
